@@ -1,0 +1,116 @@
+[
+  {
+    "part": "[Content_Types].xml",
+    "bytes": 1453,
+    "sha256": "77d6ffa29a6d155b0f0a1896db97889a21da20292de6e6dc074ba3816de27f87",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "_rels/",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "_rels/.rels",
+    "bytes": 737,
+    "sha256": "514e1846381cb6bcfff105a4b0a17d666cf0ed1f0c120bff73b82226ab7ed977",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "docProps/",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "docProps/app.xml",
+    "bytes": 634,
+    "sha256": "9f5d0118693694ff26391fd7d7eb66327b4b6ce7ac7206ee7e1e022c6be86e43",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "docProps/core.xml",
+    "bytes": 641,
+    "sha256": "10a9d09e5aafc6d030bf9ea4c0a56c110cd27625a20061fa1137dd150db2d032",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "docProps/custom.xml",
+    "bytes": 526,
+    "sha256": "39edfca194dd1904b0bee46448b8b51acb3e59d986c84b7289e8164f426475ca",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/_rels/",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/_rels/document.xml.rels",
+    "bytes": 945,
+    "sha256": "fa3afe5d507eb31704896e748fc9a36fd7636097c816ea6cb1e7dd31acce44b9",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/document.xml",
+    "bytes": 25733,
+    "sha256": "bbd5dd56eae81cf924003362c89d82602fa1b9619fe044cb6e6ffc62d901209e",
+    "policy": "editable"
+  },
+  {
+    "part": "word/fontTable.xml",
+    "bytes": 2771,
+    "sha256": "714178339f4e039963bb4841ed94bfca3390807897ddbf622efdb16a9dd78723",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/media/",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/media/image1.png",
+    "bytes": 170955,
+    "sha256": "26084abbef0984bddbf33d550256e7b33b7713e7a55445ca1bbccd4e87a70faf",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/media/image2.jpeg",
+    "bytes": 38874,
+    "sha256": "dbb79227fe349602aa13beb36c83b50ec59b57d0824129df01c55112e68ccfdc",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/settings.xml",
+    "bytes": 3158,
+    "sha256": "c1c16d7892cef49ce5a511f9bd1f447d85e9d799cae509d8bd2b204497d204b5",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/styles.xml",
+    "bytes": 22394,
+    "sha256": "0722459833ecf33004789385a6d4e8d0785a3223824b40983a867292ef6063c6",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/theme/",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "policy": "preserve-only"
+  },
+  {
+    "part": "word/theme/theme1.xml",
+    "bytes": 6444,
+    "sha256": "20b1cf0f6bd861afd2ee727424bf2da47b72e5e70232e7477547132a50c1f809",
+    "policy": "preserve-only"
+  }
+]

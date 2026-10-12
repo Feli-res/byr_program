@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JH Game Server Admin</title>
+<style>
+:root{--bg:#0f1419;--card:#1a2332;--border:#2d3a4d;--text:#e7ecf3;--muted:#8b9cb3;--accent:#3b82f6;--danger:#ef4444}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--text)}
+header{padding:20px 24px;border-bottom:1px solid var(--border);background:#111827}
+header h1{margin:0;font-size:20px;font-weight:600}
+header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.wrap{max-width:1200px;margin:0 auto;padding:24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+.card .label{color:var(--muted);font-size:12px;margin-bottom:8px}
+.card .value{font-size:28px;font-weight:700}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{padding:10px 16px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;cursor:pointer;transition:transform .1s ease,filter .15s ease,opacity .15s ease}
+.tab.active{background:var(--accent);border-color:var(--accent)}
+.tab:active,.btn:active{transform:scale(.96);filter:brightness(.78)}
+.panel{display:none}.panel.active{display:block}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+th{background:#111827;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:none}
+.btn{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:13px;margin-right:6px;transition:transform .1s ease,filter .15s ease,opacity .15s ease}
+.btn:disabled{cursor:not-allowed;opacity:.55}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px;flex-wrap:wrap}
+.toolbar-actions{display:flex;align-items:center;gap:8px}
+.account-filter{width:220px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:#111827;color:var(--text)}
+.account-filter:focus{outline:none;border-color:var(--accent)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.modal.open{display:flex}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:900px;width:100%;max-height:80vh;overflow:auto;padding:20px}
+pre{white-space:pre-wrap;word-break:break-all;background:#111827;padding:12px;border-radius:8px;font-size:12px;max-height:50vh;overflow:auto}
+.msg{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:8px}
+.form-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end}
+.form-row label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.form-row input,.form-row textarea{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#111827;color:var(--text);min-width:180px}
+.form-row textarea{min-width:320px;min-height:72px;font-family:Consolas,monospace}
+.hint{color:var(--muted);font-size:12px;margin-bottom:12px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px}
+.badge-pending{background:#854d0e;color:#fef3c7}
+.badge-delivered{background:#14532d;color:#bbf7d0}
+.badge-exempt{background:#14532d;color:#bbf7d0}
+.badge-suppress{background:#7f1d1d;color:#fecaca}
+.request-overlay{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(3,7,18,.42);opacity:0;visibility:hidden;transition:opacity .16s ease,visibility .16s ease;cursor:wait}
+.request-overlay.open{opacity:1;visibility:visible}
+.request-indicator{display:flex;align-items:center;gap:11px;padding:13px 18px;border:1px solid var(--border);border-radius:10px;background:#111827;color:var(--text);box-shadow:0 10px 35px rgba(0,0,0,.35);font-size:14px}
+.spinner{width:19px;height:19px;border:3px solid #52627a;border-top-color:#60a5fa;border-radius:50%;animation:spin .72s linear infinite}
+body.request-busy header,body.request-busy .wrap{filter:brightness(.72);transition:filter .16s ease}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}.btn,.tab,.request-overlay{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>JH Game Server 管理后台</h1>
+  <p>账号、云存档、邮件发放与服务状态</p>
+</header>
+<div class="wrap">
+  <div class="cards" id="statsCards"></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="accounts">账号</button>
+    <button class="tab" data-tab="saves">云存档</button>
+    <button class="tab" data-tab="mails">邮件</button>
+    <button class="tab" data-tab="update">在线更新</button>
+    <button class="tab" data-tab="config">服务配置</button>
+  </div>
+  <div class="msg" id="msg"></div>
+  <div class="panel active" id="panel-accounts">
+    <div class="toolbar">
+      <strong>账号列表</strong>
+      <div class="toolbar-actions">
+        <input class="account-filter" id="accountFilter" type="search" placeholder="输入账号筛选" autocomplete="off">
+        <button class="btn btn-primary" id="btnRefreshAccounts">刷新</button>
+      </div>
+    </div>
+    <table><thead><tr><th>账号</th><th>ID</th><th>MTT</th><th>密码</th><th>操作</th></tr></thead><tbody id="accountsBody"></tbody></table>
+  </div>
+  <div class="panel" id="panel-saves">
+    <div class="toolbar">
+      <strong>云存档</strong>
+      <div class="toolbar-actions">
+        <input class="account-filter" id="saveFilter" type="search" placeholder="筛选账号 / 角色 / 区服" autocomplete="off">
+        <button class="btn btn-primary" id="btnRefreshSaves">刷新</button>
+      </div>
+    </div>
+    <table><thead><tr><th>账号</th><th>角色</th><th>区服</th><th>等级</th><th>大小</th><th>更新时间</th><th>状态</th><th>操作</th></tr></thead><tbody id="savesBody"></tbody></table>
+  </div>
+  <div class="panel" id="panel-mails">
+    <div class="card" style="margin-bottom:16px">
+      <strong>发送邮件（物品奖励）</strong>
+      <p class="hint">同一渠道、账号和区服只保留一封邮件，后发覆盖前发；邮件有效期为 2 小时，并在客户端下一次 getInitData 时下发。</p>
+      <div class="form-row">
+        <label>渠道<input id="mailChannel" value="xuanwu_3" placeholder="xuanwu_3"></label>
+        <label>账号<input id="mailAcc" placeholder="手机号 / 账号"></label>
+        <label>区服<input id="mailArea" type="number" min="1" value="1" placeholder="1"></label>
+        <label>物品 JSON<textarea id="mailItems" placeholder='{"9716":10}'>{&quot;9716&quot;:10}</textarea></label>
+        <button class="btn btn-primary" id="btnSendMail">发送</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <strong>发送全体邮件</strong>
+      <p class="hint">无需账号和区服；同一渠道的所有玩家均会在下一次 getInitData 时收到。有效期 2 小时，同渠道后发覆盖前发；个人邮件优先。</p>
+      <div class="form-row">
+        <label>渠道<input id="globalMailChannel" value="xuanwu_3" placeholder="xuanwu_3"></label>
+        <label>物品 JSON<textarea id="globalMailItems" placeholder='{"9716":10}'>{&quot;9716&quot;:10}</textarea></label>
+        <label>定时发送<input id="globalMailTime" type="datetime-local"></label>
+        <button class="btn btn-primary" id="btnSendGlobalMail">发送全体邮件</button>
+        <button class="btn btn-primary" id="btnScheduleGlobalMail">创建定时任务</button>
+        <button class="btn btn-primary" id="btnRefreshGlobalMail">查询</button>
+        <button class="btn btn-danger" id="btnDeleteGlobalMail">删除</button>
+      </div>
+      <div class="hint" id="globalMailStatus">尚未查询</div>
+      <table style="margin-top:12px"><thead><tr><th>任务 ID</th><th>渠道</th><th>物品</th><th>发送时间</th><th>操作</th></tr></thead><tbody id="globalMailSchedulesBody"><tr><td colspan="5">暂无定时任务</td></tr></tbody></table>
+    </div>
+    <div class="toolbar">
+      <strong>邮件列表</strong>
+      <div class="form-row" style="margin:0">
+        <label>渠道<input id="mailQueryChannel" value="xuanwu_3" placeholder="xuanwu_3"></label>
+        <button class="btn btn-primary" id="btnRefreshMails">查询</button>
+      </div>
+    </div>
+    <table><thead><tr><th>渠道</th><th>账号</th><th>区服</th><th>物品</th><th>开始时间</th><th>结束时间</th><th>操作</th></tr></thead><tbody id="mailsBody"></tbody></table>
+  </div>
+  <div class="panel" id="panel-update">
+    <div class="card" style="margin-bottom:16px">
+      <strong>版本配置</strong>
+      <p class="hint">客户端可通过 GET /update/check 检查更新；JSON 配置供 Java 层下载（onJsonDownload）；活动/修复数据经 getInitData 下发。APK 与资源 zip 放服务端后客户端可自动拉取。</p>
+      <div class="form-row">
+        <label>程序版本<input id="updProgramVer" type="number" min="1" value="520"></label>
+        <label>最低程序版本<input id="updMinProgramVer" type="number" min="1" value="520"></label>
+        <label>JSON 版本<input id="updJsonVer" type="number" min="0" value="1"></label>
+        <label>JSON 文件<input id="updJsonFile" value="1.json"></label>
+        <label>资源版本<input id="updAssetVer" type="number" min="0" value="0"></label>
+        <label>资源文件<input id="updAssetFile" placeholder="res.zip"></label>
+      </div>
+      <div class="form-row">
+        <label>APK 文件名<input id="updApkFile" placeholder="game.apk"></label>
+        <label style="flex:1">APK 外链（可选，留空则用本机 /update/apk/）<input id="updApkUrl" placeholder="http://..."></label>
+      </div>
+      <div class="form-row">
+        <label style="flex:1">更新公告<textarea id="updNotice" placeholder="可选"></textarea></label>
+      </div>
+      <div class="form-row">
+        <label>上传 APK<input type="file" id="updApkUpload" accept=".apk,application/vnd.android.package-archive"></label>
+        <button class="btn btn-primary" id="btnUploadApk">上传 APK</button>
+      </div>
+      <div class="form-row">
+        <label><input type="checkbox" id="updEnabled" checked> 启用更新</label>
+        <label><input type="checkbox" id="updForce"> 强制更新</label>
+        <button class="btn btn-primary" id="btnSaveUpdate">保存配置</button>
+        <button class="btn btn-primary" id="btnRefreshUpdate">刷新</button>
+      </div>
+      <p class="hint" id="updateAssetHint"></p>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <strong>APK MD5 校验</strong>
+      <p class="hint">此处仅设置客户端完整性校验基准，与上方在线更新 APK 完全分开。请在本地选择最终签名并实际分发的 APK，浏览器会计算 MD5，仅把哈希提交到服务器（不上传整包）。网络、读取失败或未配置基准时客户端放行。</p>
+      <div class="form-row">
+        <label>本地 APK<input type="file" id="integrityApkUpload" accept=".apk,application/vnd.android.package-archive"></label>
+        <button class="btn btn-primary" id="btnUploadIntegrityApk" type="button" onclick="uploadIntegrityApk()">计算并提交 MD5</button>
+      </div>
+      <p class="hint" id="integrityUploadStatus">等待选择 APK</p>
+      <div class="form-row">
+        <label>来源文件名<input id="integrityApkFile" readonly placeholder="尚未提交"></label>
+        <label style="flex:1">APK MD5<input id="updApkMd5" readonly placeholder="尚未生成"></label>
+        <label>APK 大小<input id="updApkSize" readonly placeholder="-"></label>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <strong>服务端 doc.json</strong>
+      <p class="hint">上传原始或已 XOR 的 conf/doc.json。服务端会校验并统一加密保存；注入 SO 通过带时效签名的接口读取，安装包内无需再放置该文件。</p>
+      <div class="form-row">
+        <label>配置文件<input type="file" id="remoteDocUpload" accept=".json,application/json"></label>
+        <button class="btn btn-primary" id="btnUploadRemoteDoc" type="button" onclick="uploadRemoteDoc()">上传 doc.json</button>
+      </div>
+      <p class="hint" id="remoteDocStatus">尚未配置</p>
+      <div class="form-row">
+        <label>配置版本<input id="remoteDocVersion" readonly value="0"></label>
+        <label style="flex:1">文件 MD5<input id="remoteDocMd5" readonly placeholder="尚未上传"></label>
+        <label>文件大小<input id="remoteDocSize" readonly placeholder="-"></label>
+      </div>
+    </div>
+    <div class="card">
+      <strong>活动 JSON（huoDong）</strong>
+      <p class="hint">保存后同步到 manifest 与 getInitData；同时写入 data/updates/json/ 文件供客户端下载。</p>
+      <div class="form-row">
+        <label>JSON 文件<input id="updJsonEditFile" value="1.json"></label>
+        <button class="btn btn-primary" id="btnLoadUpdateJson">加载</button>
+        <button class="btn btn-primary" id="btnSaveUpdateJson">保存 JSON</button>
+      </div>
+      <textarea id="updJsonContent" style="width:100%;min-height:220px;font-family:Consolas,monospace;background:#111827;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:12px"></textarea>
+      <pre id="updateUrls" style="margin-top:12px;font-size:12px"></pre>
+    </div>
+  </div>
+  <div class="panel" id="panel-config"><div class="card" id="configBox"></div></div>
+</div>
+<div class="modal" id="modal"><div class="modal-box">
+  <div class="toolbar"><strong id="modalTitle">存档详情</strong><button class="btn btn-primary" id="btnCloseModal">关闭</button></div>
+  <pre id="modalContent"></pre>
+</div></div>
+<div class="request-overlay" id="requestOverlay" role="status" aria-live="polite" aria-hidden="true">
+  <div class="request-indicator"><span class="spinner"></span><span>处理中，请稍候…</span></div>
+</div>
+<script>
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function showMsg(text) {
+  document.getElementById('msg').textContent = text || '';
+}
+
+let activeRequests = 0;
+let busyStartedAt = 0;
+const nativeFetch = window.fetch.bind(window);
+
+function showRequestBusy() {
+  if (activeRequests++ === 0) {
+    busyStartedAt = Date.now();
+    document.body.classList.add('request-busy');
+    const overlay = document.getElementById('requestOverlay');
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function hideRequestBusy() {
+  activeRequests = Math.max(0, activeRequests - 1);
+  if (activeRequests !== 0) return;
+  const finish = function() {
+    if (activeRequests !== 0) return;
+    document.body.classList.remove('request-busy');
+    const overlay = document.getElementById('requestOverlay');
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+  };
+  const remain = Math.max(0, 220 - (Date.now() - busyStartedAt));
+  if (remain > 0) setTimeout(finish, remain);
+  else finish();
+}
+
+window.fetch = async function() {
+  showRequestBusy();
+  try {
+    return await nativeFetch.apply(window, arguments);
+  } finally {
+    hideRequestBusy();
+  }
+};
+
+async function api(path, opts) {
+  opts = opts || {};
+  let res;
+  try {
+    res = await fetch(path, opts);
+  } catch (e) {
+    showMsg('网络请求失败，请稍后重试');
+    throw e;
+  }
+  if (!res.ok) {
+    let detail = '';
+    try {
+      detail = await res.text();
+    } catch (e) {}
+    const error = new Error('请求失败: ' + res.status + (detail ? ' ' + detail.slice(0, 200) : ''));
+    showMsg(error.message);
+    throw error;
+  }
+  return res;
+}
+
+async function loadStats() {
+  const res = await api('/admin/api/stats');
+  const data = await res.json();
+  const cards = [
+    ['账号数', data.account_count],
+    ['存档数', data.save_count],
+    ['版本 ver', data.game_version],
+    ['端口', data.port]
+  ];
+  document.getElementById('statsCards').innerHTML = cards.map(function(item) {
+    return '<div class="card"><div class="label">' + esc(item[0]) + '</div><div class="value">' + esc(item[1]) + '</div></div>';
+  }).join('');
+  document.getElementById('configBox').innerHTML = '<pre>' + esc(JSON.stringify(data, null, 2)) + '</pre>';
+}
+
+let accountItems = [];
+
+function renderAccounts(items) {
+  const tbody = document.getElementById('accountsBody');
+  if (!items.length) {
+    const filtering = document.getElementById('accountFilter').value.trim();
+    tbody.innerHTML = '<tr><td colspan="5">' + (filtering ? '未找到匹配账号' : '暂无账号') + '</td></tr>';
+    return;
+  }
+  tbody.innerHTML = items.map(function(a) {
+    const pwd = a.has_password ? '已设置' : '未设置(旧账号)';
+    return '<tr><td>' + esc(a.acc) + '</td><td>' + a.id + '</td><td><code>' + esc(a.mtt) + '</code></td><td>' + pwd + '</td>' +
+      '<td><button class="btn btn-primary" data-reset="' + esc(a.acc) + '">重置密码</button>' +
+      '<button class="btn btn-danger" data-acc="' + esc(a.acc) + '">删除</button></td></tr>';
+  }).join('');
+  tbody.querySelectorAll('button[data-acc]').forEach(function(btn) {
+    btn.onclick = function() { delAccount(btn.getAttribute('data-acc')); };
+  });
+  tbody.querySelectorAll('button[data-reset]').forEach(function(btn) {
+    btn.onclick = function() { resetPassword(btn.getAttribute('data-reset')); };
+  });
+}
+
+function filterAccounts() {
+  const keyword = document.getElementById('accountFilter').value.trim().toLowerCase();
+  const items = keyword
+    ? accountItems.filter(function(a) { return String(a.acc).toLowerCase().includes(keyword); })
+    : accountItems;
+  renderAccounts(items);
+}
+
+async function loadAccounts() {
+  const res = await api('/admin/api/accounts');
+  const data = await res.json();
+  accountItems = data.items || [];
+  filterAccounts();
+}
+
+async function resetPassword(acc) {
+  const psw = prompt('为 ' + acc + ' 设置新密码（至少 6 位）', '123456');
+  if (!psw) return;
+  const res = await api('/admin/api/account/password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ acc: acc, psw: psw })
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    setMsg(data.error || '重置失败');
+    return;
+  }
+  setMsg('密码已更新: ' + acc);
+  loadAccounts();
+}
+
+let saveItems = [];
+
+function renderSaves(items) {
+  const tbody = document.getElementById('savesBody');
+  if (!items.length) {
+    const filtering = document.getElementById('saveFilter').value.trim();
+    tbody.innerHTML = '<tr><td colspan="8">' + (filtering ? '未找到匹配存档' : '暂无存档') + '</td></tr>';
+    return;
+  }
+  tbody.innerHTML = items.map(function(s) {
+    const status = s.has_blob
+      ? (s.has_meta ? '<span class="badge badge-delivered">正常</span>' : '<span class="badge badge-pending">缺少元数据</span>')
+      : '<span class="badge badge-suppress">缺少存档</span>';
+    const viewButton = s.has_blob
+      ? '<button class="btn btn-primary" data-view-acc="' + esc(s.acc) + '" data-area="' + s.area + '">查看</button>'
+      : '';
+    const resetCdButton = s.has_meta
+      ? '<button class="btn btn-primary" data-reset-cd-acc="' + esc(s.acc) + '" data-area="' + s.area + '">重置CD</button>'
+      : '';
+    return '<tr><td>' + esc(s.acc) + '</td><td>' + esc(s.username || s.acc) + '</td><td>' + s.area +
+      '</td><td>' + esc(s.lev || 1) + '</td><td>' + esc(s.size_text) + '</td><td>' +
+      esc(s.updated_at_text) + '</td><td>' + status + '</td><td>' + viewButton + resetCdButton +
+      '<button class="btn btn-danger" data-acc="' + esc(s.acc) + '" data-area="' + s.area + '">删除</button>' +
+      '</td></tr>';
+  }).join('');
+  tbody.querySelectorAll('button[data-view-acc]').forEach(function(btn) {
+    btn.onclick = function() {
+      viewSave(btn.getAttribute('data-view-acc'), Number(btn.getAttribute('data-area')));
+    };
+  });
+  tbody.querySelectorAll('button[data-reset-cd-acc]').forEach(function(btn) {
+    btn.onclick = function() {
+      resetSaveDownloadCd(btn.getAttribute('data-reset-cd-acc'), Number(btn.getAttribute('data-area')));
+    };
+  });
+  tbody.querySelectorAll('button.btn-danger[data-acc]').forEach(function(btn) {
+    btn.onclick = function() {
+      delSave(btn.getAttribute('data-acc'), Number(btn.getAttribute('data-area')));
+    };
+  });
+}
+
+function filterSaves() {
+  const keyword = document.getElementById('saveFilter').value.trim().toLowerCase();
+  const items = keyword
+    ? saveItems.filter(function(s) {
+        return String(s.acc).toLowerCase().includes(keyword) ||
+          String(s.username || '').toLowerCase().includes(keyword) ||
+          String(s.area).includes(keyword);
+      })
+    : saveItems;
+  renderSaves(items);
+}
+
+async function loadSaves() {
+  const res = await api('/admin/api/saves');
+  const data = await res.json();
+  saveItems = data.items || [];
+  filterSaves();
+}
+
+async function viewSave(acc, area) {
+  const res = await api('/admin/api/save?acc=' + encodeURIComponent(acc) + '&area=' + area);
+  const data = await res.json();
+  document.getElementById('modalTitle').textContent = '存档 ' + acc + ' / 区服 ' + area;
+  document.getElementById('modalContent').textContent = data.preview || '';
+  document.getElementById('modal').classList.add('open');
+}
+
+async function delSave(acc, area) {
+  if (!confirm('删除存档 ' + acc + ' 区服 ' + area + '？')) return;
+  await api('/admin/api/save?acc=' + encodeURIComponent(acc) + '&area=' + area, { method: 'DELETE' });
+  showMsg('存档已删除');
+  loadSaves();
+  loadStats();
+}
+
+async function resetSaveDownloadCd(acc, area) {
+  if (!confirm('清空存档 ' + acc + ' 区服 ' + area + ' 的本次下载 CD？')) return;
+  const res = await api('/admin/api/save/download-cd/reset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ acc: acc, area: area })
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    showMsg(data.error || '重置失败');
+    return;
+  }
+  showMsg('下载 CD 已重置：' + acc + ' / 区服 ' + area);
+}
+
+async function delAccount(acc) {
+  if (!confirm('删除账号 ' + acc + ' 及其全部存档？')) return;
+  await api('/admin/api/account?acc=' + encodeURIComponent(acc), { method: 'DELETE' });
+  showMsg('账号已删除');
+  loadAccounts();
+  loadSaves();
+  loadStats();
+}
+
+async function loadMails() {
+  const channel = document.getElementById('mailQueryChannel').value.trim();
+  if (!channel || channel.indexOf(':') >= 0) {
+    showMsg('请输入有效渠道，且不能包含冒号');
+    return;
+  }
+  showMsg('');
+  const res = await api('/admin/api/mails?channel=' + encodeURIComponent(channel));
+  const data = await res.json();
+  const items = data.items || [];
+  const tbody = document.getElementById('mailsBody');
+  if (!items.length) {
+    tbody.innerHTML = '<tr><td colspan="7">渠道 ' + esc(channel) + ' 暂无有效邮件</td></tr>';
+    return;
+  }
+  tbody.innerHTML = items.map(function(m) {
+    return '<tr><td>' + esc(m.channel) + '</td><td><code>' + esc(m.acc) + '</code></td><td>' +
+      (m.area || 1) + '</td><td><code>' + esc(JSON.stringify(m.items || {})) +
+      '</code></td><td>' + esc(m.begin_at || '-') + '</td><td>' + esc(m.end_at || '-') +
+      '</td><td><button class="btn btn-danger" data-channel="' + esc(m.channel) +
+      '" data-acc="' + esc(m.acc) + '" data-area="' + (m.area || 1) + '">删除</button></td></tr>';
+  }).join('');
+  tbody.querySelectorAll('button[data-acc]').forEach(function(btn) {
+    btn.onclick = function() {
+      delMail(btn.getAttribute('data-channel'), btn.getAttribute('data-acc'),
+        Number(btn.getAttribute('data-area')));
+    };
+  });
+}
+
+async function sendMail() {
+  const channel = document.getElementById('mailChannel').value.trim();
+  const acc = document.getElementById('mailAcc').value.trim();
+  const area = Number(document.getElementById('mailArea').value) || 0;
+  const itemsText = document.getElementById('mailItems').value.trim();
+  if (!channel || channel.indexOf(':') >= 0) {
+    showMsg('请输入有效渠道，且不能包含冒号');
+    return;
+  }
+  if (!acc) {
+    showMsg('请输入账号');
+    return;
+  }
+  if (area <= 0) {
+    showMsg('请输入有效的区服');
+    return;
+  }
+  let items;
+  try {
+    items = JSON.parse(itemsText);
+  } catch (e) {
+    showMsg('物品 JSON 格式错误');
+    return;
+  }
+  if (!items || typeof items !== 'object' || Array.isArray(items)) {
+    showMsg('items 必须是 JSON 对象，如 {"9716":10}');
+    return;
+  }
+  showMsg('');
+  const res = await api('/admin/api/mail', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ channel: channel, acc: acc, area: area, items: items })
+  });
+  await res.json();
+  showMsg('邮件已写入，2 小时内有效（渠道 ' + channel + ' / 区服 ' + area + '）');
+  document.getElementById('mailQueryChannel').value = channel;
+  loadMails();
+}
+
+async function delMail(channel, acc, area) {
+  if (!confirm('删除 ' + acc + '（渠道 ' + channel + ' / 区服 ' + area + '）的邮件？')) return;
+  await api('/admin/api/mail?channel=' + encodeURIComponent(channel) + '&acc=' +
+    encodeURIComponent(acc) + '&area=' + area, { method: 'DELETE' });
+  showMsg('邮件已删除');
+  loadMails();
+}
+
+function globalMailChannel() {
+  const channel = document.getElementById('globalMailChannel').value.trim();
+  if (!channel || channel.indexOf(':') >= 0) {
+    throw new Error('请输入有效渠道，且不能包含冒号');
+  }
+  return channel;
+}
+
+function globalMailItems() {
+  const items = JSON.parse(document.getElementById('globalMailItems').value.trim());
+  if (!items || typeof items !== 'object' || Array.isArray(items) || !Object.keys(items).length) {
+    throw new Error('物品必须是非空 JSON 对象');
+  }
+  return items;
+}
+
+async function sendGlobalMail() {
+  try {
+    const channel = globalMailChannel();
+    const items = globalMailItems();
+    if (!confirm('确认向渠道 ' + channel + ' 的所有账号和区服发送奖励？')) return;
+    await api('/admin/api/global-mail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channel: channel, items: items })
+    });
+    showMsg('全体邮件已发送，2 小时内有效');
+    loadGlobalMail();
+  } catch (e) {
+    showMsg(e.message || String(e));
+  }
+}
+
+async function scheduleGlobalMail() {
+  try {
+    const channel = globalMailChannel();
+    const items = globalMailItems();
+    const value = document.getElementById('globalMailTime').value;
+    if (!value) throw new Error('请选择定时发送时间');
+    const scheduledAt = Math.floor(new Date(value).getTime() / 1000);
+    if (!Number.isFinite(scheduledAt) || scheduledAt <= Math.floor(Date.now() / 1000)) {
+      throw new Error('定时发送时间必须晚于当前时间');
+    }
+    const res = await api('/admin/api/global-mail/schedules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channel: channel, items: items, scheduled_at: scheduledAt })
+    });
+    const data = await res.json();
+    showMsg('定时任务已创建：' + data.id);
+    loadGlobalMailSchedules();
+  } catch (e) {
+    showMsg(e.message || String(e));
+  }
+}
+
+async function loadGlobalMail() {
+  try {
+    const channel = globalMailChannel();
+    const res = await api('/admin/api/global-mail?channel=' + encodeURIComponent(channel));
+    const data = await res.json();
+    document.getElementById('globalMailStatus').textContent = data.active
+      ? '生效中：' + JSON.stringify(data.items || {}) + '，' + data.begin_at + ' 至 ' + data.end_at
+      : '当前没有有效的全体邮件';
+    loadGlobalMailSchedules();
+  } catch (e) {
+    showMsg(e.message || String(e));
+  }
+}
+
+async function loadGlobalMailSchedules() {
+  try {
+    const channel = globalMailChannel();
+    const res = await api('/admin/api/global-mail/schedules?channel=' + encodeURIComponent(channel));
+    const data = await res.json();
+    const items = data.items || [];
+    const tbody = document.getElementById('globalMailSchedulesBody');
+    if (!items.length) {
+      tbody.innerHTML = '<tr><td colspan="5">暂无定时任务</td></tr>';
+      return;
+    }
+    tbody.innerHTML = items.map(function(item) {
+      return '<tr><td><code>' + esc(item.id) + '</code></td><td>' + esc(item.channel) +
+        '</td><td><code>' + esc(JSON.stringify(item.items || {})) + '</code></td><td>' +
+        esc(item.scheduled_at_text || '-') + '</td><td><button class="btn btn-danger" data-global-schedule-id="' +
+        esc(item.id) + '">取消</button></td></tr>';
+    }).join('');
+    tbody.querySelectorAll('button[data-global-schedule-id]').forEach(function(btn) {
+      btn.onclick = async function() {
+        const id = btn.getAttribute('data-global-schedule-id');
+        if (!confirm('取消定时任务 ' + id + '？')) return;
+        await api('/admin/api/global-mail/schedules?id=' + encodeURIComponent(id), { method: 'DELETE' });
+        showMsg('定时任务已取消');
+        loadGlobalMailSchedules();
+      };
+    });
+  } catch (e) {
+    showMsg(e.message || String(e));
+  }
+}
+
+async function deleteGlobalMail() {
+  try {
+    const channel = globalMailChannel();
+    if (!confirm('删除渠道 ' + channel + ' 当前的全体邮件？')) return;
+    await api('/admin/api/global-mail?channel=' + encodeURIComponent(channel), { method: 'DELETE' });
+    showMsg('全体邮件已删除');
+    loadGlobalMail();
+  } catch (e) {
+    showMsg(e.message || String(e));
+  }
+}
+
+async function loadUpdate() {
+  const res = await api('/admin/api/update');
+  const data = await res.json();
+  document.getElementById('updEnabled').checked = !!data.enabled;
+  document.getElementById('updForce').checked = !!data.force_update;
+  document.getElementById('updProgramVer').value = data.program_version || 520;
+  document.getElementById('updMinProgramVer').value = data.min_program_version || 520;
+  document.getElementById('updJsonVer').value = data.json_version || 1;
+  document.getElementById('updJsonFile').value = data.json_file || '1.json';
+  document.getElementById('updAssetVer').value = data.asset_version || 0;
+  document.getElementById('updAssetFile').value = data.asset_file || '';
+  document.getElementById('updApkFile').value = data.apk_file || '';
+  document.getElementById('integrityApkFile').value = data.integrity_apk_file || '';
+  document.getElementById('updApkMd5').value = data.apk_md5 || '';
+  document.getElementById('updApkSize').value = data.apk_size ? data.apk_size + ' bytes' : '';
+  document.getElementById('remoteDocVersion').value = data.doc_version || 0;
+  document.getElementById('remoteDocMd5').value = data.doc_md5 || '';
+  document.getElementById('remoteDocSize').value = data.doc_size ? data.doc_size + ' bytes' : '';
+  document.getElementById('remoteDocStatus').textContent = data.doc_configured
+    ? '已配置；客户端仅通过签名接口读取'
+    : '尚未配置，移除安装包内 doc.json 前请先上传';
+  document.getElementById('updNotice').value = data.update_notice || '';
+  document.getElementById('updApkUrl').value = data.apk_url || '';
+  document.getElementById('updJsonEditFile').value = data.json_file || '1.json';
+  const urls = [
+    '检查更新: ' + (data.check_url || '-'),
+    'Manifest: ' + (data.public_base_url || '') + '/update/manifest',
+    'JSON: ' + (data.json_url || '-'),
+    '资源: ' + (data.asset_url || '-'),
+    'APK: ' + (data.apk_download_url || '-'),
+    'APK MD5: ' + (data.apk_md5 || '未配置（客户端放行）'),
+    'JSON 文件列表: ' + JSON.stringify(data.json_files || []),
+    '资源文件列表: ' + JSON.stringify(data.asset_files || []),
+    'APK 文件列表: ' + JSON.stringify(data.apk_files || [])
+  ];
+  document.getElementById('updateUrls').textContent = urls.join('\n');
+  document.getElementById('updateAssetHint').textContent =
+    '此卡片只管理在线更新。上传更新 APK 不会修改下方 MD5 校验基准。';
+  if (Array.isArray(data.huo_dong)) {
+    document.getElementById('updJsonContent').value = JSON.stringify({ huoDong: data.huo_dong, version: data.json_version || 1 }, null, 2);
+  }
+}
+
+async function saveUpdate() {
+  const body = {
+    enabled: document.getElementById('updEnabled').checked,
+    force_update: document.getElementById('updForce').checked,
+    program_version: Number(document.getElementById('updProgramVer').value) || 520,
+    min_program_version: Number(document.getElementById('updMinProgramVer').value) || 520,
+    json_version: Number(document.getElementById('updJsonVer').value) || 1,
+    json_file: document.getElementById('updJsonFile').value.trim() || '1.json',
+    asset_version: Number(document.getElementById('updAssetVer').value) || 0,
+    asset_file: document.getElementById('updAssetFile').value.trim(),
+    apk_file: document.getElementById('updApkFile').value.trim(),
+    update_notice: document.getElementById('updNotice').value.trim(),
+    apk_url: document.getElementById('updApkUrl').value.trim()
+  };
+  try {
+    const parsed = JSON.parse(document.getElementById('updJsonContent').value || '{}');
+    if (Array.isArray(parsed.huoDong)) {
+      body.huo_dong = parsed.huoDong;
+    }
+  } catch (e) {}
+  await api('/admin/api/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  showMsg('更新配置已保存');
+  loadUpdate();
+}
+
+async function loadUpdateJsonFile() {
+  const file = document.getElementById('updJsonEditFile').value.trim() || '1.json';
+  const res = await api('/admin/api/update/json?file=' + encodeURIComponent(file));
+  const data = await res.json();
+  document.getElementById('updJsonContent').value = data.content || '';
+  showMsg('已加载 ' + file);
+}
+
+async function saveUpdateJsonFile() {
+  const file = document.getElementById('updJsonEditFile').value.trim() || '1.json';
+  const content = document.getElementById('updJsonContent').value;
+  await api('/admin/api/update/json', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      file: file,
+      content: content,
+      json_version: Number(document.getElementById('updJsonVer').value) || 1
+    })
+  });
+  showMsg('JSON 已保存: ' + file);
+  loadUpdate();
+}
+
+async function uploadApk() {
+  const input = document.getElementById('updApkUpload');
+  if (!input.files || !input.files.length) {
+    showMsg('请选择 APK 文件');
+    return;
+  }
+  try {
+    const file = input.files[0];
+    const query = '?filename=game.apk' +
+      '&program_version=' + encodeURIComponent(document.getElementById('updProgramVer').value || '521');
+    showMsg('正在上传更新 APK（' + file.size + ' bytes），请勿关闭页面……');
+    const res = await fetch('/admin/api/update/apk' + query, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/octet-stream' },
+      body: file
+    });
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error('上传失败: ' + res.status + ' ' + detail.slice(0, 120));
+    }
+    const data = await res.json();
+    showMsg('更新 APK 已上传: ' + data.apk_file + '，程序版本=' + data.program_version);
+    loadUpdate();
+  } catch (e) {
+    showMsg(e.message || String(e));
+  }
+}
+
+async function md5File(file, onProgress) {
+  // Compact streaming MD5 (RFC 1321)
+  function md5cycle(x, k) {
+    var a = x[0], b = x[1], c = x[2], d = x[3];
+    a = ff(a, b, c, d, k[0], 7, -680876936);
+    d = ff(d, a, b, c, k[1], 12, -389564586);
+    c = ff(c, d, a, b, k[2], 17, 606105819);
+    b = ff(b, c, d, a, k[3], 22, -1044525330);
+    a = ff(a, b, c, d, k[4], 7, -176418897);
+    d = ff(d, a, b, c, k[5], 12, 1200080426);
+    c = ff(c, d, a, b, k[6], 17, -1473231341);
+    b = ff(b, c, d, a, k[7], 22, -45705983);
+    a = ff(a, b, c, d, k[8], 7, 1770035416);
+    d = ff(d, a, b, c, k[9], 12, -1958414417);
+    c = ff(c, d, a, b, k[10], 17, -42063);
+    b = ff(b, c, d, a, k[11], 22, -1990404162);
+    a = ff(a, b, c, d, k[12], 7, 1804603682);
+    d = ff(d, a, b, c, k[13], 12, -40341101);
+    c = ff(c, d, a, b, k[14], 17, -1502002290);
+    b = ff(b, c, d, a, k[15], 22, 1236535329);
+    a = gg(a, b, c, d, k[1], 5, -165796510);
+    d = gg(d, a, b, c, k[6], 9, -1069501632);
+    c = gg(c, d, a, b, k[11], 14, 643717713);
+    b = gg(b, c, d, a, k[0], 20, -373897302);
+    a = gg(a, b, c, d, k[5], 5, -701558691);
+    d = gg(d, a, b, c, k[10], 9, 38016083);
+    c = gg(c, d, a, b, k[15], 14, -660478335);
+    b = gg(b, c, d, a, k[4], 20, -405537848);
+    a = gg(a, b, c, d, k[9], 5, 568446438);
+    d = gg(d, a, b, c, k[14], 9, -1019803690);
+    c = gg(c, d, a, b, k[3], 14, -187363961);
+    b = gg(b, c, d, a, k[8], 20, 1163531501);
+    a = gg(a, b, c, d, k[13], 5, -1444681467);
+    d = gg(d, a, b, c, k[2], 9, -51403784);
+    c = gg(c, d, a, b, k[7], 14, 1735328473);
+    b = gg(b, c, d, a, k[12], 20, -1926607734);
+    a = hh(a, b, c, d, k[5], 4, -378558);
+    d = hh(d, a, b, c, k[8], 11, -2022574463);
+    c = hh(c, d, a, b, k[11], 16, 1839030562);
+    b = hh(b, c, d, a, k[14], 23, -35309556);
+    a = hh(a, b, c, d, k[1], 4, -1530992060);
+    d = hh(d, a, b, c, k[4], 11, 1272893353);
+    c = hh(c, d, a, b, k[7], 16, -155497632);
+    b = hh(b, c, d, a, k[10], 23, -1094730640);
+    a = hh(a, b, c, d, k[13], 4, 681279174);
+    d = hh(d, a, b, c, k[0], 11, -358537222);
+    c = hh(c, d, a, b, k[3], 16, -722521979);
+    b = hh(b, c, d, a, k[6], 23, 76029189);
+    a = hh(a, b, c, d, k[9], 4, -640364487);
+    d = hh(d, a, b, c, k[12], 11, -421815835);
+    c = hh(c, d, a, b, k[15], 16, 530742520);
+    b = hh(b, c, d, a, k[2], 23, -995338651);
+    a = ii(a, b, c, d, k[0], 6, -198630844);
+    d = ii(d, a, b, c, k[7], 10, 1126891415);
+    c = ii(c, d, a, b, k[14], 15, -1416354905);
+    b = ii(b, c, d, a, k[5], 21, -57434055);
+    a = ii(a, b, c, d, k[12], 6, 1700485571);
+    d = ii(d, a, b, c, k[3], 10, -1894986606);
+    c = ii(c, d, a, b, k[10], 15, -1051523);
+    b = ii(b, c, d, a, k[1], 21, -2054922799);
+    a = ii(a, b, c, d, k[8], 6, 1873313359);
+    d = ii(d, a, b, c, k[15], 10, -30611744);
+    c = ii(c, d, a, b, k[6], 15, -1560198380);
+    b = ii(b, c, d, a, k[13], 21, 1309151649);
+    a = ii(a, b, c, d, k[4], 6, -145523070);
+    d = ii(d, a, b, c, k[11], 10, -1120210379);
+    c = ii(c, d, a, b, k[2], 15, 718787259);
+    b = ii(b, c, d, a, k[9], 21, -343485551);
+    x[0] = add32(a, x[0]);
+    x[1] = add32(b, x[1]);
+    x[2] = add32(c, x[2]);
+    x[3] = add32(d, x[3]);
+  }
+  function cmn(q, a, b, x, s, t) {
+    a = add32(add32(a, q), add32(x, t));
+    return add32((a << s) | (a >>> (32 - s)), b);
+  }
+  function ff(a, b, c, d, x, s, t) { return cmn((b & c) | ((~b) & d), a, b, x, s, t); }
+  function gg(a, b, c, d, x, s, t) { return cmn((b & d) | (c & (~d)), a, b, x, s, t); }
+  function hh(a, b, c, d, x, s, t) { return cmn(b ^ c ^ d, a, b, x, s, t); }
+  function ii(a, b, c, d, x, s, t) { return cmn(c ^ (b | (~d)), a, b, x, s, t); }
+  function add32(a, b) { return (a + b) & 0xFFFFFFFF; }
+  function rhex(n) {
+    var s = '', j;
+    for (j = 0; j < 4; j++) s += ((n >> (j * 8 + 4)) & 0x0F).toString(16) + ((n >> (j * 8)) & 0x0F).toString(16);
+    return s;
+  }
+
+  var state = [1732584193, -271733879, -1732584194, 271733878];
+  var buffer = new Uint8Array(0);
+  var total = 0;
+  var chunkSize = 2 * 1024 * 1024;
+  var offset = 0;
+
+  function append(bytes) {
+    total += bytes.length;
+    var merged = new Uint8Array(buffer.length + bytes.length);
+    merged.set(buffer, 0);
+    merged.set(bytes, buffer.length);
+    buffer = merged;
+    var i = 0;
+    while (i + 64 <= buffer.length) {
+      var block = new Array(16);
+      for (var j = 0; j < 16; j++) {
+        var o = i + j * 4;
+        block[j] = buffer[o] | (buffer[o + 1] << 8) | (buffer[o + 2] << 16) | (buffer[o + 3] << 24);
+      }
+      md5cycle(state, block);
+      i += 64;
+    }
+    buffer = buffer.slice(i);
+  }
+
+  while (offset < file.size) {
+    var end = Math.min(offset + chunkSize, file.size);
+    var ab = await file.slice(offset, end).arrayBuffer();
+    append(new Uint8Array(ab));
+    offset = end;
+    if (onProgress) onProgress(offset, file.size);
+  }
+
+  var bitLenLo = (total * 8) >>> 0;
+  var bitLenHi = Math.floor(total / 0x20000000); // total*8 / 2^32
+  var tail = new Uint8Array(((buffer.length + 8) & ~63) + 64);
+  tail.set(buffer, 0);
+  tail[buffer.length] = 0x80;
+  var view = new DataView(tail.buffer);
+  view.setUint32(tail.length - 8, bitLenLo, true);
+  view.setUint32(tail.length - 4, bitLenHi, true);
+  buffer = new Uint8Array(0);
+  append(tail);
+  return rhex(state[0]) + rhex(state[1]) + rhex(state[2]) + rhex(state[3]);
+}
+
+async function uploadIntegrityApk() {
+  const input = document.getElementById('integrityApkUpload');
+  const status = document.getElementById('integrityUploadStatus');
+  const button = document.getElementById('btnUploadIntegrityApk');
+  if (!input.files || !input.files.length) {
+    showMsg('请选择用于 MD5 校验的 APK');
+    status.textContent = '请先选择 APK';
+    return;
+  }
+  const file = input.files[0];
+  button.disabled = true;
+  status.textContent = '正在本地计算 MD5：' + file.name + '（' + file.size + ' bytes）';
+  showMsg('正在本地计算 APK MD5……');
+  try {
+    const md5 = await md5File(file, function(loaded, total) {
+      const percent = Math.floor(loaded * 100 / total);
+      status.textContent = '正在本地计算 MD5：' + percent + '%（' + loaded + ' / ' + total + ' bytes）';
+    });
+    status.textContent = 'MD5 已算出，正在提交：' + md5;
+    const res = await api('/admin/api/update/integrity-md5', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        apk_md5: md5,
+        apk_size: file.size,
+        filename: file.name || 'local.apk'
+      })
+    });
+    const data = await res.json();
+    status.textContent = '已提交，MD5：' + data.apk_md5;
+    showMsg('MD5 校验基准已更新: ' + data.apk_md5);
+    loadUpdate();
+  } catch (e) {
+    status.textContent = e.message || String(e);
+    showMsg(e.message || String(e));
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function uploadRemoteDoc() {
+  const input = document.getElementById('remoteDocUpload');
+  const status = document.getElementById('remoteDocStatus');
+  const button = document.getElementById('btnUploadRemoteDoc');
+  if (!input.files || !input.files.length) {
+    showMsg('请选择 doc.json');
+    return;
+  }
+  const file = input.files[0];
+  button.disabled = true;
+  status.textContent = '正在上传并校验：' + file.size + ' bytes';
+  try {
+    const res = await fetch('/admin/api/update/doc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/octet-stream' },
+      body: file
+    });
+    if (!res.ok) {
+      throw new Error('上传失败: ' + res.status + ' ' + (await res.text()).slice(0, 160));
+    }
+    const data = await res.json();
+    showMsg('doc.json 已更新，版本=' + data.doc_version);
+    status.textContent = '上传完成，MD5：' + data.doc_md5;
+    loadUpdate();
+  } catch (e) {
+    status.textContent = e.message || String(e);
+    showMsg(e.message || String(e));
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+document.querySelectorAll('.tab').forEach(function(btn) {
+  btn.onclick = function() {
+    document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(x) { x.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  };
+});
+
+document.getElementById('btnRefreshAccounts').onclick = loadAccounts;
+document.getElementById('accountFilter').oninput = filterAccounts;
+document.getElementById('btnRefreshSaves').onclick = loadSaves;
+document.getElementById('saveFilter').oninput = filterSaves;
+document.getElementById('btnRefreshMails').onclick = loadMails;
+document.getElementById('btnSendMail').onclick = sendMail;
+document.getElementById('btnSendGlobalMail').onclick = sendGlobalMail;
+document.getElementById('btnScheduleGlobalMail').onclick = scheduleGlobalMail;
+document.getElementById('btnRefreshGlobalMail').onclick = loadGlobalMail;
+document.getElementById('btnDeleteGlobalMail').onclick = deleteGlobalMail;
+document.getElementById('btnSaveUpdate').onclick = saveUpdate;
+document.getElementById('btnRefreshUpdate').onclick = loadUpdate;
+document.getElementById('btnLoadUpdateJson').onclick = loadUpdateJsonFile;
+document.getElementById('btnSaveUpdateJson').onclick = saveUpdateJsonFile;
+document.getElementById('btnUploadApk').onclick = uploadApk;
+document.getElementById('btnUploadIntegrityApk').onclick = uploadIntegrityApk;
+document.getElementById('btnCloseModal').onclick = closeModal;
+
+loadStats();
+loadAccounts();
+loadSaves();
+loadUpdate();
+</script>
+</body>
+</html>

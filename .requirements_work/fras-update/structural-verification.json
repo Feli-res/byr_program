@@ -1,0 +1,16 @@
+{
+  "target": "E:\\program_design_experiment\\demand\\北邮校园综合交互论坛_需求分析文档.docx",
+  "draft": "E:\\program_design_experiment\\.requirements_work\\fras-update\\updated-requirements.docx",
+  "backup": "E:\\program_design_experiment\\.requirements_work\\fras-update\\before-fras-update.docx",
+  "source_sha256": "1c4a4019be882b39767c8940c6a0383b971298139ed671a94a20a2e4c9fa3154",
+  "changed_existing_paragraphs": 7,
+  "appended_elements": 43,
+  "comments": 8,
+  "changed_existing_parts": [
+    "[Content_Types].xml",
+    "word/document.xml",
+    "word/_rels/document.xml.rels"
+  ],
+  "preserved_cover_media_styles_and_section": true,
+  "repo_commit": "892e0b14d2a784c833597ecb9fc91f2a41b996d2"
+}
