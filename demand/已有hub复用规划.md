@@ -76,34 +76,60 @@
 
 - **原用途：**实验室官网，提供公开内容展示、管理员登录、内容维护及文件上传。
 - **技术：**Java 21、Spring Boot、Spring Security、JPA、MySQL、Flyway；Vue 3、TypeScript、Vite、Axios。
-- **检查版本：**`892e0b14d2a784c833597ecb9fc91f2a41b996d2`，已完成源码审阅，尚未保存到本地参考目录。
+- **检查版本：**`892e0b14d2a784c833597ecb9fc91f2a41b996d2`，2026 年 10 月 20 日重新读取远端并复核代码；当时 `main` 与此版本一致。
 - **来源：**[固定版本](https://github.com/gygy-hh/FRAS-lab-website/tree/892e0b14d2a784c833597ecb9fc91f2a41b996d2)。
+- **本地源码：**[固定版本目录](E:/program_design_experiment/.upstream/FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2)，同时保存同名 ZIP；[来源与校验记录](E:/program_design_experiment/.upstream/FRAS-lab-website.source.json)。原始源码未改动，本次未构建或启动服务。
+
+### 目录内容
+
+| 目录或文件 | 内容 |
+| --- | --- |
+| `frontend/src/views/public/`、`components/public/` | 首页、研究方向、成果、成员、新闻、活动和联系页面，以及共用导航；属于公开信息展示 |
+| `frontend/src/views/admin/` | 管理员登录和综合管理页，提供资料、轮播图及多类内容的列表、表单和上传操作 |
+| `frontend/src/api/`、`utils/`、`router/` | HTTP 请求、业务类型、浏览器凭证保存及路由守卫；`i18n/`、`locales/` 提供中英双语 |
+| `backend/src/main/java/com/fraslab/site/` | 按 `controller → service → repository/entity` 分层；另含安全认证、请求响应类型和异常处理 |
+| `backend/src/main/resources/` | 应用配置及 Flyway 的 V1—V13 数据迁移；`backend/src/test/` 提供上下文加载测试和 H2 配置 |
+| `docs/`、`deploy.ps1` | 开发过程说明及原站部署脚本；部分说明仍保留旧导师接口和旧迁移列表，应以当前代码为准；部署脚本只作参考 |
 
 ### 借鉴与适配
 
 | 模块 | 源码位置 | 执行动作 |
 | --- | --- | --- |
-| 页面样式 | `frontend/src/style.css`、`components/public/PublicHeader.vue` | 借鉴导航、卡片和响应式布局，改写为 React 页面 |
+| 页面样式 | `frontend/src/style.css`、`components/public/PublicHeader.vue` | 借鉴导航、颜色变量、卡片、表单和响应式布局，改写为 React 页面；替换品牌、图片和实验室内容 |
 | 管理界面 | `frontend/src/views/admin/AdminDashboardView.vue` | 借鉴列表、表单和状态反馈，拆成帖子、商品、公告管理页 |
-| 接口封装 | `frontend/src/api/client.ts`、`utils/auth.ts` | 适配请求超时、响应类型和身份凭证，统一错误及会话处理 |
-| 内容维护 | `NewsService.java`、`PublicController.java` | 借鉴发布状态及时间排序，在 Rust 中实现公开查询和管理操作 |
+| 接口封装 | `frontend/src/api/client.ts`、`utils/auth.ts` | 借鉴超时、类型定义和凭证注入，补统一错误、会话过期及服务端撤销处理 |
+| 内容维护 | `NewsService.java`、`PublicController.java` | 借鉴管理列表与公开列表分离、仅展示已发布内容及时间排序；在 Rust 中实现公告和帖子状态管理 |
 | 文件上传 | `AdminUploadController.java`、`FileStorageService.java` | 借鉴上传链路和路径检查，补文件白名单、真实类型及资源归属 |
-| 数据迁移 | `backend/src/main/resources/db/migration/` | 借鉴版本化迁移；为论坛重写 SQL，不导入实验室业务数据 |
+| 数据迁移 | `backend/src/main/resources/db/migration/` | 借鉴按版本逐步增删字段的方式；为论坛重写 SQL，不导入实验室业务及示例账户数据 |
+| 响应和异常 | `common/ApiResponse.java`、`common/GlobalExceptionHandler.java` | 参考统一结果和参数错误结构；在 Rust 中补安全错误信息、请求标识和日志关联 |
 
-表中前端简写路径相对 `frontend/src/`；Java 文件位于 `backend/src/main/java/com/fraslab/site/` 下的相应业务目录。
+表中前端简写路径相对 `frontend/src/`；Java 文件位于 `backend/src/main/java/com/fraslab/site/` 下的相应业务目录。主要链路是：前端页面调用 API → 后端校验和业务处理 → 数据库持久化 → 返回页面；上传另经存储服务返回文件地址。
+
+**复用判断：**页面视觉规范、管理交互和业务分层值得借鉴；Vue 组件和 Java 服务均需要适配既定 React/Rust 技术栈。它是内容管理参考，不作为论坛主底座，不增加第二套 Java 业务后端。双语、成员、科研成果等实验室功能不进入首版。
 
 ### 必须改造
 
 1. Vue 组件改写为 React，Java 服务改写为 Rust；保留既定技术栈。
-2. 重写多角色鉴权。原凭证过滤器统一授予 `ROLE_ADMIN`，不能用于普通用户和版主。
-3. 补服务端会话撤销及封禁检查，不能只清除浏览器凭证。
-4. 补列表分页、文件真实类型识别及私有资源访问控制。
-5. 替换固定配置、示例账户和原部署路径，不直接执行原部署脚本。
+2. 重写多角色鉴权。`security/JwtAuthFilter.java` 对通过 token 校验的请求统一授予 `ROLE_ADMIN`，适合原管理员场景，不能直接用于普通用户和版主。
+3. 补服务端会话撤销及封禁检查。原登录会检查账户启用状态，但后续 token 校验不重查账户状态；前端退出仅清除浏览器凭证。
+4. 补分页、筛选和资源归属。`NewsRepository.java` 等返回完整列表；原内容没有论坛作者、板块版主等权限模型。
+5. 重写上传校验。`AdminUploadController.java` 主要检查客户端 `Content-Type`，未知 `type` 未被明确拒绝；`FileStorageService.java` 已有随机文件名和路径边界检查，但仍需真实类型识别、图片解码、扩展名白名单和配额。原文件读取接口公开，不能承担私有附件授权。
+6. 替换固定配置、示例账户和部署路径；`backend/.mvn/maven.config` 指定了原作者机器的 Maven 缓存目录。不要直接执行原部署脚本，也不沿用示例密钥和密码。
+7. 补业务测试。现有后端仅有上下文加载测试，使用 H2 且关闭 Flyway，不能证明 MySQL 迁移、权限和上传链路正确；前端未定义测试脚本。本次仅完成静态阅读及源码归档校验。
 
 ### 仍需开发
 
 - 普通用户注册、论坛互动、商品业务和细粒度权限。
 - 私聊、持久通知、AI 语义检索、商品匹配及周期监控。
 - 举报、审计及业务异常测试。
+
+### 对本项目的具体落实
+
+1. 在正式前端创建导航、卡片、列表、表单和上传组件，参考原页面的交互和样式，不整体搬运管理大页面。
+2. 创建用户、板块、帖子、商品、举报、公告和任务管理页面；后台实现对应权限与状态转换。
+3. 建立统一请求模块、分页结果、登录失效提示和错误反馈；持久化成功后再更新成功状态。
+4. 新建论坛数据库迁移、文件元数据及访问规则，并验证空库迁移、非法上传、越权修改、封禁和会话失效。
+
+上述动作纳入现有 T02、T04—T07 及后续业务开发，不另开一套工程。
 
 **复用检查：**所查版本未发现许可证文件，直接复制前确认授权。优先借鉴设计；需求分析 Word 文档只保留系统要求，不写此仓库的名称、路径或引用链接。

@@ -1,0 +1,24 @@
+{
+  "target": "E:\\program_design_experiment\\demand\\北邮校园综合交互论坛_需求分析文档.docx",
+  "backup": "E:\\program_design_experiment\\.requirements_work\\no-codex-comments-20261020\\before.docx",
+  "draft": "E:\\program_design_experiment\\.requirements_work\\no-codex-comments-20261020\\updated-requirements.docx",
+  "source_sha256": "61642b45d79e8bccc6ee587dce0bf8507dc48e94e5d9a99b842b643242729082",
+  "removed_comments": 8,
+  "remaining_comments": 0,
+  "strip_stats": {
+    "markup_removed": 24,
+    "comments_part_removed": 1,
+    "comments_extended_part_removed": 1,
+    "rels_updated": 1,
+    "content_types_updated": 1
+  },
+  "extra_parts_removed": [
+    "word/commentsIds.xml"
+  ],
+  "changed_parts": [
+    "[Content_Types].xml",
+    "word/document.xml",
+    "word/_rels/document.xml.rels"
+  ],
+  "body_styles_media_and_layout_xml_preserved": true
+}

@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/gygy-hh/FRAS-lab-website",
+  "ref_checked": "refs/heads/main",
+  "commit": "892e0b14d2a784c833597ecb9fc91f2a41b996d2",
+  "commit_time": "2026-04-19T16:42:25+08:00",
+  "archived_on": "2026-10-20",
+  "timezone": "Asia/Shanghai",
+  "method": "git archive of verified commit; original files unmodified",
+  "archive": ".upstream/FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2.zip",
+  "source_directory": ".upstream/FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2",
+  "archive_sha256": "9a8ed605436cc8ef00f12c5bcacf0a4c7486b447dc8ea1e6c3c738744559f950",
+  "source_file_count": 123,
+  "archive_extraction_verified": true,
+  "license_files_found": [],
+  "review": "Static review of frontend pages and API, authentication, CRUD, uploads, migrations, configuration and tests",
+  "build_executed": false,
+  "application_started": false,
+  "forum_migration_completed": false
+}

@@ -1,0 +1,8 @@
+{
+  "previous_minutes": 6,
+  "total_minutes": 113,
+  "only_changed_part": "docProps/app.xml",
+  "other_parts_byte_identical": true,
+  "source_sha256": "5a39dc5129ba7f4734fdf6d973b794a811fb09a83a8c0da563c5ec996114c61c",
+  "result_sha256": "9afaa804b0429f65807cabf46cb4e4f03db7f21415a014325b31b5ae02065092"
+}

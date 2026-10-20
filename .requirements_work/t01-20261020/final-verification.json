@@ -1,0 +1,20 @@
+{
+  "t01_complete": true,
+  "requirements": 9,
+  "acceptance_cases": 20,
+  "markdown_files_checked": [
+    "T01_首版需求基线与验收清单.md",
+    "程设项目规划.md",
+    "AI+创新点设计.md",
+    "现有代码评估与后续开发计划.md",
+    "README.md"
+  ],
+  "local_links_valid": true,
+  "word_updated": false,
+  "word_preserved_per_user_request": true,
+  "word_sha256": "037aaca33dadf6a2c1587a25acbfd4f8b1c3129b9e2994f5f5433365e23ab0f4",
+  "scope_conflicts_resolved_in_markdown_baseline": true,
+  "word_differences_recorded": true,
+  "application_tests_executed": false,
+  "t02_t03_status": "not_completed"
+}
