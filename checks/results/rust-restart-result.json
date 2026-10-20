@@ -1,0 +1,1 @@
+﻿{"configuration":"passed","mysql_read_write":"passed","redis_read_write":"passed","restart_readback":true,"salvo_in_process_request":"passed"}

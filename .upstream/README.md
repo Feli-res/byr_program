@@ -1,17 +1,34 @@
-# 参考源码目录
+﻿# .upstream · 参考源码
 
-这里保存固定版本的原始参考源码和 ZIP，供阅读、比较及后续迁移使用。源码已保存不表示已完成构建、迁移或功能验收。
+这里保存三个参考仓库的固定版本源码和 ZIP，供阅读、比较及后续采用。仓库内部的文件保持原样，项目自身的改写和验证放在其他目录。
 
-## hnu doc
+## 目录
 
-`hnu-doc-d71b9976bcd6606b0e74855fda092338687218af/` 是 Rust 试卷资料库后端。主要参考配置、日志、中间件、数据库和缓存连接等通用组件；平台账户、论坛业务和搜索需要重写。来源为 [hnu-doc 固定版本](https://github.com/gygy-hh/hnu-doc/tree/d71b9976bcd6606b0e74855fda092338687218af)。
+| 源码目录 | 原用途及本项目参考范围 |
+| --- | --- |
+| [hnu-doc-d71b9976bcd6606b0e74855fda092338687218af/](hnu-doc-d71b9976bcd6606b0e74855fda092338687218af/) | Rust 试卷资料库后端。参考配置、日志、中间件、数据库及缓存连接；自主账户和论坛业务重写。 |
+| [jhserver-8fb142e049f0eac1a53abf522cb861ccd944685a/](jhserver-8fb142e049f0eac1a53abf522cb861ccd944685a/) | C++ 游戏服务器。参考到期任务和通知思路，用 Rust 实现论坛周期监控，不接入整套游戏服务。 |
+| [FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2/](FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2/) | Java/Vue 实验室官网。参考页面、表单、上传和内容管理，按 React/Rust 重写。 |
 
-## jhserver
+| 归档与记录 | 说明 |
+| --- | --- |
+| [hnu-doc.zip](hnu-doc.zip) | hnu-doc 的本地源码归档 |
+| [jhserver.zip](jhserver.zip) | jhserver 的本地源码归档 |
+| [FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2.zip](FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2.zip) | 第三个仓库的固定版本归档 |
+| [FRAS-lab-website.source.json](FRAS-lab-website.source.json) | 第三个仓库的来源与校验记录 |
 
-`jhserver-8fb142e049f0eac1a53abf522cb861ccd944685a/` 是 C++ 游戏服务器。主要参考到期任务调度、游戏邮件、会话撤销及后台管理设计，相关能力按论坛需求用 Rust 实现，不运行第二套游戏业务服务。来源为 [jhserver 固定版本](https://github.com/gygy-hh/jhserver/tree/8fb142e049f0eac1a53abf522cb861ccd944685a)。
+第三个仓库内，`frontend/` 是公开及管理页面，`backend/` 是认证、内容管理、上传和数据库调整代码，`docs/` 是过程说明，`deploy.ps1` 是原站部署脚本。
 
-## FRAS lab website
+## 原仓库及检查结果
 
-`FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2/` 是 Java/Vue 实验室官网。`frontend/` 提供公开页面及管理界面，`backend/` 提供认证、内容 CRUD、上传及迁移，`docs/` 保存过程说明，`deploy.ps1` 是原站部署脚本。主要借鉴页面、内容管理和分层设计；原始源码保持不变，示例配置及部署脚本不直接用于本项目。来源为 [FRAS-lab-website 固定版本](https://github.com/gygy-hh/FRAS-lab-website/tree/892e0b14d2a784c833597ecb9fc91f2a41b996d2)，归档和校验信息见 [来源记录](E:/program_design_experiment/.upstream/FRAS-lab-website.source.json)。
+| 仓库 | 固定版本来源 | 2026 年 10 月 20 日的检查结果 |
+| --- | --- | --- |
+| hnu-doc | [原始版本](https://github.com/gygy-hh/hnu-doc/tree/d71b9976bcd6606b0e74855fda092338687218af) | 按锁文件检查及一项纯计算测试通过；未运行学校登录或原业务服务 |
+| jhserver | [原始版本](https://github.com/gygy-hh/jhserver/tree/8fb142e049f0eac1a53abf522cb861ccd944685a) | 已阅读调度代码；未编译、运行游戏服务器 |
+| FRAS-lab-website | [原始版本](https://github.com/gygy-hh/FRAS-lab-website/tree/892e0b14d2a784c833597ecb9fc91f2a41b996d2) | 前端副本构建和 HTTP 检查通过；未运行 Java 后端 |
 
-具体复用动作见 [三个仓库复用规划](E:/program_design_experiment/demand/已有hub复用规划.md)，项目缺口和开发顺序见 [代码评估与后续计划](E:/program_design_experiment/demand/现有代码评估与后续开发计划.md)。
+## 使用说明
+
+hnu-doc 工作区声明 MIT，jhserver 包含 MIT 许可；实际采用代码时核实并保留相应版权与许可。第三个仓库快照未发现许可文件，确认允许范围前参考设计、自行编写。原站账号、密码、密钥、图片及部署脚本不直接用于本项目。
+
+详细取舍见 [仓库复用规划](../demand/已有hub复用规划.md)，真实检查结果见 [4.1 与 4.2 报告](../demand/4.1与4.2_检查结果与使用说明.md)，复现命令见 [检查代码说明](../checks/README.md)。返回 [项目总目录](../README.md)。

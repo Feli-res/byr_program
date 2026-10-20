@@ -1,0 +1,7 @@
+﻿{
+    "all_reference_tests_run":  false,
+    "exit_code":  0,
+    "status":  "passed",
+    "school_login_executed":  false,
+    "test":  "utils::pow::tests::pow_correct"
+}

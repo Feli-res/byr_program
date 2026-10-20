@@ -1,0 +1,34 @@
+name: youzhihui-checks
+services:
+  mysql:
+    image: mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364
+    environment:
+      MYSQL_DATABASE: byr_check
+      MYSQL_USER: byr_check
+      MYSQL_PASSWORD: ${MYSQL_CHECK_PASSWORD:?Run Prepare-Checks.ps1 first}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run Prepare-Checks.ps1 first}
+    ports:
+      - "127.0.0.1:23306:3306"
+    volumes:
+      - mysql-check-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u byr_check -D byr_check -e 'SELECT 1' >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+  redis:
+    image: redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+    ports:
+      - "127.0.0.1:26379:6379"
+    volumes:
+      - redis-check-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+volumes:
+  mysql-check-data:
+  redis-check-data:

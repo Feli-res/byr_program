@@ -1,0 +1,10 @@
+﻿{
+    "preview_http":  200,
+    "node":  "v24.14.0",
+    "npm":  "11.9.0",
+    "build":  "passed",
+    "source":  "FRAS-lab-website frontend",
+    "javascript_http":  200,
+    "install":  "passed",
+    "backend_api_tested":  false
+}

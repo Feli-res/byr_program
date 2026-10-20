@@ -1,0 +1,19 @@
+﻿{
+    "redis_image":  "redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "next":  "16.4.2",
+    "formal_application_tested":  false,
+    "rustc":  "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "scope":  "local development computer; no production or second computer validation",
+    "compose":  "5.0.2",
+    "mysql":  "/usr/sbin/mysqld  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)",
+    "docker":  "29.2.0",
+    "cargo":  "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "gcc":  "8.1.0",
+    "redis":  "Redis server v=7.4.11 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=40ff01a501d8e4b6",
+    "school_login_executed":  false,
+    "mysql_image":  "mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364",
+    "npm":  "11.9.0",
+    "node":  "v24.14.0",
+    "react":  "19.3.1",
+    "recorded_at":  "2026-10-20T18:37:50.1320390+08:00"
+}

@@ -1,0 +1,9 @@
+# Local tools, downloads, build outputs and private settings
+/.local/
+**/node_modules/
+**/target/
+**/.next/
+.env
+.env.*
+!.env.example
+~$*.docx

@@ -1,0 +1,14 @@
+﻿{
+    "recorded_at":  "2026-10-20T18:38:42.0676294+08:00",
+    "data_volumes_retained":  true,
+    "services":  [
+                     {
+                         "state":  "exited",
+                         "container":  "youzhihui-checks-mysql-1"
+                     },
+                     {
+                         "state":  "exited",
+                         "container":  "youzhihui-checks-redis-1"
+                     }
+                 ]
+}
