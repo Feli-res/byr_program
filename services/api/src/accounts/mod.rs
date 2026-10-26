@@ -1,4 +1,4 @@
-mod files;
+pub(crate) mod files;
 mod security;
 
 use crate::{AppState, fail, ok, state};
@@ -65,14 +65,14 @@ impl AccountSettings {
 pub type AccountResult<T> = Result<T, AccountError>;
 #[derive(Debug)]
 pub struct AccountError {
-    status: StatusCode,
-    code: &'static str,
-    message: &'static str,
-    field: Option<&'static str>,
-    retry_after: Option<u64>,
+    pub(crate) status: StatusCode,
+    pub(crate) code: &'static str,
+    pub(crate) message: &'static str,
+    pub(crate) field: Option<&'static str>,
+    pub(crate) retry_after: Option<u64>,
 }
 impl AccountError {
-    fn new(status: StatusCode, code: &'static str, message: &'static str) -> Self {
+    pub(crate) fn new(status: StatusCode, code: &'static str, message: &'static str) -> Self {
         Self {
             status,
             code,
@@ -81,7 +81,7 @@ impl AccountError {
             retry_after: None,
         }
     }
-    pub(super) fn validation(field: &'static str, message: &'static str) -> Self {
+    pub(crate) fn validation(field: &'static str, message: &'static str) -> Self {
         let mut e = Self::new(
             StatusCode::UNPROCESSABLE_ENTITY,
             "VALIDATION_FAILED",
@@ -90,37 +90,37 @@ impl AccountError {
         e.field = Some(field);
         e
     }
-    fn auth() -> Self {
+    pub(crate) fn auth() -> Self {
         Self::new(
             StatusCode::UNAUTHORIZED,
             "AUTH_REQUIRED",
             "请先登录，或重新登录后再试",
         )
     }
-    fn forbidden() -> Self {
+    pub(crate) fn forbidden() -> Self {
         Self::new(StatusCode::FORBIDDEN, "FORBIDDEN", "没有执行这项操作的权限")
     }
-    fn missing() -> Self {
+    pub(crate) fn missing() -> Self {
         Self::new(StatusCode::NOT_FOUND, "NOT_FOUND", "内容不存在或不可访问")
     }
-    fn conflict() -> Self {
+    pub(crate) fn conflict() -> Self {
         Self::new(
             StatusCode::CONFLICT,
             "VERSION_CONFLICT",
             "资料已经变化，请重新读取后再修改",
         )
     }
-    fn unavailable() -> Self {
+    pub(crate) fn unavailable() -> Self {
         Self::new(
             StatusCode::SERVICE_UNAVAILABLE,
             "DEPENDENCY_UNAVAILABLE",
             "服务暂时不可用，请稍后重试",
         )
     }
-    fn busy() -> Self {
+    pub(crate) fn busy() -> Self {
         Self::rate(2)
     }
-    fn rate(seconds: u64) -> Self {
+    pub(crate) fn rate(seconds: u64) -> Self {
         let mut e = Self::new(
             StatusCode::TOO_MANY_REQUESTS,
             "RATE_LIMITED",
@@ -156,17 +156,17 @@ impl From<sqlx::Error> for AccountError {
 }
 
 #[derive(Clone, sqlx::FromRow)]
-struct User {
-    id: u64,
-    account_norm: String,
-    password_hash: String,
-    nickname: String,
-    bio: String,
-    role: String,
-    status: String,
-    password_reset_required: bool,
-    used_file_bytes: u64,
-    version: u32,
+pub(crate) struct User {
+    pub(crate) id: u64,
+    pub(crate) account_norm: String,
+    pub(crate) password_hash: String,
+    pub(crate) nickname: String,
+    pub(crate) bio: String,
+    pub(crate) role: String,
+    pub(crate) status: String,
+    pub(crate) password_reset_required: bool,
+    pub(crate) used_file_bytes: u64,
+    pub(crate) version: u32,
 }
 const USER_COLUMNS: &str = "id,CAST(account_norm AS CHAR CHARACTER SET utf8mb4) AS account_norm,CAST(password_hash AS CHAR CHARACTER SET utf8mb4) AS password_hash,nickname,bio,role,status,password_reset_required,used_file_bytes,version";
 
@@ -241,7 +241,7 @@ fn csrf_context(req: &Request) -> Option<String> {
         .filter(|v| security::token_valid(v))
         .map(|v| format!("anonymous:{v}"))
 }
-fn csrf_check(req: &Request, app: &AppState) -> AccountResult<()> {
+pub(crate) fn csrf_check(req: &Request, app: &AppState) -> AccountResult<()> {
     let valid_origin = req.headers().get("origin").and_then(|v| v.to_str().ok())
         == Some(app.settings.web_origin.as_str());
     let header = req
@@ -310,12 +310,12 @@ fn csrf(req: &Request, res: &mut Response, app: &AppState) -> Value {
     json!({"csrf_token":token,"expires_at":iso(expiry)})
 }
 
-struct Identity {
-    user: User,
-    session_id: u64,
-    expires: String,
+pub(crate) struct Identity {
+    pub(crate) user: User,
+    pub(crate) session_id: u64,
+    pub(crate) expires: String,
 }
-async fn authenticate(req: &Request, app: &AppState) -> AccountResult<Identity> {
+pub(crate) async fn authenticate(req: &Request, app: &AppState) -> AccountResult<Identity> {
     let token = cookie(req, "byr_session")
         .filter(|v| security::token_valid(v))
         .ok_or_else(AccountError::auth)?;
@@ -329,7 +329,7 @@ async fn authenticate(req: &Request, app: &AppState) -> AccountResult<Identity> 
         expires: row.try_get("expiry")?,
     })
 }
-async fn lock_identity(
+pub(crate) async fn lock_identity(
     tx: &mut Transaction<'_, MySql>,
     identity: &Identity,
 ) -> AccountResult<User> {
@@ -397,8 +397,8 @@ async fn parse<T: DeserializeOwned>(req: &mut Request) -> AccountResult<T> {
         )
     })
 }
-fn id(value: &str) -> AccountResult<u64> {
-    if value.starts_with('0') || value.len() > 20 {
+pub(crate) fn id(value: &str) -> AccountResult<u64> {
+    if value.starts_with('0') || value.len() > 20 || !value.bytes().all(|b| b.is_ascii_digit()) {
         return Err(AccountError::missing());
     }
     value
@@ -407,14 +407,19 @@ fn id(value: &str) -> AccountResult<u64> {
         .filter(|v| *v > 0)
         .ok_or_else(AccountError::missing)
 }
-fn field_text(value: &str, min: usize, max: usize, field: &'static str) -> AccountResult<String> {
+pub(crate) fn field_text(
+    value: &str,
+    min: usize,
+    max: usize,
+    field: &'static str,
+) -> AccountResult<String> {
     let value = value.trim();
     if !(min..=max).contains(&value.chars().count()) {
         return Err(AccountError::validation(field, "文字长度不符合要求"));
     }
     Ok(value.to_owned())
 }
-fn reason(value: &str) -> AccountResult<String> {
+pub(crate) fn reason(value: &str) -> AccountResult<String> {
     field_text(value, 1, 1000, "reason")
 }
 
@@ -1081,38 +1086,54 @@ async fn dispatch(req: &mut Request, depot: &mut Depot, res: &mut Response) {
     match action(req, depot, res, app).await {
         Ok(Reply::Json(status, value)) => ok(res, depot, status, value),
         Ok(Reply::Bytes(mime, bytes)) => {
-            res.add_header("Content-Type", mime, true).ok();
+            res.add_header("Content-Type", &mime, true).ok();
             res.add_header("X-Content-Type-Options", "nosniff", true)
                 .ok();
             res.add_header("Cache-Control", "private, no-cache", true)
                 .ok();
+            if mime == "application/pdf" {
+                res.add_header(
+                    "Content-Disposition",
+                    "attachment; filename=attachment.pdf",
+                    true,
+                )
+                .ok();
+                res.add_header(
+                    "Content-Security-Policy",
+                    "sandbox; default-src 'none'",
+                    true,
+                )
+                .ok();
+            }
             res.status_code(StatusCode::OK);
             res.write_body(bytes).ok();
         }
-        Err(e) => {
-            if e.status == StatusCode::UNAUTHORIZED
-                || ["ACCOUNT_BANNED", "PASSWORD_RESET_REQUIRED"].contains(&e.code)
-            {
-                clear_login(res, &state(depot).settings.accounts);
-            }
-            if let Some(seconds) = e.retry_after {
-                res.add_header("Retry-After", seconds.to_string(), true)
-                    .ok();
-            }
-            if let Some(field) = e.field {
-                res.status_code(e.status);
-                res.render(Json(json!({"error":{"code":e.code,"message":e.message,"fields":[{"path":field,"message":e.message}],"retryable":false},"meta":{"request_id":depot.get::<String>("request_id").ok()}})));
-            } else {
-                fail(
-                    res,
-                    depot,
-                    e.status,
-                    e.code,
-                    e.message,
-                    e.status == StatusCode::SERVICE_UNAVAILABLE,
-                );
-            }
-        }
+        Err(e) => render_error(e, depot, res),
+    }
+}
+
+pub(crate) fn render_error(e: AccountError, depot: &Depot, res: &mut Response) {
+    if e.status == StatusCode::UNAUTHORIZED
+        || ["ACCOUNT_BANNED", "PASSWORD_RESET_REQUIRED"].contains(&e.code)
+    {
+        clear_login(res, &state(depot).settings.accounts);
+    }
+    if let Some(seconds) = e.retry_after {
+        res.add_header("Retry-After", seconds.to_string(), true)
+            .ok();
+    }
+    if let Some(field) = e.field {
+        res.status_code(e.status);
+        res.render(Json(json!({"error":{"code":e.code,"message":e.message,"fields":[{"path":field,"message":e.message}],"retryable":false},"meta":{"request_id":depot.get::<String>("request_id").ok()}})));
+    } else {
+        fail(
+            res,
+            depot,
+            e.status,
+            e.code,
+            e.message,
+            e.status == StatusCode::SERVICE_UNAVAILABLE,
+        );
     }
 }
 

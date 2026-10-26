@@ -1,0 +1,30 @@
+{
+  "stage": "4.6.1",
+  "status": "passed",
+  "checks": [
+    "Independent migrated database and ordinary/admin/board-moderator identities",
+    "All new upload purposes work; staged uploads are readable only by their owner",
+    "Real image/PDF parsing, MIME-extension matching, active PDF rejection, path and size limits",
+    "Posts persist in two boards; attachments bind atomically and valid PDFs download with safe headers",
+    "Unicode text boundaries, disabled boards, forged fields and null/no-op edits are rejected",
+    "CSRF, exact Origin and author restrictions protect forum writes for every role",
+    "Likes and favorites are idempotent; personal collections return only current public posts",
+    "Comments preserve same-post parent relationships, counts and latest reply metadata",
+    "Concurrent edits with the same version preserve one successful update and reject the stale write",
+    "Failed publishing rolls back posts and bindings; ownership, purpose, duplication and attachment counts are enforced",
+    "Replacing/removing bound files revokes old URLs immediately and physical cleanup returns quota",
+    "Only authorized moderators can manage their board; pinned posts lead stable public ordering",
+    "Hidden posts leave public views; file reads enforce author/board governance scope and restore correctly",
+    "Hidden/deleted comments use safe placeholders, retain reply structure and cannot restore deleted text",
+    "Public/personal/admin responses conform to 4.3 OpenAPI with bounded stable pagination",
+    "Shared quota and staged expiry/cleanup apply to goods uploads as well as forum attachments",
+    "Three real browser cases: forum/upload/edit flow, moderator scope and actual database-failure form recovery",
+    "Actual database outage returns failure; restarted API/MySQL/Redis preserve forum records and sessions",
+    "Soft deletion revokes content/files; durable content-change jobs and moderation audit are recorded together"
+  ],
+  "browser_cases": 3,
+  "isolated_database_removed": true,
+  "development_accounts_modified": false,
+  "server_deployed": false,
+  "error": null
+}

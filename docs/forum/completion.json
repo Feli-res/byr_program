@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-26",
+  "stage": "4.6.1",
+  "status": "passed",
+  "rust_unit_tests": 10,
+  "clippy": "passed",
+  "frontend_build": "passed",
+  "forum_runtime_groups": 19,
+  "forum_browser_cases": 3,
+  "exact_10_mib_pdf_through_browser": "passed",
+  "account_regression_groups": 21,
+  "engineering_regression_groups": 11,
+  "existing_development_accounts_modified": false,
+  "word_documents_modified": false,
+  "server_deployed": false,
+  "github_actions_executed": false,
+  "next": "4.6.2 goods and keyword search",
+  "acceptance": {
+    "AC04": "passed",
+    "AC05": "passed",
+    "AC07": "public forum and file visibility subset; search/index portion pending",
+    "AC09": "avatar/forum binding and all upload purposes subset; goods binding/counts pending 4.6.2",
+    "AC18": "forum database-failure subset passed",
+    "AC02": "WebSocket closure pending 4.6.3"
+  }
+}

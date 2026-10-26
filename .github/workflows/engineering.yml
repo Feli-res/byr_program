@@ -1,4 +1,4 @@
-name: Build, persistence and accounts
+name: Build, persistence, accounts and forum
 on:
   push:
     branches: [main]
@@ -46,6 +46,8 @@ jobs:
         run: python3 -m pip install -r docs/accounts/requirements-tests.txt
       - name: Verify accounts and permissions
         run: python3 scripts/verify_accounts.py
+      - name: Verify forum and shared uploads
+        run: python3 scripts/verify_forum.py
       - name: Save verification results
         if: always()
         uses: actions/upload-artifact@v4
@@ -54,6 +56,10 @@ jobs:
           path: |
             docs/engineering/runtime-verification.json
             docs/accounts/verification.json
+            docs/forum/verification.json
+            .local/logs/forum/*.log
+            .local/logs/forum/*.json
+            .local/logs/forum/*.png
             .local/logs/accounts/*.log
             .local/logs/accounts/*.json
             .local/logs/accounts/*.png

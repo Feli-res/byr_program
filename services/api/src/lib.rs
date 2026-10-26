@@ -1,4 +1,6 @@
+mod access;
 pub mod accounts;
+mod forum;
 use anyhow::{Context, Result, ensure};
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -362,6 +364,7 @@ pub fn app(state: AppState) -> Service {
         .hoop(request_context)
         .hoop(salvo::affix_state::inject(context))
         .push(accounts::routes())
+        .push(forum::routes())
         .push(Router::with_path("health/live").get(live))
         .push(Router::with_path("health/ready").get(ready))
         .push(

@@ -2,7 +2,7 @@
 
 邮智汇是面向北邮师生的校园论坛项目，计划提供讨论、二手商品、文字私聊，以及 AI 搜索、商品匹配和持续提醒。使用自主账号，不接校园 CAS。
 
-**更新日期：2026 年 10 月 26 日。当前已完成需求、设计、正式工程和账户功能的本机验证，下一步为 4.6：论坛、商品和聊天。**
+**更新日期：2026 年 10 月 26 日。当前已完成需求、设计、正式工程、账户和 4.6.1 论坛与通用上传的本机验证，下一步为 4.6.2：商品和普通搜索。**
 
 ## 从哪里开始看
 
@@ -11,7 +11,7 @@
 | 当前有哪些成果、哪些还没做 | [当前成果汇报](邮智汇_当前成果汇报.md) |
 | 项目是什么、全过程怎么完成 | [项目计划书](邮智汇_程设项目计划书.md) |
 | 第一版必须做什么、怎样检查 | [T01 需求与验收清单](demand/T01_首版需求基线与验收清单.md) |
-| 怎样启动、停止和检查程序 | [工程运行说明](docs/engineering/README.md) · [账户功能说明](docs/accounts/README.md) |
+| 怎样启动、停止和检查程序 | [工程运行说明](docs/engineering/README.md) · [账户功能说明](docs/accounts/README.md) · [论坛与上传说明](docs/forum/README.md) |
 | 页面计划做成什么样 | [HTML 页面草图](docs/page-drafts/index.html) · [打开说明](docs/page-drafts/README.md) |
 | 前后端按什么字段和规则配合 | [4.3 设计包](docs/design/README.md) |
 | 三个参考仓库怎么使用 | [参考代码说明](.upstream/README.md) |
@@ -38,7 +38,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Start-Dev.ps1
 
 | 页面 | 地址与用途 |
 | --- | --- |
-| 网站首页 | <http://localhost:3000/> |
+| 论坛首页 | <http://localhost:3000/> · <http://localhost:3000/posts> |
+| 发布帖子 | <http://localhost:3000/posts/new>，登录后使用 |
+| 我的内容 | <http://localhost:3000/me/posts> · <http://localhost:3000/me/favorites> |
+| 帖子管理 | <http://localhost:3000/admin/posts>，管理员或授权版主使用 |
 | 注册、登录 | <http://localhost:3000/register> · <http://localhost:3000/login> |
 | 个人资料 | <http://localhost:3000/profile>，登录后使用 |
 | 账户管理 | <http://localhost:3000/admin/users>，管理员登录后使用 |
@@ -65,6 +68,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Stop-Dev.ps1
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Dev.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Accounts.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Forum.ps1
 ```
 
 详细配置、准备步骤和故障处理见 [工程说明](docs/engineering/README.md) 与 [账户说明](docs/accounts/README.md)。真实配置位于被 Git 忽略的 `deploy/.env`；本机工具、缓存和日志位于 `.local/`。
@@ -87,7 +91,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Accounts.
 │  ├─ page-drafts/                   HTML 页面草图和本地中文字体
 │  ├─ design/                        页面、数据、操作和权限设计
 │  ├─ engineering/                   4.4 运行说明和检查记录
-│  └─ accounts/                      4.5 账户说明和检查记录
+│  ├─ accounts/                      4.5 账户说明和检查记录
+│  └─ forum/                         4.6.1 论坛、通用上传与检查记录
 ├─ checks/                           准备阶段的示例、脚本和结果
 ├─ .upstream/                        三个参考仓库的固定版本与归档
 ├─ Old_docs/                         早期讨论资料
@@ -99,6 +104,6 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Accounts.
 
 ## 下一步与最终交付
 
-下一步按计划书完成 4.6：先做论坛发帖与互动，再做商品、上传和关键词搜索，最后接入私聊、通知及“联系卖家”。接入实时聊天后，还要补验退出、改密或封禁后，旧实时连接在 5 秒内关闭。
+4.6.1 论坛和通用上传已完成本机实现与验证，见 [使用说明](docs/forum/README.md) 和 [实际结果](docs/forum/verification.json)。现在可以真实发帖、回复、点赞收藏和管理帖子，头像、帖子图片/PDF 及商品图片共用上传方法。下一步为 **4.6.2 商品和普通搜索**，随后按计划完成聊天和通知、全流程验收与修复；旧实时连接 5 秒内关闭在 4.6.3 补验。商品图片目前仅支持上传，商品发布和绑定数量检查尚待 4.6.2。
 
 最终目标是在 **4 核 16 GB、IP 为 `85.121.122.124` 的服务器**运行网站，用户输入网址即可使用。当前仅完成本机验证，尚未部署到该服务器；服务器访问、HTTPS、多人使用时的速度及备份恢复仍需后续实测。第二台电脑独立安装为选做，GitHub 自动检查已配置但尚未远端运行。

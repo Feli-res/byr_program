@@ -40,7 +40,7 @@ Linux / WSL 可以执行 `python3 scripts/dev.py init-admin`。命令也支持�
 | [verify_accounts.py](../../scripts/verify_accounts.py) | 独立临时数据库中的真实接口、故障、并发及浏览器检查 |
 | [accounts.spec.mjs](../../apps/web/tests/accounts.spec.mjs) | 账户与管理员页面、头像、改密、重置及数据库故障检查 |
 
-接口使用 `/api/v1` 设计中的字段，返回字符串 ID、UTC 时间、请求编号及统一错误。当前只实现账户相关操作和头像文件能力；帖子/商品文件类型在对应业务阶段实现。
+接口使用 `/api/v1` 设计中的字段，返回字符串 ID、UTC 时间、请求编号及统一错误。4.5 交付账户和头像；4.6.1 已扩展帖子图片/PDF 与商品图片的通用上传，商品绑定在 4.6.2 接入，详见 [论坛说明](../forum/README.md)。
 
 ## 已固定的账户规则
 
@@ -80,4 +80,4 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Accounts.
 
 **仍待后续验证：**AC02 中撤销后实时连接 5 秒内关闭，需等 4.6 接入 WebSocket；服务器部署、HTTPS、真实代理链、性能和备份恢复在后续阶段验证。当前不能把这些项标为通过。
 
-下一步 **4.6：论坛、商品和聊天**。返回 [项目首页](../../README.md)。
+后续进度：**4.6.1 论坛和通用上传已实现并验证，下一步为 4.6.2 商品和普通搜索**，见 [论坛说明](../forum/README.md)。头像与论坛附件已使用同一上传方法。返回 [项目首页](../../README.md)。

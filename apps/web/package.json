@@ -2,13 +2,23 @@
   "name": "youzhihui-web",
   "version": "0.1.0",
   "private": true,
-  "engines": {"node": ">=24 <25"},
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
     "test:e2e": "playwright test"
   },
-  "dependencies": {"next": "16.4.2", "react": "19.3.1", "react-dom": "19.3.1"},
-  "devDependencies": {"@playwright/test": "1.64.1"}
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
 }

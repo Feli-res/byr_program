@@ -1,4 +1,5 @@
 @import "./account-styles.css";
+@import "./forum-styles.css";
 @font-face{font-family:NotoSansSC;src:url('/fonts/NotoSansSC-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:NotoSansSC;src:url('/fonts/NotoSansSC-Medium.woff2') format('woff2');font-weight:500 700;font-display:swap}
 :root{color-scheme:light;--blue:#215c91;--ink:#273441;--muted:#687582;--line:#dce3e9;--paper:#fff}
