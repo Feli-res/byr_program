@@ -7,3 +7,12 @@
 .env.*
 !.env.example
 ~$*.docx
+
+# Browser-test output and local development settings
+**/playwright-report/
+**/test-results/
+/deploy/.env
+
+# Python generated files
+**/__pycache__/
+*.pyc

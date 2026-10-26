@@ -1,67 +1,104 @@
 # 邮智汇 · 程序设计实验
 
-邮智汇是计划面向北邮师生制作的校园论坛，包含讨论、二手商品、文字私聊，以及 AI 搜索、商品匹配和持续提醒。使用自主账号，不接校园 CAS。
+邮智汇是面向北邮师生的校园论坛项目，计划提供讨论、二手商品、文字私聊，以及 AI 搜索、商品匹配和持续提醒。使用自主账号，不接校园 CAS。
 
-当前工作目录：`D:\program_design_experiment`。迁移过程和验证结果见 [D 盘迁移记录](docs/migration-20261023.md)。
+**更新日期：2026 年 10 月 26 日。当前已完成需求、设计、正式工程和账户功能的本机验证，下一步为 4.6：论坛、商品和聊天。**
 
 ## 从哪里开始看
 
 | 想了解什么 | 阅读入口 |
 | --- | --- |
+| 当前有哪些成果、哪些还没做 | [当前成果汇报](邮智汇_当前成果汇报.md) |
 | 项目是什么、全过程怎么完成 | [项目计划书](邮智汇_程设项目计划书.md) |
 | 第一版必须做什么、怎样检查 | [T01 需求与验收清单](demand/T01_首版需求基线与验收清单.md) |
-| 当前做到了哪里 | [4.1 与 4.2 检查结果](demand/4.1与4.2_检查结果与使用说明.md) |
-| 怎样重复运行准备阶段的检查 | [检查代码说明](checks/README.md) |
-| 在浏览器里看页面长什么样 | [HTML 页面草图入口](docs/page-drafts/index.html) · [打开说明](docs/page-drafts/README.md) |
-| 前后端按什么字段和规则开发 | [4.3 设计包](docs/design/README.md) · [完成核对](docs/design/05_完成核对.md) |
+| 怎样启动、停止和检查程序 | [工程运行说明](docs/engineering/README.md) · [账户功能说明](docs/accounts/README.md) |
+| 页面计划做成什么样 | [HTML 页面草图](docs/page-drafts/index.html) · [打开说明](docs/page-drafts/README.md) |
+| 前后端按什么字段和规则配合 | [4.3 设计包](docs/design/README.md) |
+| 三个参考仓库怎么使用 | [参考代码说明](.upstream/README.md) |
+
+## 本机怎样使用
+
+项目位置：`D:\program_design_experiment`。先打开 Docker Desktop，再在 PowerShell 中进入项目目录：
+
+```powershell
+Set-Location D:\program_design_experiment
+```
+
+首次准备、升级已有工程或依赖改变后执行：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Prepare-Dev.ps1
+```
+
+已有程序在运行时先停止；正常启动使用：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Start-Dev.ps1
+```
+
+| 页面 | 地址与用途 |
+| --- | --- |
+| 网站首页 | <http://localhost:3000/> |
+| 注册、登录 | <http://localhost:3000/register> · <http://localhost:3000/login> |
+| 个人资料 | <http://localhost:3000/profile>，登录后使用 |
+| 账户管理 | <http://localhost:3000/admin/users>，管理员登录后使用 |
+| 开发读写检查 | <http://localhost:3000/dev-check>，保存并刷新检查测试记录 |
+
+本机开发库中已按要求创建以下账号，登录验证通过。账号不区分大小写，昵称与下列账号写法相同；密码由项目负责人掌握，文档不保存。
+
+| 账号 | 权限 |
+| --- | --- |
+| Administrator001 | 管理员 |
+| TestUser001 | 普通用户 |
+| TestUser002 | 普通用户 |
+
+当前开发库已有管理员，无需再次执行初始化。以后准备一个全新数据库、且没有管理员时，才使用 `scripts/Init-Admin.ps1` 交互创建第一位管理员；其他管理员由已有管理员授权。
+
+停止程序和开发数据库，保留已保存数据：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Stop-Dev.ps1
+```
+
+需要重新验收时，先停止正在运行的开发程序，再分别执行以下检查。检查会停止、重启本机开发服务：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Dev.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Accounts.ps1
+```
+
+详细配置、准备步骤和故障处理见 [工程说明](docs/engineering/README.md) 与 [账户说明](docs/accounts/README.md)。真实配置位于被 Git 忽略的 `deploy/.env`；本机工具、缓存和日志位于 `.local/`。
 
 ## 目录
 
 ```text
 .
-├─ README.md                         项目总入口
+├─ README.md                         项目总入口和本机使用方法
+├─ 邮智汇_当前成果汇报.md              已完成内容、检查结果和后续任务
 ├─ 邮智汇_程设项目计划书.md             项目目标和 4.1—4.11 的任务
-├─ demand/                           当前需求、任务和代码分析
-├─ docs/                             页面草图与后续设计说明
-│  ├─ page-drafts/                   双击 index.html 查看主要页面
-│  └─ design/                        页面、数据、接口、消息和状态约定
-├─ checks/                           准备阶段的小示例、脚本和结果
-│  ├─ results/                       已保存的检查结果
-│  ├─ rust-smoke/                    Rust、MySQL 和 Redis 最小示例
-│  └─ web-smoke/                     Next.js / React 最小页面
-├─ .upstream/                        三个固定版本的参考仓库及归档
+├─ apps/web/                         正式 Next.js / React 前端
+├─ services/api/                     正式 Rust / Salvo 后端
+├─ migrations/                       4 个正式数据库版本文件
+├─ deploy/                           本地 MySQL、Redis 和配置示例
+├─ scripts/                          准备、启动、停止和验证命令
+├─ .github/workflows/                GitHub 自动检查配置
+├─ demand/                           需求、验收清单和参考代码分析
+├─ docs/
+│  ├─ page-drafts/                   HTML 页面草图和本地中文字体
+│  ├─ design/                        页面、数据、操作和权限设计
+│  ├─ engineering/                   4.4 运行说明和检查记录
+│  └─ accounts/                      4.5 账户说明和检查记录
+├─ checks/                           准备阶段的示例、脚本和结果
+├─ .upstream/                        三个参考仓库的固定版本与归档
 ├─ Old_docs/                         早期讨论资料
-├─ .requirements_work/               文档处理脚本、备份和排版预览
-├─ .local/                           本机工具、缓存、日志及私有设置，不提交
-└─ .gitignore                        不提交的文件规则
+├─ .requirements_work/               文档处理记录、备份和预览
+└─ .local/                           本机工具、缓存和日志，不提交
 ```
 
-| 文件夹 | 详细说明 |
-| --- | --- |
-| `demand/` | [各份需求文档的用途和阅读顺序](demand/README.md) |
-| `docs/` | [页面草图及设计说明](docs/README.md) |
-| `checks/` | [脚本目录、运行顺序和结果入口](checks/README.md) |
-| `.upstream/` | [参考仓库的来源、版本和使用范围](.upstream/README.md) |
-| `Old_docs/` | [旧资料目录](Old_docs/README.md) |
-| `.requirements_work/` | [文档处理记录目录](.requirements_work/README.md) |
+各目录说明：[前端](apps/web/README.md) · [后端](services/api/README.md) · [数据库版本](migrations/README.md) · [部署设置](deploy/README.md) · [脚本](scripts/README.md) · [需求](demand/README.md) · [设计与记录](docs/README.md) · [准备检查](checks/README.md) · [参考代码](.upstream/README.md) · [旧资料](Old_docs/README.md) · [文档处理记录](.requirements_work/README.md)。
 
-## 当前进度
+## 下一步与最终交付
 
-截至 **2026 年 10 月 26 日**，计划书的 **4.1、4.2、4.3 已完成**，下一步进入 **4.4：建立正式工程并接通最小读写流程**。
+下一步按计划书完成 4.6：先做论坛发帖与互动，再做商品、上传和关键词搜索，最后接入私聊、通知及“联系卖家”。接入实时聊天后，还要补验退出、改密或封禁后，旧实时连接在 5 秒内关闭。
 
-| 阶段 | 已完成内容 | 查看结果 |
-| --- | --- | --- |
-| 4.1 统一需求 | 固定第一版功能、权限、状态、参数和 20 项业务验收用例 | [T01 需求与验收清单](demand/T01_首版需求基线与验收清单.md) |
-| 4.2 检查工具和参考代码 | 验证前端构建、Rust 编译、MySQL / Redis 读写及重启后的数据读取 | [4.1 与 4.2 检查报告](demand/4.1与4.2_检查结果与使用说明.md) |
-| 4.3 页面、数据与操作设计 | 完成页面草图、数据草案、接口、实时消息、权限和状态规则 | [4.3 设计包](docs/design/README.md) · [完成核对](docs/design/05_完成核对.md) |
-
-**4.3 的具体成果：**
-
-- **页面：**15 个可在浏览器直接打开的 HTML 入口，覆盖论坛、账户、商品、搜索、订阅、聊天、通知和管理；已应用本地中文字体。双击 [index.html](docs/page-drafts/index.html) 查看。
-- **数据：**32 张 MySQL 表、244 个字段，以及表之间的关系、索引和约束，见 [数据与关系](docs/design/02_数据与关系.md) 和 [建表草案](docs/design/schema.sql)。
-- **前后端配合：**89 项 HTTP 操作、13 类实时消息，以及输入、返回、错误、权限、状态和商品匹配规则，见 [接口说明](docs/design/03_接口与消息约定.md) 和 [权限状态说明](docs/design/04_权限状态与共同匹配.md)。
-- **检查：**设计文件格式与引用、页面和操作对应关系、临时 MySQL 库建表及约束、草图本地交互已核对通过；结果见 [完成核对](docs/design/05_完成核对.md)。真实浏览器的显示兼容性尚待确认。
-
-**接下来做 4.4：**建立 `apps/web` 前端、`services/api` 后端和正式数据库迁移目录，按上述设计接通最小读写流程，再逐步把页面中的模拟数据替换为真实请求。
-
-当前完成的是准备和设计，尚无正式论坛工程。页面仍使用模拟数据，账户、论坛、聊天及 AI 业务仍待开发，AC01—AC20 仍待实现后验收。开发要求以 [T01 清单](demand/T01_首版需求基线与验收清单.md) 为准。
+最终目标是在 **4 核 16 GB、IP 为 `85.121.122.124` 的服务器**运行网站，用户输入网址即可使用。当前仅完成本机验证，尚未部署到该服务器；服务器访问、HTTPS、多人使用时的速度及备份恢复仍需后续实测。第二台电脑独立安装为选做，GitHub 自动检查已配置但尚未远端运行。

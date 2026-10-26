@@ -1,0 +1,64 @@
+name: Build, persistence and accounts
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CARGO_BUILD_JOBS: '4'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24.14.0'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install pinned Rust tools
+        run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy
+      - name: Check and test API
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo test --locked -p youzhihui-api
+          cargo build --locked -p youzhihui-api
+      - name: Prepare local settings
+        run: python3 scripts/dev.py init-env
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build web application
+        run: python3 scripts/dev.py build-web
+      - name: Install test browser
+        working-directory: apps/web
+        run: node node_modules/@playwright/test/cli.js install --with-deps chromium
+      - name: Verify migrations, real browser, outage and restart
+        run: python3 scripts/verify_runtime.py
+      - name: Install account-contract test dependency
+        run: python3 -m pip install -r docs/accounts/requirements-tests.txt
+      - name: Verify accounts and permissions
+        run: python3 scripts/verify_accounts.py
+      - name: Save verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engineering-results
+          path: |
+            docs/engineering/runtime-verification.json
+            docs/accounts/verification.json
+            .local/logs/accounts/*.log
+            .local/logs/accounts/*.json
+            .local/logs/accounts/*.png
+            .local/logs/dev/*.log
+            .local/logs/dev/*.json
+            .local/logs/dev/*.png
+          include-hidden-files: true
+          retention-days: 7

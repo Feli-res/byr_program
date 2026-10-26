@@ -1,0 +1,2 @@
+# SQLx migration checksums must remain byte-identical on every platform.
+/migrations/*.sql -text

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "markdown_files": 36,
+  "local_links": 288,
+  "migration_business_table_names_match_design": true,
+  "python_syntax": "passed",
+  "ignored_local_artifacts": 5,
+  "word_and_upstream_unchanged": true
+}

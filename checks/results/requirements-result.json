@@ -2,7 +2,7 @@
     "acceptance_case_count":  20,
     "application_functions_tested":  false,
     "feature_count":  9,
-    "requirement_sha256":  "AD618FE10325A036516A4815CA3CFDBBB9930042ED7D2CC6A43FC1B19187F4D2",
+    "requirement_sha256":  "B124B65EA050290C0A7E3058F3C68AE964443907CA2B9D0F1E810BE0A49BA23E",
     "status":  "passed",
     "step":  "4.1",
     "word_modified":  false,

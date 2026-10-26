@@ -1,0 +1,22 @@
+{
+  "stage": "4.4",
+  "status": "passed",
+  "checks": [
+    "Versioned migrations and repeated migration execution",
+    "Liveness and MySQL / Redis readiness",
+    "Real HTTP write and read through MySQL",
+    "Validation boundaries, malformed JSON, unknown fields and origin rejection",
+    "32 designed tables, development records, account throttling and migration history in MySQL",
+    "Redis failure changes readiness without killing liveness",
+    "Real browser save, refresh, escaped text, narrow screen and console checks",
+    "Database outage returns failure with liveness still available",
+    "Browser retains input and shows no false success during real database outage",
+    "Readback through restarted web and API after MySQL / Redis restart",
+    "Development write and read routes disappear when disabled"
+  ],
+  "browser_tested": true,
+  "second_computer_tested": false,
+  "application_acceptance_cases_run": false,
+  "development_volumes_retained": true,
+  "error": null
+}

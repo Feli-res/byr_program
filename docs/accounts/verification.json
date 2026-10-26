@@ -1,0 +1,33 @@
+{
+  "stage": "4.5",
+  "status": "passed",
+  "checks": [
+    "Fresh isolated database: four migrations and repeat execution",
+    "Interactive-admin command supports secure stdin verification and refuses repeated bootstrap",
+    "Registration normalization, duplicates, validation, no auto-login and role injection rejection",
+    "Argon2id parameters, normalized login, host-only HttpOnly cookie and seven-day absolute session",
+    "Signed CSRF cookie/header, strict Origin and anonymous-to-session binding",
+    "Personal data, stale versions, forged fields and concurrent profile updates",
+    "Real avatar decoding, size/dimension/quota limits, ownership, public binding, detach and cleanup",
+    "Logout revokes current session while another browser session stays valid",
+    "Password change revokes every old session and accepts the new password",
+    "Expired sessions are rejected without silent renewal",
+    "Ordinary/moderator/admin restrictions, board authorization and last-administrator protection",
+    "Ban revokes sessions and pauses tasks; unban does not resume tasks",
+    "Admin reset: old sessions revoked, change-only token, single use, expiry and reissue",
+    "Management actions audited without passwords or credentials",
+    "Implemented JSON responses validate against the existing 4.3 OpenAPI schemas",
+    "Browser registration/login/profile/avatar/change/logout and administrator reset flows",
+    "Browser database-failure registration retains non-secret fields and shows no success",
+    "Accounts and still-valid sessions persist through API and database restart",
+    "Concurrent administrator changes preserve one usable administrator",
+    "Five-failure account/IP throttling, Retry-After, spoofed forwarding rejection and Redis-loss persistence",
+    "Access logs contain no tested passwords, session tokens or reset credentials"
+  ],
+  "isolated_test_database_removed": true,
+  "real_browser": "Microsoft Edge on Windows; bundled Chromium in CI",
+  "real_development_accounts_modified": false,
+  "websocket_invalidation_tested": false,
+  "server_deployed": false,
+  "error": null
+}
