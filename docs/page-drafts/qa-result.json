@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-23",
+  "method": "Local DOM simulation using linkedom. No browser, CSS layout or native constraint validation tested.",
+  "entry_pages": 15,
+  "passed": true,
+  "checks": [
+    "Rendered admin.html",
+    "Rendered chat.html",
+    "Rendered compose.html",
+    "Rendered directory.html",
+    "Rendered forum.html",
+    "Rendered goods-detail.html",
+    "Rendered goods-edit.html",
+    "Rendered goods.html",
+    "Rendered index.html",
+    "Rendered login.html",
+    "Rendered notifications.html",
+    "Rendered post.html",
+    "Rendered profile.html",
+    "Rendered search.html",
+    "Rendered subscriptions.html",
+    "Forum-first homepage; no promotional hero or feature statistics; collapsed preview tools; compact public navigation; separate directory; board filtering; budget / campus filters; task creation; notification deduplication; pause; read state; chat and disconnect; empty/loading/error states; role views; moderation; text escaping"
+  ]
+}

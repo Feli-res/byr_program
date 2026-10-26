@@ -1,0 +1,656 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "邮智汇 WebSocket 帧设计",
+  "description": "只用于4.3契约，不代表服务已建立。外部引用复用同目录openapi.json。",
+  "$defs": {
+    "client.authenticate": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "authenticate"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "ticket": {
+              "type": "string",
+              "maxLength": 200,
+              "minLength": 32
+            }
+          },
+          "required": [
+            "ticket"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "client.message.send": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "message.send"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "conversation_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,19}$",
+              "maxLength": 20,
+              "minLength": 1
+            },
+            "client_message_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "body": {
+              "type": "string",
+              "maxLength": 2000,
+              "minLength": 1
+            }
+          },
+          "required": [
+            "conversation_id",
+            "client_message_id",
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "client.message.read": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "message.read"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "conversation_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,19}$",
+              "maxLength": 20,
+              "minLength": 1
+            },
+            "through_sequence": {
+              "type": "string",
+              "pattern": "^[0-9]{1,20}$",
+              "maxLength": 20,
+              "minLength": 1
+            }
+          },
+          "required": [
+            "conversation_id",
+            "through_sequence"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "client.ping": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "ping"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "server.ready": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "ready"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,19}$",
+              "maxLength": 20,
+              "minLength": 1
+            },
+            "session_expires_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "user_id",
+            "session_expires_at"
+          ],
+          "additionalProperties": false
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.message.ack": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "message.ack"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "$ref": "openapi.json#/components/schemas/Message"
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.message.created": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "message.created"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "$ref": "openapi.json#/components/schemas/Message"
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.notification.created": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "notification.created"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "$ref": "openapi.json#/components/schemas/Notification"
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.conversation.read": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "conversation.read"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "conversation_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,19}$",
+              "maxLength": 20,
+              "minLength": 1
+            },
+            "reader_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,19}$",
+              "maxLength": 20,
+              "minLength": 1
+            },
+            "through_sequence": {
+              "type": "string",
+              "pattern": "^[0-9]{1,20}$",
+              "maxLength": 20,
+              "minLength": 1
+            }
+          },
+          "required": [
+            "conversation_id",
+            "reader_id",
+            "through_sequence"
+          ],
+          "additionalProperties": false
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.unread.updated": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "unread.updated"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "conversation_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]{0,19}$",
+                  "maxLength": 20,
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "message_unread_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "notification_unread_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "conversation_id",
+            "message_unread_count",
+            "notification_unread_count"
+          ],
+          "additionalProperties": false
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.pong": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "pong"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "server_time": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "server_time"
+          ],
+          "additionalProperties": false
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.session.revoked": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "session.revoked"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "reason_code": {
+              "type": "string",
+              "enum": [
+                "logout",
+                "expired",
+                "password_changed",
+                "password_reset",
+                "banned"
+              ]
+            }
+          },
+          "required": [
+            "reason_code"
+          ],
+          "additionalProperties": false
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    },
+    "server.error": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "error"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 300
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "retryable"
+          ],
+          "additionalProperties": false
+        },
+        "event_id": {
+          "type": "string",
+          "maxLength": 180,
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "data",
+        "event_id",
+        "occurred_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/client.authenticate"
+    },
+    {
+      "$ref": "#/$defs/client.message.send"
+    },
+    {
+      "$ref": "#/$defs/client.message.read"
+    },
+    {
+      "$ref": "#/$defs/client.ping"
+    },
+    {
+      "$ref": "#/$defs/server.ready"
+    },
+    {
+      "$ref": "#/$defs/server.message.ack"
+    },
+    {
+      "$ref": "#/$defs/server.message.created"
+    },
+    {
+      "$ref": "#/$defs/server.notification.created"
+    },
+    {
+      "$ref": "#/$defs/server.conversation.read"
+    },
+    {
+      "$ref": "#/$defs/server.unread.updated"
+    },
+    {
+      "$ref": "#/$defs/server.pong"
+    },
+    {
+      "$ref": "#/$defs/server.session.revoked"
+    },
+    {
+      "$ref": "#/$defs/server.error"
+    }
+  ]
+}

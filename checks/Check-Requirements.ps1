@@ -11,9 +11,14 @@ for ($i=0;$i -lt 20;$i++) { if ([int]$cases[$i].Groups[1].Value -ne ($i+1)) { th
 $files = @($baselinePath,(Join-Path $demandPath '程设项目规划.md'),(Join-Path $demandPath 'AI+创新点设计.md'),(Join-Path $taskRoot '邮智汇_程设项目计划书.md'))
 foreach ($path in $files) {
     $text = Get-Content -Raw -LiteralPath $path -Encoding UTF8
-    foreach ($link in [regex]::Matches($text,'\]\((E:/[^)]+)\)')) {
-        $target = $link.Groups[1].Value -replace ':\d+$',''
-        if (-not (Test-Path -LiteralPath $target)) { throw ('Broken local link in '+$path) }
+    foreach ($link in [regex]::Matches($text,'\]\(([^)]+)\)')) {
+        $target = $link.Groups[1].Value.Trim('<','>')
+        if ($target -match '^(https?://|mailto:|#)') { continue }
+        $target = ($target -split '#',2)[0] -replace ':\d+$',''
+        if (-not [System.IO.Path]::IsPathRooted($target)) {
+            $target = Join-Path (Split-Path -Parent $path) $target
+        }
+        if (-not (Test-Path -LiteralPath $target)) { throw ('Broken local link in '+$path+': '+$target) }
     }
 }
 foreach ($required in @('不接校园 CAS','99,999.99','5～1,440','200 MiB','7 天','与原 Word 的差异及适用规则')) {

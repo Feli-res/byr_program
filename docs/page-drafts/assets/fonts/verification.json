@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-23",
+  "fonts_verified": true,
+  "sha256_verified": true,
+  "embedded_css_verified": true,
+  "contrast_on_white": {
+    "#242a33": 14.44,
+    "#66717e": 4.97,
+    "#245b98": 6.94
+  },
+  "all_page_chinese_characters_covered": true,
+  "page_chinese_character_count": 720,
+  "real_browser_layout_tested": false
+}

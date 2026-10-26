@@ -78,7 +78,7 @@
 - **技术：**Java 21、Spring Boot、Spring Security、JPA、MySQL、Flyway；Vue 3、TypeScript、Vite、Axios。
 - **检查版本：**`892e0b14d2a784c833597ecb9fc91f2a41b996d2`，2026 年 10 月 20 日重新读取远端并复核代码；当时 `main` 与此版本一致。
 - **来源：**[固定版本](https://github.com/gygy-hh/FRAS-lab-website/tree/892e0b14d2a784c833597ecb9fc91f2a41b996d2)。
-- **本地源码：**[固定版本目录](E:/program_design_experiment/.upstream/FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2)，同时保存同名 ZIP；[来源与校验记录](E:/program_design_experiment/.upstream/FRAS-lab-website.source.json)。原始源码未改动，本次未构建或启动服务。
+- **本地源码：**[固定版本目录](../.upstream/FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2)，同时保存同名 ZIP；[来源与校验记录](../.upstream/FRAS-lab-website.source.json)。原始源码未改动，本次未构建或启动服务。
 
 ### 目录内容
 

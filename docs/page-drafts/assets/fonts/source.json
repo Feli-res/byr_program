@@ -1,0 +1,26 @@
+{
+  "downloaded_at": "2026-10-23",
+  "repository": "https://github.com/notofonts/noto-cjk",
+  "revision": "f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+  "license": "SIL Open Font License 1.1",
+  "license_file": "OFL.txt",
+  "processing": "Unsubsetted SC source fonts converted to WOFF2. Original names and license retained. Data URLs avoid local-file font CORS differences.",
+  "files": [
+    {
+      "weight": 400,
+      "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf",
+      "source_sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+      "web_file": "NotoSansSC-Regular.woff2",
+      "web_bytes": 6093248,
+      "web_sha256": "fc16a4b9b7cc55d9dd337a959e7bb7c8b5607de07195ea321020b3b8204679e1"
+    },
+    {
+      "weight": 500,
+      "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Medium.otf",
+      "source_sha256": "7633f5a016d4dd95e685a69633d818aabc4644c4b08e26bd35b1b30c45ed5dda",
+      "web_file": "NotoSansSC-Medium.woff2",
+      "web_bytes": 6201228,
+      "web_sha256": "5f11def01497c858bb857476b83c0c4c4213e1780a22eaf0ac3b914919fe992c"
+    }
+  ]
+}
