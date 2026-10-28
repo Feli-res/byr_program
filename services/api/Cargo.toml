@@ -8,7 +8,7 @@ publish = false
 [dependencies]
 anyhow = "1"
 redis = { version = "=0.28.2", default-features = false, features = ["tokio-comp", "aio"] }
-salvo = { version = "=0.80.0", features = ["test", "affix-state", "matched-path"] }
+salvo = { version = "=0.80.0", features = ["test", "affix-state", "matched-path", "websocket"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "=1.0.149"
 sqlx = { version = "=0.8.6", default-features = false, features = ["mysql", "runtime-tokio", "migrate", "macros", "json"] }
@@ -27,3 +27,4 @@ chrono = "=0.4.44"
 image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
 rpassword = "7"
 lopdf = { version = "0.46.0", default-features = false }
+futures-util = { version = "0.3.34", features = ["sink"] }

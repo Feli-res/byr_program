@@ -1,5 +1,5 @@
 pub(crate) mod files;
-mod security;
+pub(crate) mod security;
 
 use crate::{AppState, fail, ok, state};
 use chrono::SecondsFormat;
@@ -170,14 +170,14 @@ pub(crate) struct User {
 }
 const USER_COLUMNS: &str = "id,CAST(account_norm AS CHAR CHARACTER SET utf8mb4) AS account_norm,CAST(password_hash AS CHAR CHARACTER SET utf8mb4) AS password_hash,nickname,bio,role,status,password_reset_required,used_file_bytes,version";
 
-async fn user(pool: &MySqlPool, id: u64) -> AccountResult<User> {
+pub(crate) async fn user(pool: &MySqlPool, id: u64) -> AccountResult<User> {
     sqlx::query_as(&format!("SELECT {USER_COLUMNS} FROM users WHERE id=?"))
         .bind(id)
         .fetch_optional(pool)
         .await?
         .ok_or_else(AccountError::missing)
 }
-async fn locked_user(tx: &mut Transaction<'_, MySql>, id: u64) -> AccountResult<User> {
+pub(crate) async fn locked_user(tx: &mut Transaction<'_, MySql>, id: u64) -> AccountResult<User> {
     sqlx::query_as(&format!(
         "SELECT {USER_COLUMNS} FROM users WHERE id=? FOR UPDATE"
     ))
@@ -264,7 +264,7 @@ pub(crate) fn csrf_check(req: &Request, app: &AppState) -> AccountResult<()> {
         ))
     }
 }
-fn iso(seconds: u64) -> String {
+pub(crate) fn iso(seconds: u64) -> String {
     chrono::DateTime::from_timestamp(seconds as i64, 0)
         .expect("generated timestamp")
         .to_rfc3339_opts(SecondsFormat::Secs, true)
@@ -352,7 +352,7 @@ async fn board_ids(pool: &MySqlPool, id: u64) -> AccountResult<Vec<String>> {
     .map(|v| v.to_string())
     .collect())
 }
-async fn public_user(pool: &MySqlPool, u: &User) -> AccountResult<Value> {
+pub(crate) async fn public_user(pool: &MySqlPool, u: &User) -> AccountResult<Value> {
     let avatar = sqlx::query_scalar::<_, u64>(
         "SELECT file_id FROM file_bindings WHERE avatar_user_id=? AND kind='avatar'",
     )
@@ -653,15 +653,20 @@ async fn change_password(
         .bind(u.id)
         .execute(&mut *tx)
         .await?;
-    revoke_sessions(&mut tx, u.id).await?;
+    revoke_sessions(&mut tx, u.id, "password_changed").await?;
     tx.commit().await?;
     clear_login(res, &app.settings.accounts);
     Ok(json!({"ok":true}))
 }
-async fn revoke_sessions(tx: &mut Transaction<'_, MySql>, id: u64) -> AccountResult<()> {
+async fn revoke_sessions(
+    tx: &mut Transaction<'_, MySql>,
+    id: u64,
+    reason: &str,
+) -> AccountResult<()> {
     sqlx::query(
-        "UPDATE sessions SET revoked_at=UTC_TIMESTAMP(6) WHERE user_id=? AND revoked_at IS NULL",
+        "UPDATE sessions SET revoked_at=UTC_TIMESTAMP(6),revocation_reason=? WHERE user_id=? AND revoked_at IS NULL",
     )
+    .bind(reason)
     .bind(id)
     .execute(&mut **tx)
     .await?;
@@ -790,7 +795,7 @@ async fn admin_change(
             }
             if p.status == "banned" {
                 protect_last_admin(&mut tx, &u).await?;
-                revoke_sessions(&mut tx, u.id).await?;
+                revoke_sessions(&mut tx, u.id, "banned").await?;
                 sqlx::query("UPDATE subscriptions SET state='paused',config_version=config_version+1,lease_token=NULL,lease_until=NULL WHERE owner_id=? AND state='active'").bind(u.id).execute(&mut *tx).await?;
             }
             sqlx::query("UPDATE users SET status=?,version=version+1 WHERE id=?")
@@ -892,7 +897,7 @@ async fn admin_change(
             .bind(u.id)
             .execute(&mut *tx)
             .await?;
-            revoke_sessions(&mut tx, u.id).await?;
+            revoke_sessions(&mut tx, u.id, "password_reset").await?;
             audit(
                 &mut tx,
                 actor.id,
@@ -946,7 +951,7 @@ async fn complete_reset(
         .execute(&mut *tx)
         .await?;
     sqlx::query("UPDATE users SET password_hash=?,password_reset_required=false,version=version+1 WHERE id=?").bind(hash).bind(target).execute(&mut *tx).await?;
-    revoke_sessions(&mut tx, target).await?;
+    revoke_sessions(&mut tx, target, "password_reset").await?;
     tx.commit().await?;
     clear_login(res, &app.settings.accounts);
     Ok(json!({"ok":true}))
@@ -1032,7 +1037,7 @@ async fn action(
             let identity = authenticate(req, &app).await?;
             let mut tx = app.pool.begin().await?;
             lock_identity(&mut tx, &identity).await?;
-            sqlx::query("UPDATE sessions SET revoked_at=UTC_TIMESTAMP(6) WHERE id=?")
+            sqlx::query("UPDATE sessions SET revoked_at=UTC_TIMESTAMP(6),revocation_reason='logout' WHERE id=?")
                 .bind(identity.session_id)
                 .execute(&mut *tx)
                 .await?;

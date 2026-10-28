@@ -1,0 +1,327 @@
+{
+  "date": "2026-10-28",
+  "root": "D:\\program_design_experiment",
+  "method": "Read-only file sizes; no credentials or file contents collected; .git excluded; Docker volumes external",
+  "top_folders": {
+    ".local": {
+      "files": 64023,
+      "bytes": 19027265117
+    },
+    "apps": {
+      "files": 12981,
+      "bytes": 489423180
+    },
+    "checks": {
+      "files": 10564,
+      "bytes": 368718041
+    },
+    ".requirements_work": {
+      "files": 311,
+      "bytes": 366206905
+    },
+    "docs": {
+      "files": 65,
+      "bytes": 29402453
+    },
+    ".upstream": {
+      "files": 279,
+      "bytes": 2922631
+    },
+    "demand": {
+      "files": 13,
+      "bytes": 635614
+    },
+    "scripts": {
+      "files": 21,
+      "bytes": 264137
+    },
+    "services": {
+      "files": 16,
+      "bytes": 212651
+    },
+    "(root files)": {
+      "files": 8,
+      "bytes": 161019
+    },
+    "Old_docs": {
+      "files": 6,
+      "bytes": 91063
+    },
+    "migrations": {
+      "files": 6,
+      "bytes": 24021
+    },
+    ".github": {
+      "files": 1,
+      "bytes": 3226
+    },
+    "deploy": {
+      "files": 4,
+      "bytes": 3129
+    }
+  },
+  "subfolders": {
+    ".local/rust-target": {
+      "files": 21396,
+      "bytes": 11656824463
+    },
+    ".local/migration-20261023": {
+      "files": 8801,
+      "bytes": 4120492564
+    },
+    ".local/rustup": {
+      "files": 425,
+      "bytes": 1824437524
+    },
+    ".local/cargo": {
+      "files": 27847,
+      "bytes": 822234560
+    },
+    "apps/web": {
+      "files": 12980,
+      "bytes": 489422930
+    },
+    ".local/npm-cache": {
+      "files": 838,
+      "bytes": 420797651
+    },
+    "checks/web-smoke": {
+      "files": 10536,
+      "bytes": 368607050
+    },
+    ".requirements_work/fras-update": {
+      "files": 89,
+      "bytes": 220348732
+    },
+    ".local/fras-frontend": {
+      "files": 2673,
+      "bytes": 94439967
+    },
+    ".local/forum-tests": {
+      "files": 19,
+      "bytes": 31458918
+    },
+    "docs/page-drafts": {
+      "files": 27,
+      "bytes": 28818270
+    },
+    ".requirements_work/no-codex-comments-20261020": {
+      "files": 40,
+      "bytes": 28589835
+    },
+    ".requirements_work/requirements-cleanup": {
+      "files": 39,
+      "bytes": 28566321
+    },
+    ".requirements_work/t01-20261020": {
+      "files": 43,
+      "bytes": 24692254
+    },
+    ".local/font-work": {
+      "files": 13,
+      "bytes": 17568921
+    },
+    ".requirements_work/submission-qa": {
+      "files": 9,
+      "bytes": 16473083
+    },
+    ".requirements_work/render_docx-pages": {
+      "files": 9,
+      "bytes": 16404156
+    },
+    ".local/downloads": {
+      "files": 2,
+      "bytes": 14686418
+    },
+    ".local/logs": {
+      "files": 126,
+      "bytes": 12609754
+    },
+    ".requirements_work/submission-render": {
+      "files": 20,
+      "bytes": 10120815
+    },
+    ".requirements_work/final-render": {
+      "files": 18,
+      "bytes": 10088383
+    },
+    ".local/design-qa": {
+      "files": 632,
+      "bytes": 7326575
+    },
+    ".local/draft-qa": {
+      "files": 1056,
+      "bytes": 2784067
+    },
+    ".upstream/jhserver-8fb142e049f0eac1a53abf522cb861ccd944685a": {
+      "files": 61,
+      "bytes": 1541764
+    },
+    ".local/chat-qa": {
+      "files": 106,
+      "bytes": 1462906
+    },
+    "docs/design": {
+      "files": 18,
+      "bytes": 528922
+    },
+    ".upstream/hnu-doc-d71b9976bcd6606b0e74855fda092338687218af": {
+      "files": 90,
+      "bytes": 426786
+    },
+    ".upstream/FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2": {
+      "files": 123,
+      "bytes": 326669
+    },
+    ".requirements_work/total-edit-time-20261020-180308": {
+      "files": 2,
+      "bytes": 241854
+    },
+    "services/api": {
+      "files": 15,
+      "bytes": 212422
+    },
+    "scripts/__pycache__": {
+      "files": 4,
+      "bytes": 144590
+    },
+    ".local/redesign": {
+      "files": 6,
+      "bytes": 134988
+    },
+    "checks/rust-smoke": {
+      "files": 4,
+      "bytes": 83660
+    },
+    ".requirements_work/markdown-rewrite-20261012": {
+      "files": 4,
+      "bytes": 55406
+    },
+    "demand/提交文档模版": {
+      "files": 3,
+      "bytes": 53433
+    },
+    "docs/accounts": {
+      "files": 4,
+      "bytes": 10895
+    },
+    "docs/chat": {
+      "files": 4,
+      "bytes": 10518
+    },
+    "docs/goods": {
+      "files": 3,
+      "bytes": 10506
+    },
+    "docs/forum": {
+      "files": 3,
+      "bytes": 9846
+    },
+    "docs/engineering": {
+      "files": 4,
+      "bytes": 7731
+    },
+    "checks/results": {
+      "files": 10,
+      "bytes": 4648
+    },
+    ".local/goods-tests": {
+      "files": 64,
+      "bytes": 4480
+    },
+    ".github/workflows": {
+      "files": 1,
+      "bytes": 3226
+    },
+    ".local/chat-tests": {
+      "files": 11,
+      "bytes": 770
+    },
+    ".local/account-tests": {
+      "files": 6,
+      "bytes": 420
+    }
+  },
+  "large_files": [
+    {
+      "path": ".local/rustup/toolchains/1.99.1-x86_64-pc-windows-gnu/bin/rustc_driver-737f10a507f50706.dll",
+      "bytes": 340951063
+    },
+    {
+      "path": ".local/rustup/toolchains/stable-x86_64-pc-windows-gnu/bin/rustc_driver-737f10a507f50706.dll",
+      "bytes": 340951063
+    },
+    {
+      "path": ".local/migration-20261023/rust-target-before-rebuild/debug/deps/hnudoc-004c28c9e09f0671.exe",
+      "bytes": 297437023
+    },
+    {
+      "path": ".local/rust-target/debug/deps/hnudoc-004c28c9e09f0671.exe",
+      "bytes": 297437023
+    },
+    {
+      "path": ".local/rust-target/debug/youzhihui-api.exe",
+      "bytes": 282480293
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-75164053d59aa3b4.exe",
+      "bytes": 282480293
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-22409df9d09bf3b5.exe",
+      "bytes": 271162003
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-4addbdc19fae6b50.exe",
+      "bytes": 254773340
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-9b56060016e766f1.exe",
+      "bytes": 244904891
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-1b82dbbb19eefc5d.exe",
+      "bytes": 238329159
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-9c3987f0b3cad2dd.exe",
+      "bytes": 238204435
+    },
+    {
+      "path": ".local/rustup/toolchains/1.99.1-x86_64-pc-windows-gnu/lib/rustlib/x86_64-pc-windows-gnu/bin/rust-lld.exe",
+      "bytes": 218408593
+    },
+    {
+      "path": ".local/rustup/toolchains/stable-x86_64-pc-windows-gnu/lib/rustlib/x86_64-pc-windows-gnu/bin/rust-lld.exe",
+      "bytes": 218408593
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-fa30db499782baa0.exe",
+      "bytes": 211688637
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-1bae2ec9ae93e8dc.exe",
+      "bytes": 211612845
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-9d9361c0ebcfb40d.exe",
+      "bytes": 177929633
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-40337c579f074cd5.exe",
+      "bytes": 177755633
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-c6e9db80b83f19af.exe",
+      "bytes": 154995475
+    },
+    {
+      "path": ".local/rust-target/debug/deps/youzhihui_api-cf6668f0af43bc63.exe",
+      "bytes": 154763764
+    },
+    {
+      "path": ".local/migration-20261023/rust-target-before-rebuild/debug/byr-environment-check.exe",
+      "bytes": 145386252
+    }
+  ]
+}

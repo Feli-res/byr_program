@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-28",
+  "stage": "4.6.3",
+  "status": "passed",
+  "rust_unit_tests": 14,
+  "money_unit_tests": 3,
+  "clippy": "passed",
+  "frontend_build": "passed",
+  "chat_runtime_groups": 14,
+  "chat_browser_cases": 4,
+  "session_revocation_seconds": {
+    "logout": 0.53,
+    "password_changed": 2.025,
+    "password_reset": 0.528,
+    "banned": 0.517,
+    "expired": 0.52
+  },
+  "goods_regression_groups": 17,
+  "forum_regression_groups": 19,
+  "account_regression_groups": 21,
+  "engineering_regression_groups": 11,
+  "existing_development_accounts_modified": false,
+  "word_documents_modified": false,
+  "server_deployed": false,
+  "github_actions_executed": false,
+  "notification_producers_for_goods_matching_and_reports_implemented": false,
+  "next": "4.6.4 end-to-end acceptance and fixes",
+  "acceptance": {
+    "AC02": "account checks and all five real WebSocket revocation cases passed locally",
+    "AC10": "passed locally: persistence, sequence, deduplication, offline catch-up and restart",
+    "AC11": "chat members only, including administrator denial passed; private AI conditions pending later implementation",
+    "AC18": "chat/notification dependency failure and recovery subset passed; complete system acceptance remains pending"
+  }
+}

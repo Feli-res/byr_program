@@ -1,7 +1,7 @@
 {
   "status": "passed",
-  "markdown_files": 38,
-  "local_links": 328,
+  "markdown_files": 44,
+  "local_links": 444,
   "migration_business_table_names_match_design": true,
   "python_syntax": "passed",
   "ignored_local_artifacts": 5,

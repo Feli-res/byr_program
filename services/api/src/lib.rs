@@ -1,6 +1,10 @@
 mod access;
 pub mod accounts;
+pub mod chat;
+mod content;
 mod forum;
+mod goods;
+mod search;
 use anyhow::{Context, Result, ensure};
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -71,6 +75,7 @@ impl Settings {
 pub struct AppState {
     pub pool: MySqlPool,
     redis: redis::Client,
+    pub(crate) realtime: Arc<chat::realtime::Hub>,
     pub settings: Settings,
 }
 
@@ -95,6 +100,7 @@ impl AppState {
         Ok(Self {
             pool,
             redis,
+            realtime: Arc::new(chat::realtime::Hub::default()),
             settings,
         })
     }
@@ -365,6 +371,9 @@ pub fn app(state: AppState) -> Service {
         .hoop(salvo::affix_state::inject(context))
         .push(accounts::routes())
         .push(forum::routes())
+        .push(goods::routes())
+        .push(search::routes())
+        .push(chat::routes())
         .push(Router::with_path("health/live").get(live))
         .push(Router::with_path("health/ready").get(ready))
         .push(

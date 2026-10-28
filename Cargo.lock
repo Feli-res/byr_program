@@ -3838,6 +3838,7 @@ dependencies = [
  "argon2",
  "base64 0.22.1",
  "chrono",
+ "futures-util",
  "getrandom 0.4.3",
  "hmac",
  "image",

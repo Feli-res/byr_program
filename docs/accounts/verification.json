@@ -2,7 +2,7 @@
   "stage": "4.5",
   "status": "passed",
   "checks": [
-    "Fresh isolated database: four migrations and repeat execution",
+    "Fresh isolated database: five migrations and repeat execution",
     "Interactive-admin command supports secure stdin verification and refuses repeated bootstrap",
     "Registration normalization, duplicates, validation, no auto-login and role injection rejection",
     "Argon2id parameters, normalized login, host-only HttpOnly cookie and seven-day absolute session",

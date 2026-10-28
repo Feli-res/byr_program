@@ -1,0 +1,29 @@
+{
+  "stage": "4.6.2",
+  "status": "passed",
+  "checks": [
+    "Independent database, migrations, enabled category/campus dictionaries and account roles",
+    "Real product creation, exact integer cents, optional facts, image binding and public detail/list readback",
+    "Free/max prices and Unicode boundaries work; fractional, forged, missing-dictionary and invalid optional facts are rejected",
+    "One-to-six images, purpose, ownership, expiry, duplicate binding and publish rollback are enforced",
+    "Seller-only writes, JSON field rules, CSRF and exact Origin checks apply to all goods mutations",
+    "Editing preserves exact cents, clears optional values, reorders/replaces images and releases quota only after cleanup",
+    "Concurrent seller edits accept one matching version and reject a stale update",
+    "Reservation, cancellation, shelving and final sold state follow the required transition graph",
+    "Admin restriction hides detail/files; only seller/admin can inspect, release never auto-lists or revives sold goods",
+    "Unified keyword search returns typed post/goods hits with truthful ranking, inclusive filters and explicit semantic fallback",
+    "Literal wildcard/SQL characters, private-source exclusion, stable mixed pagination and search validation",
+    "Search consults current source visibility and excludes hidden posts, reserved/sold/restricted goods immediately",
+    "Concurrent publishing cannot bind the same uploaded image to two products",
+    "Goods/public/owner/admin JSON follows the existing OpenAPI with bounded inputs and private ownership",
+    "Four real browser cases: goods lifecycle/uploads, search-return/mobile, moderation privacy and database-failure recovery",
+    "API/MySQL/Redis restart preserves goods, exact prices, searchable records and valid sessions",
+    "Deletion revokes old detail/image/search routes; shared change counter, search jobs and moderation audit remain consistent"
+  ],
+  "browser_cases": 4,
+  "isolated_database_removed": true,
+  "development_accounts_modified": false,
+  "server_deployed": false,
+  "ai_search_implemented": false,
+  "error": null
+}

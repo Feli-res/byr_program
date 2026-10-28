@@ -1,0 +1,32 @@
+{
+  "stage": "4.6.3",
+  "status": "passed",
+  "checks": [
+    "Five migrations and independent seller/buyer/outsider/admin identities",
+    "Contact seller derives ownership, reuses one pair conversation and rejects outsiders including administrators",
+    "HTTP persistence, retry deduplication, concurrent ordering, cursor history and monotonic peer-only unread counts",
+    "Real WebSocket works through the web origin; hashed thirty-second single-use/session-bound tickets and exact Origin are enforced",
+    "WS acknowledgement follows persistence; WS/HTTP retries share one record, frames validate and outsiders cannot send or receive private messages",
+    "Offline/reconnected clients recover committed messages through sequence-based HTTP catch-up",
+    "Notification creation/outbox is atomic; private list, single/read-all idempotency and later-unread preservation work",
+    "HTTP and queued notification delivery recheck current targets; hidden sources and conversation product context reveal no stale titles",
+    "Logout/password change/reset/ban/expiry close the correct old live sessions within five seconds; another login survives current-session logout",
+    "Redis failure rejects new tickets while HTTP message save/history remain available",
+    "Four real browser cases cover contact/live chat, retry and reconnect, notifications/privacy, and database-failure recovery",
+    "A real temporary read lock causes push retry and expiry after its final allowed attempt; committed HTTP history remains intact",
+    "Service/database restart preserves sessions, message identities/history and notification read state",
+    "Access logs exclude tested passwords, ticket values and private message content"
+  ],
+  "browser_cases": 4,
+  "revocation_seconds": {
+    "logout": 0.53,
+    "password_changed": 2.025,
+    "password_reset": 0.528,
+    "banned": 0.517,
+    "expired": 0.52
+  },
+  "isolated_database_removed": true,
+  "development_accounts_modified": false,
+  "server_deployed": false,
+  "error": null
+}

@@ -36,7 +36,7 @@ Markdown 使用 [react-markdown](https://github.com/remarkjs/react-markdown) 和
 | `avatar` | JPEG、PNG、WebP | 2 MiB | 1 张头像 |
 | `post_image` | JPEG、PNG、WebP | 5 MiB | 每帖最多 9 张 |
 | `post_pdf` | 可解析的 PDF | 10 MiB | 每帖最多 2 个 |
-| `goods_image` | JPEG、PNG、WebP | 5 MiB | 上传已支持，商品绑定与 1～6 张限制在 4.6.2 接入 |
+| `goods_image` | JPEG、PNG、WebP | 5 MiB | 4.6.2 已接入商品绑定，必须 1～6 张 |
 
 所有用途共用每人 200 MiB 配额。图片检查实际解码、声明类型和扩展名，最长边 4096 像素、解码预算 64 MiB。PDF 通过 lopdf 解析结构，检查页树，拒绝加密及已检查的脚本、活动动作、嵌入文件等内容；解析时每个解压流限制 64 MiB。PDF 以附件下载，设置 `nosniff` 和沙箱响应策略。
 
@@ -58,7 +58,7 @@ Markdown 使用 [react-markdown](https://github.com/remarkjs/react-markdown) 和
 | [verify_forum.py](../../scripts/verify_forum.py) | 独立临时库的真实接口、权限、并发、文件、故障和重启检查 |
 | [forum.spec.mjs](../../apps/web/tests/forum.spec.mjs) | 普通用户操作、版主范围、数据库故障与表单恢复的浏览器检查 |
 
-沿用已执行的四个数据库版本，不改写历史建表文件。帖子变更与 `content_changes`、待更新搜索记录一起保存；实际搜索更新与 AI 工作在后续阶段完成。
+沿用已执行的四个数据库版本，不改写历史建表文件。帖子变更与 `content_changes`、待更新搜索记录一起保存；普通关键词搜索已在 4.6.2 接入；向量索引更新与 AI 工作在后续阶段完成。
 
 ## 五、怎样重复验收
 
@@ -76,6 +76,6 @@ Linux / WSL 先按工程说明准备工具和浏览器，安装 [已有测试依
 
 ## 六、后续边界
 
-下一步是 **4.6.2 商品和普通搜索**。聊天、通知和旧实时连接 5 秒内关闭在 4.6.3 实现；4.6 全流程验收与修复在 4.6.4 执行。本阶段不代表完整 AC01—AC20、AI 效果、多人性能或服务器部署已经验收。
+后续进度：**4.6.2 商品和普通搜索、4.6.3 聊天和通知已完成本机验收**，见 [商品说明](../goods/README.md)、[聊天说明](../chat/README.md)。旧实时连接5秒内关闭已实测；4.6.4全流程验收也已完成，见 [整体验收](../acceptance/README.md)；下一步4.7。本阶段不代表完整 AC01—AC20、AI 效果、多人性能或服务器部署已经验收。
 
 返回 [项目首页](../../README.md) · [项目计划书](../../邮智汇_程设项目计划书.md) · [当前成果汇报](../../邮智汇_当前成果汇报.md)。

@@ -7,14 +7,15 @@ import remarkGfm from 'remark-gfm';
 import {jsonRequest,request} from '../lib/api';
 import {Feedback,Protected,useAuth} from './auth';
 import {Attachments,FilePicker} from './files';
+import ReturnLink from './return-link';
 
-function useData(key,loader){
+export function useData(key,loader){
   const [value,setValue]=useState(null),[error,setError]=useState(''),[loading,setLoading]=useState(true),[revision,setRevision]=useState(0);
   const load=useRef(loader);load.current=loader;
   useEffect(()=>{let alive=true;setLoading(true);setError('');setValue(null);load.current().then(v=>{if(alive)setValue(v);}).catch(e=>{if(alive)setError(e.message);}).finally(()=>{if(alive)setLoading(false);});return()=>{alive=false;};},[key,revision]);
   return {value,error,loading,setValue,reload:useCallback(()=>setRevision(v=>v+1),[])};
 }
-function Failure({data}){return data.error?<p role="alert" className="message error">{data.error} <button className="text-button" onClick={data.reload}>重试读取</button></p>:data.loading?<p className="muted">正在读取…</p>:null;}
+export function Failure({data}){return data.error?<p role="alert" className="message error">{data.error} <button className="text-button" onClick={data.reload}>重试读取</button></p>:data.loading?<p className="muted">正在读取…</p>:null;}
 export function Time({value}){return <time dateTime={value}>{new Date(value).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false})}</time>;}
 export function SafeMarkdown({children}){
   return <div className="markdown"><Markdown remarkPlugins={[remarkGfm]} skipHtml components={{
@@ -22,7 +23,7 @@ export function SafeMarkdown({children}){
     img:({src,alt})=>/^\/api\/v1\/files\/[1-9][0-9]*\/content$/.test(src||'')?<img src={src} alt={alt||'帖子图片'} loading="lazy"/>:<span className="muted">[外部图片未加载：{alt||'图片'}]</span>,
   }}>{children}</Markdown></div>;
 }
-function Pager({page,total,onPage,size=20}){
+export function Pager({page,total,onPage,size=20}){
   if(total<=size&&page===1)return null;
   return <nav className="pagination" aria-label="分页"><button className="secondary" disabled={page<=1} onClick={()=>onPage(page-1)}>上一页</button><span>第 {page} 页 · 共 {total} 条</span><button className="secondary" disabled={page*size>=total} onClick={()=>onPage(page+1)}>下一页</button></nav>;
 }
@@ -97,7 +98,7 @@ function Detail({postId,manage=false}){
   async function react(kind,active){setBusy(true);setError('');try{await request(`/api/v1/posts/${postId}/${kind}`,{method:active?'DELETE':'PUT'});changed();}catch(e){setError(e.message);}finally{setBusy(false);}}
   async function moderation(action){setBusy(true);setError('');setNotice('');try{await jsonRequest(`/api/v1/admin/posts/${postId}/moderation`,'PATCH',{action,version:data.value.version,reason});setNotice('管理操作已保存');changed();}catch(e){setError(e.message);}finally{setBusy(false);}}
   const post=data.value;
-  return <><ForumMenu/><section className="panel"><Failure data={data}/>{post&&<><div className="post-heading">{post.pinned&&<span className="tag">置顶</span>}{post.visibility==='hidden'&&<span className="tag warning">已隐藏</span>}<h1>{post.title}</h1><p className="muted">{post.author.nickname} · <Time value={post.created_at}/>{post.created_at!==post.updated_at&&<> · 更新于 <Time value={post.updated_at}/></>}</p></div>
+  return <><ForumMenu/><Suspense fallback={null}><ReturnLink defaultTo="/posts"/></Suspense><section className="panel"><Failure data={data}/>{post&&<><div className="post-heading">{post.pinned&&<span className="tag">置顶</span>}{post.visibility==='hidden'&&<span className="tag warning">已隐藏</span>}<h1>{post.title}</h1><p className="muted">{post.author.nickname} · <Time value={post.created_at}/>{post.created_at!==post.updated_at&&<> · 更新于 <Time value={post.updated_at}/></>}</p></div>
     <SafeMarkdown>{post.body_markdown}</SafeMarkdown><Attachments images={post.image_files} pdfs={post.pdf_files}/>
     <div className="post-stats">{post.like_count} 人点赞 · {post.comment_count} 条回复</div>
     {(!manage||post.visibility==='public')&&!post.deleted_at&&<div className="actions"><button className="secondary" disabled={!user||busy} onClick={()=>react('like',post.liked_by_me)}>{post.liked_by_me?'取消点赞':'点赞'}</button><button className="secondary" disabled={!user||busy} onClick={()=>react('favorite',post.saved_by_me)}>{post.saved_by_me?'取消收藏':'收藏'}</button>{user?.id===post.author.id&&<Link href={`/posts/${post.id}/edit`}>编辑帖子</Link>}</div>}

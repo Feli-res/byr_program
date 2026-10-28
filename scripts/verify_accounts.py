@@ -121,8 +121,8 @@ class Accounts(runtime.Verification):
         assert re.fullmatch(r'[A-Za-z0-9_]+',self.env['MYSQL_USER'])
         self.sql(f"CREATE DATABASE `{self.database}` CHARACTER SET utf8mb4; GRANT ALL ON `{self.database}`.* TO '{self.env['MYSQL_USER']}'@'%';",'create-test-database');self.created=True
         self.cli(['--migrate'],'migrate-empty');self.cli(['--migrate'],'migrate-repeat')
-        assert self.query('SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE(); SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;').split()==['35','4']
-        self.record('Fresh isolated database: four migrations and repeat execution')
+        assert self.query('SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE(); SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;').split()==['35','5']
+        self.record('Fresh isolated database: five migrations and repeat execution')
         admin_input=json.dumps({'account':self.root_account,'nickname':'初始管理员','password':self.password}).encode()
         self.cli(['--init-admin'],'initialize-administrator',admin_input)
         self.cli(['--init-admin'],'refuse-second-bootstrap',admin_input,1)

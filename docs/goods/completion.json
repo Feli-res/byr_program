@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-28",
+  "stage": "4.6.2",
+  "status": "passed",
+  "rust_unit_tests": 13,
+  "money_unit_tests": 3,
+  "clippy": "passed",
+  "frontend_build": "passed",
+  "goods_runtime_groups": 17,
+  "goods_browser_cases": 4,
+  "forum_regression_groups": 19,
+  "account_regression_groups": 21,
+  "engineering_regression_groups": 11,
+  "existing_development_accounts_modified": false,
+  "word_documents_modified": false,
+  "server_deployed": false,
+  "github_actions_executed": false,
+  "ai_search_implemented": false,
+  "next": "4.6.3 chat and notifications",
+  "acceptance": {
+    "AC06": "keyword/types/filters/pagination passed; semantic portion pending 4.7",
+    "AC07": "current-source keyword/detail/file visibility passed; vector-index portion pending 4.7",
+    "AC08": "passed",
+    "AC09": "goods binding/counts/ownership/rollback passed, alongside existing avatar/forum checks",
+    "AC16": "goods administrator-restriction subset passed",
+    "AC18": "goods database-failure and recovery subset passed",
+    "AC02": "WebSocket closure pending 4.6.3"
+  }
+}

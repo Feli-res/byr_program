@@ -1,4 +1,4 @@
-name: Build, persistence, accounts and forum
+name: Build and phase 4.6 acceptance
 on:
   push:
     branches: [main]
@@ -48,6 +48,16 @@ jobs:
         run: python3 scripts/verify_accounts.py
       - name: Verify forum and shared uploads
         run: python3 scripts/verify_forum.py
+      - name: Check exact money conversion
+        run: node --test apps/web/checks/money.test.mjs
+      - name: Verify goods and keyword search
+        run: python3 scripts/verify_goods.py
+      - name: Install WebSocket test dependency
+        run: python3 -m pip install -r docs/chat/requirements-tests.txt
+      - name: Verify chat and notifications
+        run: python3 scripts/verify_chat.py
+      - name: Verify cross-module phase 4.6 flow
+        run: python3 scripts/verify_acceptance.py
       - name: Save verification results
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,6 +67,18 @@ jobs:
             docs/engineering/runtime-verification.json
             docs/accounts/verification.json
             docs/forum/verification.json
+            docs/goods/verification.json
+            docs/chat/verification.json
+            docs/acceptance/verification.json
+            .local/logs/acceptance/*.log
+            .local/logs/acceptance/*.json
+            .local/logs/acceptance/*.png
+            .local/logs/chat/*.log
+            .local/logs/chat/*.json
+            .local/logs/chat/*.png
+            .local/logs/goods/*.log
+            .local/logs/goods/*.json
+            .local/logs/goods/*.png
             .local/logs/forum/*.log
             .local/logs/forum/*.json
             .local/logs/forum/*.png

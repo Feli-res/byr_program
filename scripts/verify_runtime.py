@@ -44,7 +44,7 @@ class Verification:
         env=self.env.copy();env.update(extra or {})
         with (LOG/(name+'.log')).open('wb') as log:
             result=subprocess.run([str(a) for a in args],cwd=cwd,env=env,stdout=log,stderr=subprocess.STDOUT)
-        if result.returncode:raise RuntimeError(f'{name} failed; see .local/logs/dev/{name}.log')
+        if result.returncode:raise RuntimeError(f'{name} failed; see {(LOG/(name+chr(46)+"log")).relative_to(ROOT).as_posix()}')
 
     def start(self, args, name, cwd=ROOT, extra=None):
         env=self.env.copy();env.update(extra or {})
@@ -113,7 +113,7 @@ class Verification:
         self.record('Validation boundaries, malformed JSON, unknown fields and origin rejection')
         self.run(self.compose+['exec','-T','mysql','sh','-c','MYSQL_PWD="$MYSQL_PASSWORD" mysql -u "$MYSQL_USER" -D "$MYSQL_DATABASE" --batch --skip-column-names -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE(); SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;"'],'schema-count')
         counts=(LOG/'schema-count.log').read_text().split()
-        assert counts==['35','4'],counts
+        assert counts==['35','5'],counts
         self.record('32 designed tables, development records, account throttling and migration history in MySQL')
         self.run(self.compose+['stop','redis'],'redis-stop')
         self.request('/health/live');self.request('/health/ready',expected=503)

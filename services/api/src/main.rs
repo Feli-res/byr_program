@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use salvo::Listener;
 use std::io::{self, IsTerminal, Read, Write};
-use youzhihui_api::{AppState, Settings, accounts, app, migrate};
+use youzhihui_api::{AppState, Settings, accounts, app, chat, migrate};
 
 fn administrator_input() -> Result<accounts::Registration> {
     if !io::stdin().is_terminal() {
@@ -56,6 +56,13 @@ async fn main() -> Result<()> {
             .map_err(|_| anyhow::anyhow!("file cleanup unavailable"))?;
         return Ok(());
     }
+    if arguments.iter().any(|v| v == "--seed-chat-notification") {
+        let mut input = String::new();
+        io::stdin().read_to_string(&mut input)?;
+        chat::seed_verification_notification(&state, &input).await?;
+        return Ok(());
+    }
+    chat::start_workers(state.clone());
     let cleanup = state.clone();
     tokio::spawn(async move {
         let mut interval = tokio::time::interval(std::time::Duration::from_secs(3600));

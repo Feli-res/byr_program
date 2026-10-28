@@ -388,7 +388,7 @@ pub(super) async fn read(req: &Request, app: &AppState) -> AccountResult<(String
         .param::<String>("file_id")
         .as_deref()
         .ok_or_else(AccountError::missing)?)?;
-    let row=sqlx::query("SELECT f.owner_id,CAST(f.storage_key AS CHAR CHARACTER SET utf8mb4) AS storage_key,f.mime_type,f.state,f.expires_at>UTC_TIMESTAMP(6) AS fresh,b.avatar_user_id,b.post_id,b.goods_id,p.author_id,p.board_id,p.visibility,p.deleted_at IS NOT NULL AS post_deleted,g.state AS goods_state,g.moderation,g.deleted_at IS NOT NULL AS goods_deleted FROM files f LEFT JOIN file_bindings b ON b.file_id=f.id LEFT JOIN posts p ON p.id=b.post_id LEFT JOIN goods g ON g.id=b.goods_id WHERE f.id=?").bind(file).fetch_optional(&app.pool).await?.ok_or_else(AccountError::missing)?;
+    let row=sqlx::query("SELECT f.owner_id,CAST(f.storage_key AS CHAR CHARACTER SET utf8mb4) AS storage_key,f.mime_type,f.state,f.expires_at>UTC_TIMESTAMP(6) AS fresh,b.avatar_user_id,b.post_id,b.goods_id,p.author_id,p.board_id,p.visibility,p.deleted_at IS NOT NULL AS post_deleted,g.state AS goods_state,g.seller_id,g.moderation,g.deleted_at IS NOT NULL AS goods_deleted FROM files f LEFT JOIN file_bindings b ON b.file_id=f.id LEFT JOIN posts p ON p.id=b.post_id LEFT JOIN goods g ON g.id=b.goods_id WHERE f.id=?").bind(file).fetch_optional(&app.pool).await?.ok_or_else(AccountError::missing)?;
     let state = row.get::<String, _>("state");
     if state == "staged" && row.get::<Option<bool>, _>("fresh") == Some(true) {
         let identity = authenticate(req, app)
@@ -416,9 +416,17 @@ pub(super) async fn read(req: &Request, app: &AppState) -> AccountResult<(String
             }
         } else if row.get::<Option<u64>, _>("goods_id").is_some()
             && !row.get::<bool, _>("goods_deleted")
-            && row.get::<Option<String>, _>("moderation").as_deref() == Some("clear")
         {
-            // Public goods, including reserved/sold items, inherit the goods visibility rule.
+            if row.get::<Option<String>, _>("moderation").as_deref() != Some("clear") {
+                let viewer = authenticate(req, app)
+                    .await
+                    .map_err(|_| AccountError::missing())?;
+                if Some(viewer.user.id) != row.get::<Option<u64>, _>("seller_id")
+                    && viewer.user.role != "admin"
+                {
+                    return Err(AccountError::missing());
+                }
+            }
         } else {
             return Err(AccountError::missing());
         }
@@ -610,6 +618,80 @@ pub(crate) async fn bind_post(
                 .execute(&mut **tx)
                 .await?;
         }
+    }
+    Ok(())
+}
+
+pub(crate) async fn goods_files(pool: &sqlx::MySqlPool, goods: u64) -> AccountResult<Vec<Value>> {
+    let rows=sqlx::query("SELECT f.id,f.purpose,f.mime_type,f.size_bytes,f.original_name FROM file_bindings b JOIN files f ON f.id=b.file_id WHERE b.goods_id=? AND f.state='attached' ORDER BY b.position_no").bind(goods).fetch_all(pool).await?;
+    Ok(rows.iter().map(|r|json!({"id":r.get::<u64,_>("id").to_string(),"purpose":r.get::<String,_>("purpose"),"mime_type":r.get::<String,_>("mime_type"),"size_bytes":r.get::<u64,_>("size_bytes"),"name":r.get::<String,_>("original_name"),"url":format!("/api/v1/files/{}/content",r.get::<u64,_>("id")),"state":"attached","expires_at":null})).collect())
+}
+pub(crate) async fn bind_goods(
+    tx: &mut Transaction<'_, MySql>,
+    owner: u64,
+    goods: u64,
+    images: &[String],
+) -> AccountResult<()> {
+    if !(1..=6).contains(&images.len()) {
+        return Err(AccountError::validation(
+            "image_file_ids",
+            "商品必须有1～6张图片",
+        ));
+    }
+    let ids = images
+        .iter()
+        .map(|v| id(v))
+        .collect::<AccountResult<Vec<_>>>()?;
+    let mut sorted = ids.clone();
+    sorted.sort_unstable();
+    sorted.dedup();
+    if sorted.len() != ids.len() {
+        return Err(AccountError::validation(
+            "image_file_ids",
+            "商品图片不能重复",
+        ));
+    }
+    let old = sqlx::query_scalar::<_, u64>(
+        "SELECT file_id FROM file_bindings WHERE goods_id=? ORDER BY file_id FOR UPDATE",
+    )
+    .bind(goods)
+    .fetch_all(&mut **tx)
+    .await?;
+    for file in &sorted {
+        let row=sqlx::query("SELECT f.owner_id,f.purpose,f.state,f.expires_at>UTC_TIMESTAMP(6) AS fresh,b.id AS binding_id,b.goods_id FROM files f LEFT JOIN file_bindings b ON b.file_id=f.id WHERE f.id=? FOR UPDATE").bind(file).fetch_optional(&mut **tx).await?.ok_or_else(AccountError::missing)?;
+        if row.get::<u64, _>("owner_id") != owner {
+            return Err(AccountError::missing());
+        }
+        let state = row.get::<String, _>("state");
+        let valid = (state == "staged"
+            && row.get::<Option<bool>, _>("fresh") == Some(true)
+            && row.get::<Option<u64>, _>("binding_id").is_none())
+            || (state == "attached" && row.get::<Option<u64>, _>("goods_id") == Some(goods));
+        if row.get::<String, _>("purpose") != "goods_image" || !valid {
+            return Err(AccountError::validation(
+                "image_file_ids",
+                "商品图片用途不符、已绑定其他内容或已过期",
+            ));
+        }
+    }
+    sqlx::query("DELETE FROM file_bindings WHERE goods_id=?")
+        .bind(goods)
+        .execute(&mut **tx)
+        .await?;
+    for old in old {
+        if !ids.contains(&old) {
+            sqlx::query("UPDATE files SET state='cleanup_pending' WHERE id=?")
+                .bind(old)
+                .execute(&mut **tx)
+                .await?;
+        }
+    }
+    for (position, file) in ids.iter().enumerate() {
+        sqlx::query("INSERT INTO file_bindings(file_id,kind,goods_id,position_no) VALUES (?,'goods_image',?,?)").bind(file).bind(goods).bind((position+1) as u32).execute(&mut **tx).await?;
+        sqlx::query("UPDATE files SET state='attached',expires_at=NULL WHERE id=?")
+            .bind(file)
+            .execute(&mut **tx)
+            .await?;
     }
     Ok(())
 }

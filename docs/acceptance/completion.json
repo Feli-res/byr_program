@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-28",
+  "stage": "4.6.4",
+  "status": "passed",
+  "phase_4_6_completed_locally": true,
+  "rust_unit_tests": 14,
+  "money_unit_tests": 3,
+  "clippy": "passed",
+  "frontend_build": "passed",
+  "cross_module_groups": 8,
+  "cross_module_browser_cases": 3,
+  "regressions": {
+    "engineering": {
+      "status": "passed",
+      "groups": 11,
+      "report": "docs/engineering/runtime-verification.json"
+    },
+    "accounts": {
+      "status": "passed",
+      "groups": 21,
+      "report": "docs/accounts/verification.json"
+    },
+    "forum": {
+      "status": "passed",
+      "groups": 19,
+      "report": "docs/forum/verification.json"
+    },
+    "goods": {
+      "status": "passed",
+      "groups": 17,
+      "report": "docs/goods/verification.json"
+    },
+    "chat": {
+      "status": "passed",
+      "groups": 14,
+      "report": "docs/chat/verification.json"
+    }
+  },
+  "cross_module_revocation_seconds": {
+    "password_changed_cross_module": 1.52
+  },
+  "original_development_accounts_unchanged": true,
+  "word_and_upstream_unchanged": true,
+  "folder_cleanup": "planned only; no bulk deletion or relocation",
+  "server_deployed": false,
+  "github_actions_executed": false,
+  "ai_and_performance_acceptance_completed": false,
+  "next": "4.7 semantic search and AI goods matching",
+  "page_entries_checked": 22,
+  "page_width_checked": 375
+}
