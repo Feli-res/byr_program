@@ -1,29 +1,27 @@
-"""4.6.4 cross-module acceptance in a disposable database, with optional regressions."""
+"""Acceptance scenarios; shared setup lives in test_support."""
+from test_support import ROOT
 import argparse
-import hashlib
 import json
-import re
 import socket
-import subprocess
 import sys
 import time
+import urllib.error
 import urllib.parse
+import urllib.request
 import uuid
-import verify_chat as chat
-import verify_accounts as accounts
-import verify_goods as goods
-import verify_runtime as runtime
+import hashlib
+import re
+from test_support.runtime import environment
+from test_support.chat import ChatVerification
+from test_support.http import GoodsClient as Client
+from test_support.fixtures import png, pdf
+from test_support.websocket import Live
+LOG=ROOT/".local/logs/acceptance"
+RESULT=ROOT/"docs/acceptance/verification.json"
 
-ROOT = runtime.ROOT
-LOG = ROOT / '.local/logs/acceptance'
-RESULT = ROOT / 'docs/acceptance/verification.json'
-accounts.LOG = LOG
-runtime.LOG = LOG
-
-
-class Acceptance(chat.Chat):
+class Acceptance(ChatVerification):
     def __init__(self):
-        super().__init__()
+        super().__init__(log_dir=LOG)
         self.env['UPLOAD_ROOT'] = str(ROOT / '.local/acceptance-tests' / self.database)
         self.baseline = None
         self.accounts_unchanged = None
@@ -76,14 +74,14 @@ class Acceptance(chat.Chat):
         self.api = self.api.replace('localhost', '127.0.0.1')
         self.server = self.start([self.binary], 'api')
         self.wait('/health/ready')
-        admin = goods.Client(self);admin.login(self.root_account, self.password)
-        alice = goods.Client(self);alice.register(self.alice_account, self.password, '联通卖家');alice.login(self.alice_account, self.password)
-        bob = goods.Client(self);bob.register(self.bob_account, self.password, '联通买家');bob.login(self.bob_account, self.password)
-        outsider = goods.Client(self);third = 'third_' + self.suffix;outsider.register(third, self.password, '无关用户');outsider.login(third, self.password)
-        visitor = goods.Client(self)
+        admin = Client(self);admin.login(self.root_account, self.password)
+        alice = Client(self);alice.register(self.alice_account, self.password, '联通卖家');alice.login(self.alice_account, self.password)
+        bob = Client(self);bob.register(self.bob_account, self.password, '联通买家');bob.login(self.bob_account, self.password)
+        outsider = Client(self);third = 'third_' + self.suffix;outsider.register(third, self.password, '无关用户');outsider.login(third, self.password)
+        visitor = Client(self)
         board = visitor.call('/api/v1/boards')['data']['items'][0]['id']
         category = visitor.call('/api/v1/goods-categories')['data'][0]['id']
-        image = alice.upload(accounts.png(), 'post_image')['data']
+        image = alice.upload(png(), 'post_image')['data']
         post = alice.post(board, title='管理联动' + self.suffix + '帖子', images=[image['id']])
         product = alice.publish(category, title='管理联动' + self.suffix + '商品')
         cid = bob.call('/api/v1/conversations', 'POST', {'goods_id': product['id']})['data']['id']
@@ -94,7 +92,7 @@ class Acceptance(chat.Chat):
         goods_notice = next(n['id'] for n in notices if n['target_type'] == 'goods')
         self.record('Fresh isolated database, five migrations, independent roles and private notification fixtures')
 
-        fixture = LOG / 'fixture.png';fixture.write_bytes(accounts.png())
+        fixture = self.log_dir / 'fixture.png';fixture.write_bytes(png())
         next_cli = ROOT / 'apps/web/node_modules/next/dist/bin/next'
         self.web_process = self.start(['node', next_cli, 'start', '--hostname', '127.0.0.1', '--port', self.env['WEB_PORT']], 'web', cwd=ROOT / 'apps/web')
         self.wait('/health/ready', base=self.web)
@@ -102,12 +100,12 @@ class Acceptance(chat.Chat):
         self.run(['node', ROOT / 'apps/web/node_modules/@playwright/test/cli.js', 'test', 'tests/acceptance.spec.mjs'], 'browser', cwd=ROOT / 'apps/web', extra=extra)
         report = json.loads((ROOT / '.local/logs/dev/browser-results.json').read_text(encoding='utf-8'))
         assert report['stats']['expected'] == 3 and report['stats']['unexpected'] == 0
-        (LOG / 'browser-results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+        (self.log_dir / 'browser-results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
         self.browser_cases = 3
         self.record('One real browser flow publishes and replies to a post, publishes and searches goods, contacts seller, receives real WS chat and persists notification read state')
         self.record('Browser loading/empty/validation/permission/read-failure/save-failure states recover without false success; list filters and narrow layout work')
         self.record('The same moderation changes remove search hits, revoke old files, clear conversation product context and redact notification targets')
-        flow = json.loads((LOG / 'flow-ids.json').read_text(encoding='utf-8'))
+        flow = json.loads((self.log_dir / 'flow-ids.json').read_text(encoding='utf-8'))
         pid, gid, flow_cid = flow['postId'], flow['goodsId'], flow['cid']
         assert visitor.call('/api/v1/goods/' + gid)['data']['price_cents'] == 12345
         assert bob.call('/api/v1/posts/' + pid)['data']['liked_by_me']
@@ -121,7 +119,7 @@ class Acceptance(chat.Chat):
         authored = alice.call('/api/v1/posts/' + pid)['data']
         owned = alice.call('/api/v1/me/goods/' + gid)['data']
         second = alice.clone()
-        live = chat.Live(self, alice, proxy=True)
+        live = Live(self, alice, proxy=True)
         new_password = self.password + 'n'
         start = time.monotonic()
         alice.call('/api/v1/me/password', 'POST', {'current_password': self.password, 'new_password': new_password})
@@ -130,7 +128,7 @@ class Acceptance(chat.Chat):
         self.revocations['password_changed_cross_module'] = round(elapsed, 3)
         live.close()
         for client in [alice, second]:self.reject_old_writes(client, pid, gid, flow_cid, authored['version'], owned['version'])
-        alice = goods.Client(self);alice.login(self.alice_account, new_password)
+        alice = Client(self);alice.login(self.alice_account, new_password)
         alice.call('/api/v1/posts/' + pid, 'PATCH', {'version': authored['version'], 'title': authored['title'] + '已核对'})
         self.admin_action(admin, alice.me()['id'], 'status', {'version': self.target(admin, alice.me()['id'])['version'], 'status': 'banned', 'reason': '跨业务封禁检查'})
         self.reject_old_writes(alice, pid, gid, flow_cid, authored['version'], owned['version'])
@@ -160,7 +158,6 @@ class Acceptance(chat.Chat):
             finally:
                 self.run(self.compose + ['stop'], 'account-protection-stop')
 
-
 def main():
     parser = argparse.ArgumentParser();parser.add_argument('--regressions', action='store_true');args = parser.parse_args()
     LOG.mkdir(parents=True, exist_ok=True);RESULT.parent.mkdir(parents=True, exist_ok=True)
@@ -173,5 +170,4 @@ def main():
         RESULT.write_text(json.dumps({'stage': '4.6.4', 'date': '2026-10-28', 'status': status, 'checks': verification.checks, 'browser_cases': verification.browser_cases, 'regressions_run': verification.regressions, 'revocation_seconds': verification.revocations, 'isolated_database_removed': not verification.created, 'original_development_accounts_unchanged': verification.accounts_unchanged, 'server_deployed': False, 'ai_or_performance_acceptance_completed': False, 'error': error}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     return 0 if status == 'passed' else 1
 
-
-if __name__ == '__main__':sys.exit(main())
+if __name__ == "__main__":sys.exit(main())

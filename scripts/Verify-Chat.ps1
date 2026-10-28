@@ -13,7 +13,7 @@ try {
     Invoke-DevCommand 'cargo.exe' @('clippy','--locked','--all-targets','--','-D','warnings')
     Invoke-DevCommand 'cargo.exe' @('test','--locked','-p','youzhihui-api')
     Invoke-DevCommand 'cargo.exe' @('build','--locked','-p','youzhihui-api')
-    Invoke-DevCommand 'node.exe' @('--test','apps/web/checks/money.test.mjs')
+    Invoke-DevCommand 'node.exe' @('--test','apps/web/tests/unit/money.test.mjs')
     Push-Location -LiteralPath (Join-Path $projectRoot 'apps\web')
     try {Invoke-DevCommand 'npm.cmd' @('run','build')} finally {Pop-Location}
     Invoke-DevCommand 'python.exe' @('scripts/verify_chat.py')

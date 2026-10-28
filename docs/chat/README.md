@@ -50,7 +50,7 @@
 | [chat/notifications.rs](../../services/api/src/chat/notifications.rs) | 共用通知写入、当前目标检查与本人已读操作 |
 | [0005_chat_session_reasons.sql](../../migrations/0005_chat_session_reasons.sql) | 补充登录撤销原因，不改写旧版本 |
 | [realtime.js](../../apps/web/components/realtime.js) | 连接、心跳、重连、确认和未读数量 |
-| [chat.js](../../apps/web/components/chat.js)、[chat-contact.js](../../apps/web/components/chat-contact.js) | 聊天、通知页面和商品联系入口 |
+| [chat/](../../apps/web/components/chat/)、[chat-contact.js](../../apps/web/components/chat-contact.js) | 聊天、通知页面和商品联系入口 |
 | [verify_chat.py](../../scripts/verify_chat.py)、[chat.spec.mjs](../../apps/web/tests/chat.spec.mjs) | 隔离的接口、真实 WebSocket 和浏览器验收 |
 
 共沿用 34 张应用表，另有 SQLx 版本记录表；第五个版本只增加会话撤销原因字段。现有账号、帖子和商品保持原数据。

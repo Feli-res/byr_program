@@ -1,6 +1,6 @@
 [workspace]
 members = ["services/api"]
-exclude = ["checks/rust-smoke"]
+exclude = ["archive/preparation-checks/rust-smoke"]
 resolver = "2"
 
 [workspace.package]

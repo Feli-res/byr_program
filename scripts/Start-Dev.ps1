@@ -1,4 +1,4 @@
-﻿param([switch]$Production)
+param([switch]$Production)
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'Use-DevEnvironment.ps1')
 $processPath=Join-Path $projectRoot '.local\dev-processes.json'

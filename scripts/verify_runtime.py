@@ -1,92 +1,29 @@
-"""4.4 integration check. Uses only the dedicated local development services."""
-from pathlib import Path
+"""Runtime scenarios; shared setup lives in test_support."""
+from test_support import ROOT
 import argparse
 import json
-import os
-import signal
 import socket
-import subprocess
 import sys
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
+from test_support.runtime import environment
+from test_support.runtime import RuntimeVerification
+LOG=ROOT/".local/logs/dev"
+RESULT=ROOT/"docs/engineering/runtime-verification.json"
 
-ROOT = Path(__file__).resolve().parent.parent
-LOG = ROOT / '.local/logs/dev'
-RESULT = ROOT / 'docs/engineering/runtime-verification.json'
-
-def environment():
-    env = os.environ.copy()
-    for line in (ROOT/'deploy/.env').read_text(encoding='utf-8-sig').splitlines():
-        if line.strip() and not line.lstrip().startswith('#'):
-            key, value = line.split('=',1);env[key] = value
-    password = urllib.parse.quote(env['MYSQL_PASSWORD'], safe='')
-    env['DATABASE_URL'] = f"mysql://{env['MYSQL_USER']}:{password}@127.0.0.1:{env['MYSQL_PORT']}/{env['MYSQL_DATABASE']}"
-    env['REDIS_URL'] = f"redis://127.0.0.1:{env['REDIS_PORT']}/"
-    env['NEXT_TELEMETRY_DISABLED'] = '1'
-    if os.name == 'nt' and 'PLAYWRIGHT_CHANNEL' not in env:
-        env['PLAYWRIGHT_CHANNEL'] = 'msedge'
-    return env
-
-class Verification:
+class Verification(RuntimeVerification):
     def __init__(self):
-        self.env = environment()
-        self.api = self.env['API_INTERNAL_URL']
-        self.web = self.env['WEB_ORIGIN']
-        self.processes=[];self.logs=[];self.checks=[];self.owns_services=False
-        self.compose=['docker','compose','--env-file',str(ROOT/'deploy/.env'),'-f',str(ROOT/'deploy/compose.dev.yaml')]
-        target = Path(self.env.get('CARGO_TARGET_DIR', ROOT/'target'))
-        self.binary = target/'debug'/('youzhihui-api.exe' if os.name=='nt' else 'youzhihui-api')
-
-    def run(self, args, name, cwd=ROOT, extra=None):
-        env=self.env.copy();env.update(extra or {})
-        with (LOG/(name+'.log')).open('wb') as log:
-            result=subprocess.run([str(a) for a in args],cwd=cwd,env=env,stdout=log,stderr=subprocess.STDOUT)
-        if result.returncode:raise RuntimeError(f'{name} failed; see {(LOG/(name+chr(46)+"log")).relative_to(ROOT).as_posix()}')
-
-    def start(self, args, name, cwd=ROOT, extra=None):
-        env=self.env.copy();env.update(extra or {})
-        log=(LOG/(name+'.log')).open('wb');self.logs.append(log)
-        process=subprocess.Popen([str(a) for a in args],cwd=cwd,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=os.name!='nt',creationflags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0)
-        self.processes.append(process);return process
-
-    def stop(self, process):
-        if process.poll() is not None:return
-        if os.name=='nt':subprocess.run(['taskkill','/PID',str(process.pid),'/T','/F'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
-        else:os.killpg(process.pid,signal.SIGTERM)
-        process.wait(timeout=15)
-
-    def request(self, path, body=None, expected=200, headers=None, base=None, raw=None):
-        data=json.dumps(body,ensure_ascii=False).encode('utf-8') if body is not None else raw
-        head={'Content-Type':'application/json'} if data is not None else {}
-        head.update(headers or {})
-        req=urllib.request.Request((base or self.api)+path,data=data,headers=head)
-        try:
-            with urllib.request.urlopen(req,timeout=12) as response:status=response.status;payload=json.load(response)
-        except urllib.error.HTTPError as error:status=error.code;payload=json.load(error)
-        assert status==expected,(path,status,expected)
-        assert uuid.UUID(payload.get('meta',{}).get('request_id')),(path,'missing request id')
-        return payload
-
-    def wait(self, path, base=None):
-        last=None
-        for _ in range(60):
-            try:return self.request(path,base=base)
-            except (Exception,) as error:last=error;time.sleep(.5)
-        raise RuntimeError('Service not ready: '+str(last))
-
-    def record(self, text):
-        self.checks.append(text);print('PASS '+text,flush=True)
+        super().__init__(log_dir=LOG)
 
     def browser(self, failure=False):
         cli=ROOT/'apps/web/node_modules/@playwright/test/cli.js'
         self.run(['node',cli,'test'],'browser-failure' if failure else 'browser-success',cwd=ROOT/'apps/web',extra={'E2E_FAILURE_MODE':'1' if failure else '0'})
-        source=LOG/'browser-results.json'
+        source=self.log_dir/'browser-results.json'
         report=json.loads(source.read_text(encoding='utf-8'))
         assert report['stats']['expected']==1 and report['stats']['unexpected']==0
-        (LOG/('browser-failure-results.json' if failure else 'browser-success-results.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+        (self.log_dir/('browser-failure-results.json' if failure else 'browser-success-results.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
 
     def execute(self, skip_browser=False):
         for address in [self.api,self.web]:
@@ -112,7 +49,7 @@ class Verification:
         self.request('/api/dev/records',expected=400,raw=b'{bad json')
         self.record('Validation boundaries, malformed JSON, unknown fields and origin rejection')
         self.run(self.compose+['exec','-T','mysql','sh','-c','MYSQL_PWD="$MYSQL_PASSWORD" mysql -u "$MYSQL_USER" -D "$MYSQL_DATABASE" --batch --skip-column-names -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE(); SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;"'],'schema-count')
-        counts=(LOG/'schema-count.log').read_text().split()
+        counts=(self.log_dir/'schema-count.log').read_text().split()
         assert counts==['35','5'],counts
         self.record('32 designed tables, development records, account throttling and migration history in MySQL')
         self.run(self.compose+['stop','redis'],'redis-stop')
@@ -143,11 +80,6 @@ class Verification:
         self.wait('/health/ready');self.request('/api/dev/records',expected=404)
         self.record('Development write and read routes disappear when disabled')
 
-    def cleanup(self):
-        for process in reversed(self.processes):self.stop(process)
-        for log in self.logs:log.close()
-        if self.owns_services:self.run(self.compose+['stop'],'services-stop')
-
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--skip-browser',action='store_true');args=parser.parse_args()
     LOG.mkdir(parents=True,exist_ok=True);RESULT.parent.mkdir(parents=True,exist_ok=True)
@@ -161,4 +93,4 @@ def main():
         RESULT.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     return 0 if status=='passed' else 1
 
-if __name__=='__main__':sys.exit(main())
+if __name__ == "__main__":sys.exit(main())

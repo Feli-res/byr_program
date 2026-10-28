@@ -13,35 +13,9 @@
     "The three original development account rows are identical before and after acceptance"
   ],
   "browser_cases": 3,
-  "regressions_run": {
-    "engineering": {
-      "status": "passed",
-      "groups": 11,
-      "report": "docs/engineering/runtime-verification.json"
-    },
-    "accounts": {
-      "status": "passed",
-      "groups": 21,
-      "report": "docs/accounts/verification.json"
-    },
-    "forum": {
-      "status": "passed",
-      "groups": 19,
-      "report": "docs/forum/verification.json"
-    },
-    "goods": {
-      "status": "passed",
-      "groups": 17,
-      "report": "docs/goods/verification.json"
-    },
-    "chat": {
-      "status": "passed",
-      "groups": 14,
-      "report": "docs/chat/verification.json"
-    }
-  },
+  "regressions_run": {},
   "revocation_seconds": {
-    "password_changed_cross_module": 1.52
+    "password_changed_cross_module": 1.009
   },
   "isolated_database_removed": true,
   "original_development_accounts_unchanged": true,

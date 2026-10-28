@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference='Stop'
+$ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
 $envPath=Join-Path $projectRoot 'deploy\.env'
 if (-not (Test-Path -LiteralPath $envPath)) {

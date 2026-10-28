@@ -1,26 +1,24 @@
-"""4.6.2 real goods, search, image and browser checks in an owned temporary database."""
-import concurrent.futures
+"""Goods scenarios; shared setup lives in test_support."""
+from test_support import ROOT
 import json
-import re
 import socket
 import sys
+import urllib.error
 import urllib.parse
-from pathlib import Path
-import verify_accounts as accounts
-import verify_forum as forum
-import verify_runtime as runtime
+import urllib.request
+import concurrent.futures
+import re
+from test_support.runtime import environment
+from test_support.accounts import AccountVerification
+from test_support.http import GoodsClient as Client
+from test_support.fixtures import png, pdf
+LOG=ROOT/".local/logs/goods"
+RESULT=ROOT/"docs/goods/verification.json"
 
-ROOT=runtime.ROOT;LOG=ROOT/'.local/logs/goods';RESULT=ROOT/'docs/goods/verification.json'
-accounts.LOG=LOG;runtime.LOG=LOG
+class Goods(AccountVerification):
+    def __init__(self):
+        super().__init__(log_dir=LOG)
 
-class Client(forum.Client):
-    def publish(self,category,images=None,expected=201,**overrides):
-        if images is None:images=[self.upload(accounts.png(),'goods_image')['data']['id']]
-        data={'category_id':category,'campus_code':'shahe','title':'校园测试商品','description':'商品真实描述','condition_code':'good','price_cents':1250,'location_text':'教学楼门口','image_file_ids':images,'brand':None,'model':None,'purpose':None,'attributes':{}}
-        data.update(overrides);reply=self.call('/api/v1/goods','POST',data,expected)
-        return reply['data'] if expected==201 else reply
-
-class Goods(accounts.Accounts):
     def execute(self):
         for address in [self.api,self.web]:
             parsed=urllib.parse.urlparse(address);assert parsed.hostname in ['localhost','127.0.0.1','::1'] and parsed.scheme=='http'
@@ -42,7 +40,7 @@ class Goods(accounts.Accounts):
         assert {v['code'] for v in campuses}=={'shahe','xitucheng','other'} and len(cats)>=2
         self.record('Independent database, migrations, enabled category/campus dictionaries and account roles')
 
-        image=alice.upload(accounts.png(),'goods_image')['data'];visitor.call(image['url'],expected=404)
+        image=alice.upload(png(),'goods_image')['data'];visitor.call(image['url'],expected=404)
         item=alice.publish(category,[image['id']],title='校园检索平板',price_cents=29,attributes={'stylus_support':False,'storage_gb':64},brand='Apple',model='iPad',purpose='学习');gid=item['id'];url='/api/v1/goods/'+gid
         assert item['price_cents']==29 and item['attributes']['stylus_support'] is False and not item['can_contact']
         assert visitor.call(url)['data']['can_contact'] and visitor.call(url)['data']['seller']['id']==aid
@@ -59,14 +57,14 @@ class Goods(accounts.Accounts):
         self.record('Free/max prices and Unicode boundaries work; fractional, forged, missing-dictionary and invalid optional facts are rejected')
 
         for count in [0,7]:alice.publish(category,images=[image['id']]*count,expected=422)
-        spare=alice.upload(accounts.png(),'goods_image')['data'];post_image=alice.upload(accounts.png(),'post_image')['data']
+        spare=alice.upload(png(),'goods_image')['data'];post_image=alice.upload(png(),'post_image')['data']
         alice.publish(category,images=[spare['id'],spare['id']],expected=422)
         alice.publish(category,images=[image['id']],expected=422)
         bob.publish(category,images=[spare['id']],expected=404)
         before=self.query('SELECT COUNT(*) FROM goods;')
         alice.publish(category,images=[spare['id'],post_image['id']],expected=422)
         assert self.query('SELECT COUNT(*) FROM goods;')==before and self.query(f"SELECT state FROM files WHERE id={spare['id']};")=='staged'
-        expired=alice.upload(accounts.png(),'goods_image')['data'];self.query(f"UPDATE files SET expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 HOUR) WHERE id={expired['id']};")
+        expired=alice.upload(png(),'goods_image')['data'];self.query(f"UPDATE files SET expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 HOUR) WHERE id={expired['id']};")
         alice.publish(category,images=[expired['id']],expected=422)
         self.record('One-to-six images, purpose, ownership, expiry, duplicate binding and publish rollback are enforced')
 
@@ -79,7 +77,7 @@ class Goods(accounts.Accounts):
         alice.call(url,'PATCH',{'version':item['version'],'moderation':'clear'},400)
         self.record('Seller-only writes, JSON field rules, CSRF and exact Origin checks apply to all goods mutations')
 
-        images=[alice.upload(accounts.png(),'goods_image')['data'] for _ in range(2)]
+        images=[alice.upload(png(),'goods_image')['data'] for _ in range(2)]
         current=alice.call(url,'PATCH',{'version':item['version'],'price_cents':3010,'image_file_ids':[i['id'] for i in images],'brand':None,'attributes':{'storage_gb':None,'stylus_support':True}})['data']
         assert current['price_cents']==3010 and current['brand'] is None and current['attributes']['storage_gb'] is None
         assert [v['id'] for v in current['images']]==[v['id'] for v in images]
@@ -88,7 +86,7 @@ class Goods(accounts.Accounts):
         assert current['images'][0]['id']==images[1]['id']
         quota=int(alice.call('/api/v1/me/file-quota')['data']['used_bytes']);self.cli(['--cleanup-files'],'cleanup-removed-files')
         # Includes one expired spare upload as well as the replaced original image.
-        assert int(alice.call('/api/v1/me/file-quota')['data']['used_bytes'])==quota-2*len(accounts.png())
+        assert int(alice.call('/api/v1/me/file-quota')['data']['used_bytes'])==quota-2*len(png())
         self.record('Editing preserves exact cents, clears optional values, reorders/replaces images and releases quota only after cleanup')
 
         def edit(client):
@@ -160,7 +158,7 @@ class Goods(accounts.Accounts):
         search_current=alice.call('/api/v1/goods/'+search_good['id']+'/state','PATCH',{'version':search_current['version'],'state':'on_sale'})['data']
         self.record('Search consults current source visibility and excludes hidden posts, reserved/sold/restricted goods immediately')
 
-        shared=alice.upload(accounts.png(),'goods_image')['data'];
+        shared=alice.upload(png(),'goods_image')['data'];
         def bind(client):
             try:client.call('/api/v1/goods','POST',{'category_id':category,'campus_code':'shahe','title':'并发图片绑定','description':'同一图片只能属于一件商品','condition_code':'good','price_cents':100,'location_text':'','image_file_ids':[shared['id']]},201);return 201
             except AssertionError as error:assert 'received 422' in str(error);return 422
@@ -175,13 +173,13 @@ class Goods(accounts.Accounts):
         assert admin.call('/api/v1/admin/goods')['data']['total']>=1
         self.record('Goods/public/owner/admin JSON follows the existing OpenAPI with bounded inputs and private ownership')
 
-        fixture=LOG/'fixture.png';fixture.write_bytes(accounts.png())
+        fixture=self.log_dir/'fixture.png';fixture.write_bytes(png())
         next_cli=ROOT/'apps/web/node_modules/next/dist/bin/next'
         self.web_process=self.start(['node',next_cli,'start','--hostname','127.0.0.1','--port',self.env['WEB_PORT']],'web',cwd=ROOT/'apps/web');self.wait('/health/ready',base=self.web)
         extra={'E2E_GOODS':'1','GOODS_ALICE':self.alice_account,'GOODS_BOB':self.bob_account,'GOODS_ADMIN':self.root_account,'GOODS_PASSWORD':self.password,'GOODS_SUFFIX':self.suffix,'GOODS_PNG':str(fixture),'GOODS_CATEGORY':category,'GOODS_SEED':search_good['id'],'GOODS_POST':post['id']}
         cli=ROOT/'apps/web/node_modules/@playwright/test/cli.js';self.run(['node',cli,'test','tests/goods.spec.mjs'],'browser',cwd=ROOT/'apps/web',extra=extra)
         report=json.loads((ROOT/'.local/logs/dev/browser-results.json').read_text(encoding='utf-8'));assert report['stats']['expected']==4 and report['stats']['unexpected']==0
-        (LOG/'browser-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+        (self.log_dir/'browser-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
         self.record('Four real browser cases: goods lifecycle/uploads, search-return/mobile, moderation privacy and database-failure recovery')
 
         restart=alice.publish(category,title='重启保留商品',price_cents=1234)
@@ -208,4 +206,5 @@ def main():
         except Exception as exc:status='failed';error=str(exc);print('Goods verification cleanup failed',file=sys.stderr)
         RESULT.write_text(json.dumps({'stage':'4.6.2','status':status,'checks':verification.checks,'browser_cases':4 if any('Four real browser' in s for s in verification.checks) else 0,'isolated_database_removed':not verification.created,'development_accounts_modified':False,'server_deployed':False,'ai_search_implemented':False,'error':error},ensure_ascii=False,indent=2),encoding='utf-8')
     return 0 if status=='passed' else 1
-if __name__=='__main__':sys.exit(main())
+
+if __name__ == "__main__":sys.exit(main())

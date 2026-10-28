@@ -19,11 +19,11 @@
   ],
   "browser_cases": 4,
   "revocation_seconds": {
-    "logout": 0.53,
-    "password_changed": 2.025,
-    "password_reset": 0.528,
-    "banned": 0.517,
-    "expired": 0.52
+    "logout": 0.456,
+    "password_changed": 1.009,
+    "password_reset": 0.51,
+    "banned": 0.512,
+    "expired": 0.509
   },
   "isolated_database_removed": true,
   "development_accounts_modified": false,

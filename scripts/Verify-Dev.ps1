@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference='Stop'
+$ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'Use-DevEnvironment.ps1')
 Push-Location -LiteralPath $projectRoot
 try {

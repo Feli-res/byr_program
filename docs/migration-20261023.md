@@ -44,9 +44,9 @@
 
 ## 以后怎样打开和运行
 
-- 看页面：双击 [页面入口](page-drafts/index.html)。
+- 看页面：双击 [页面入口](../archive/early-docs/page-drafts/index.html)。
 - 看项目任务：[项目计划书](../邮智汇_程设项目计划书.md)。
-- 重复工具和代码检查：[checks 使用说明](../checks/README.md)。
+- 重复工具和代码检查：[checks 使用说明](../archive/preparation-checks/README.md)。
 - 查本次原始结果：项目根目录下 `.local/migration-20261023/` 中的清单、日志和检查结果。此目录包含本机文件，不提交到 Git。
 
-检查结束后停止专用 MySQL、Redis 容器，保留数据卷；下次运行 `checks/Prepare-Checks.ps1` 即可启动。
+检查结束后停止专用 MySQL、Redis 容器，保留数据卷；下次运行 `archive/preparation-checks/Prepare-Checks.ps1` 即可启动。

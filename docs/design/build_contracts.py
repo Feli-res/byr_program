@@ -250,7 +250,7 @@ page_specs=[
     ('admin','F08','社区管理',[r[0] for r in rows if r[0].startswith('admin')]),
     ('directory','F09','草图目录',[])
 ]
-page_map={'date':'2026-10-23','status':'design_complete_not_implemented','pages':[{'page':key,'html':'../page-drafts/'+key+'.html','feature':feature,'name':name,'planned_operations':ops} for key,feature,name,ops in page_specs],
+page_map={'date':'2026-10-23','status':'design_complete_not_implemented','pages':[{'page':key,'html':'../../archive/early-docs/page-drafts/'+key+'.html','feature':feature,'name':name,'planned_operations':ops} for key,feature,name,ops in page_specs],
     'global_operations':['getCsrf','healthLive','healthReady'],
     'feature_cross_links':{'F01':['login','profile'],'F02':['index','forum','post','compose'],'F03':['search'],'F04':['goods','goods-detail','goods-edit'],'F05':['chat','notifications'],'F06':['search'],'F07':['search','subscriptions','notifications'],'F08':['admin'],'F09':['directory']}}
 (ROOT/'page-map.json').write_text(json.dumps(page_map,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

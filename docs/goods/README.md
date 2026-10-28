@@ -59,7 +59,7 @@
 | [search.rs](../../services/api/src/search.rs) | 公开帖子与商品的统一关键词搜索、排序和分页 |
 | [content.rs](../../services/api/src/content.rs) | 帖子与商品共用的变更编号、变更记录和待更新搜索记录 |
 | [files.rs](../../services/api/src/accounts/files.rs) | 沿用通用上传，增加商品图片绑定、顺序和访问权限 |
-| [goods.js](../../apps/web/components/goods.js) | 商品列表、详情、发布编辑、管理及搜索页面 |
+| [goods/](../../apps/web/components/goods/) | 商品列表、详情、发布编辑、管理及搜索页面；goods.js仅为入口 |
 | [money.mjs](../../apps/web/lib/money.mjs) | 元与整数分的严格转换与显示 |
 | [return-link.js](../../apps/web/components/return-link.js) | 校验站内返回地址，保留列表与搜索条件 |
 | [verify_goods.py](../../scripts/verify_goods.py)、[goods.spec.mjs](../../apps/web/tests/goods.spec.mjs) | 隔离的接口、浏览器、并发、故障及重启检查 |
@@ -80,7 +80,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Goods.ps1
 
 检查包括价格边界、非法输入、图片归属与数量、并发编辑、同图并发绑定、状态变化、管理员限制、搜索即时隐藏、分页返回、窄屏、数据库故障和重启读取。Windows 使用 Edge，CI 使用安装后的 Chromium。
 
-Linux / WSL 按工程说明准备后，安装 [现有测试依赖](../accounts/requirements-tests.txt)，构建前后端，运行 `node --test apps/web/checks/money.test.mjs` 和 `python3 scripts/verify_goods.py`。
+Linux / WSL 按工程说明准备后，安装 [现有测试依赖](../accounts/requirements-tests.txt)，构建前后端，运行 `node --test apps/web/tests/unit/money.test.mjs` 和 `python3 scripts/verify_goods.py`。
 
 ## 六、下一步
 

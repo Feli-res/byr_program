@@ -1,64 +1,33 @@
-"""4.6.3 isolated HTTP/WebSocket/browser verification; never seeds real user databases."""
-import concurrent.futures
-import hashlib
+"""Chat scenarios; shared setup lives in test_support."""
+from test_support import ROOT
 import json
-import os
-from pathlib import Path
 import socket
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.parse
+import urllib.request
 import uuid
-import verify_accounts as accounts
-import verify_goods as goods
-import verify_runtime as runtime
-ROOT=runtime.ROOT;LOG=ROOT/'.local/logs/chat';RESULT=ROOT/'docs/chat/verification.json'
-sys.path.insert(0,str(ROOT/'.local/chat-qa/python'))
-from websockets.sync.client import connect
-from websockets.exceptions import ConnectionClosed,InvalidStatus
-from jsonschema import Draft202012Validator,FormatChecker,ValidationError
-accounts.LOG=LOG;runtime.LOG=LOG
-WS=json.loads((ROOT/'docs/design/ws-events.json').read_text(encoding='utf-8-sig').replace('openapi.json#/components/','#/components/'))
-WS['components']=accounts.CONTRACT['components']
+import concurrent.futures
+import hashlib
+from websockets.exceptions import ConnectionClosed, InvalidStatus
+from test_support.runtime import environment
+from test_support.chat import ChatVerification
+from test_support.http import GoodsClient as Client
+from test_support.fixtures import png, pdf
+from test_support.websocket import Live
+LOG=ROOT/".local/logs/chat"
+RESULT=ROOT/"docs/chat/verification.json"
 
-class Live:
-    def __init__(self,v,client,ticket=None,authenticate=True,proxy=False,origin=True,url_suffix=''):
-        self.v=v;self.seen=[]
-        address=v.web if proxy else v.api;address=address.replace('localhost','127.0.0.1').replace('http:','ws:')+'/api/v1/ws'+url_suffix
-        cookie='; '.join(c.name+'='+c.value for c in client.jar)
-        self.ws=connect(address,origin=v.web if origin is True else origin or None,additional_headers={'Cookie':cookie},open_timeout=8,close_timeout=1,proxy=None)
-        v.sockets.append(self)
-        if authenticate:
-            ticket=ticket or client.call('/api/v1/ws-tickets','POST')['data']['ticket'];self.send('authenticate',{'ticket':ticket});self.until('ready')
-    def send(self,kind,data):
-        rid=str(uuid.uuid4());self.ws.send(json.dumps({'type':kind,'request_id':rid,'data':data}));return rid
-    def receive(self,timeout=5):
-        value=json.loads(self.ws.recv(timeout=timeout));name='server.'+value['type']
-        assert name in WS['$defs'],'Unknown server event'
-        try:Draft202012Validator({**WS,'$ref':'#/$defs/'+name},format_checker=FormatChecker()).validate(value)
-        except ValidationError as error:raise AssertionError('WebSocket schema mismatch at '+error.json_path) from None
-        self.seen.append(value);return value
-    def until(self,kind,predicate=lambda value:True,timeout=6):
-        end=time.monotonic()+timeout
-        while time.monotonic()<end:
-            value=self.receive(end-time.monotonic())
-            if value['type']==kind and predicate(value):return value
-        raise AssertionError('Expected WebSocket event missing: '+kind)
-    def close(self):self.ws.close()
-
-class Chat(accounts.Accounts):
+class Chat(ChatVerification):
     def __init__(self):
-        super().__init__();self.sockets=[];self.env['CHAT_TEST_FIXTURES']='1';self.env['UPLOAD_ROOT']=str(ROOT/'.local/chat-tests'/self.database);self.revocations={}
-    def fixture(self,recipient,summary,target_type='none',target=None):
-        self.cli(['--seed-chat-notification'],'seed-notification',json.dumps({'recipient_id':recipient,'summary':summary,'target_type':target_type,'target_id':target}).encode())
-    def redis(self,*args):
-        r=subprocess.run(self.compose+['exec','-T','redis','redis-cli','--raw',*map(str,args)],cwd=ROOT,env=self.env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=10)
-        assert r.returncode==0;return r.stdout.decode().strip()
+        super().__init__(log_dir=LOG)
+
     def revoke_check(self,admin,kind,index):
-        client=goods.Client(self);account='close_'+self.suffix+str(index);client.register(account,self.password,'连接撤销检查');client.login(account,self.password);uid=client.me()['id'];live=Live(self,client)
+        client=Client(self);account='close_'+self.suffix+str(index);client.register(account,self.password,'连接撤销检查');client.login(account,self.password);uid=client.me()['id'];live=Live(self,client)
         if kind=='logout':
-            other=goods.Client(self);other.login(account,self.password);survivor=Live(self,other)
+            other=Client(self);other.login(account,self.password);survivor=Live(self,other)
         start=time.monotonic()
         if kind=='logout':client.call('/api/v1/auth/logout','POST')
         elif kind=='password_changed':client.call('/api/v1/me/password','POST',{'current_password':self.password,'new_password':self.password+'n'})
@@ -74,6 +43,7 @@ class Chat(accounts.Accounts):
         except ConnectionClosed as error:assert error.rcvd and error.rcvd.code==4001
         self.revocations[kind]=round(elapsed,3)
         if kind=='logout':rid=survivor.send('ping',{});assert survivor.until('pong')['request_id']==rid;survivor.close()
+
     def verify_push_failure(self,bob,cid,recipient):
         message=bob.call('/api/v1/conversations/'+cid+'/messages','POST',{'client_message_id':str(uuid.uuid4()),'body':'推送失败也保留的消息'},201)['data']
         source=message['id']
@@ -101,6 +71,7 @@ class Chat(accounts.Accounts):
             except subprocess.TimeoutExpired:holder.terminate();holder.wait(timeout=3)
         assert any(m['id']==source for m in bob.call('/api/v1/conversations/'+cid+'/messages')['data']['items'])
         self.record('A real temporary read lock causes push retry and expiry after its final allowed attempt; committed HTTP history remains intact')
+
     def execute(self):
         for address in [self.api,self.web]:
             parsed=urllib.parse.urlparse(address);assert parsed.hostname in ['localhost','127.0.0.1','::1'] and parsed.scheme=='http'
@@ -112,11 +83,11 @@ class Chat(accounts.Accounts):
         assert self.query('SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;')=='5'
         self.cli(['--init-admin'],'init-admin',json.dumps({'account':self.root_account,'nickname':'聊天测试管理员','password':self.password}).encode())
         self.server=self.start([self.binary],'api');self.wait('/health/ready')
-        admin=goods.Client(self);admin.login(self.root_account,self.password)
-        alice=goods.Client(self);alice.register(self.alice_account,self.password,'聊天卖家');alice.login(self.alice_account,self.password);aid=alice.me()['id']
-        bob=goods.Client(self);bob.register(self.bob_account,self.password,'聊天买家');bob.login(self.bob_account,self.password);bid=bob.me()['id']
-        outsider=goods.Client(self);third='third_'+self.suffix;outsider.register(third,self.password,'无关用户');outsider.login(third,self.password)
-        visitor=goods.Client(self);category=visitor.call('/api/v1/goods-categories')['data'][0]['id'];product=alice.publish(category,title='联系卖家测试商品')
+        admin=Client(self);admin.login(self.root_account,self.password)
+        alice=Client(self);alice.register(self.alice_account,self.password,'聊天卖家');alice.login(self.alice_account,self.password);aid=alice.me()['id']
+        bob=Client(self);bob.register(self.bob_account,self.password,'聊天买家');bob.login(self.bob_account,self.password);bid=bob.me()['id']
+        outsider=Client(self);third='third_'+self.suffix;outsider.register(third,self.password,'无关用户');outsider.login(third,self.password)
+        visitor=Client(self);category=visitor.call('/api/v1/goods-categories')['data'][0]['id'];product=alice.publish(category,title='联系卖家测试商品')
         self.record('Five migrations and independent seller/buyer/outsider/admin identities')
 
         opened=bob.call('/api/v1/conversations','POST',{'goods_id':product['id']})['data'];cid=opened['id'];base='/api/v1/conversations/'+cid
@@ -213,11 +184,11 @@ class Chat(accounts.Accounts):
             try:live.close()
             except Exception:pass
 
-        fixture=LOG/'fixture.png';fixture.write_bytes(accounts.png())
+        fixture=self.log_dir/'fixture.png';fixture.write_bytes(png())
         extra={'E2E_CHAT':'1','CHAT_ALICE':self.alice_account,'CHAT_BOB':self.bob_account,'CHAT_THIRD':third,'CHAT_ADMIN':self.root_account,'CHAT_PASSWORD':self.password,'CHAT_SUFFIX':self.suffix,'CHAT_GOODS':second['id'],'CHAT_CONVERSATION':cid,'CHAT_NOTICE':nid,'CHAT_PNG':str(fixture)}
         self.run(['node',ROOT/'apps/web/node_modules/@playwright/test/cli.js','test','tests/chat.spec.mjs'],'browser',cwd=ROOT/'apps/web',extra=extra)
         report=json.loads((ROOT/'.local/logs/dev/browser-results.json').read_text(encoding='utf-8'));assert report['stats']['expected']==4 and report['stats']['unexpected']==0
-        (LOG/'browser-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+        (self.log_dir/'browser-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
         self.record('Four real browser cases cover contact/live chat, retry and reconnect, notifications/privacy, and database-failure recovery')
 
         self.verify_push_failure(bob,cid,aid)
@@ -230,14 +201,10 @@ class Chat(accounts.Accounts):
         assert any(n['id']==nid and n['read_at'] for n in bob.call('/api/v1/notifications')['data']['items'])
         assert self.query('SELECT COUNT(*) FROM messages;')==self.query("SELECT COUNT(DISTINCT CONCAT(conversation_id,':',sender_id,':',client_message_id)) FROM messages;")
         self.record('Service/database restart preserves sessions, message identities/history and notification read state')
-        logs='\n'.join(p.read_text(encoding='utf-8',errors='replace') for p in LOG.glob('api*.log'))
+        logs='\n'.join(p.read_text(encoding='utf-8',errors='replace') for p in self.log_dir.glob('api*.log'))
         assert self.password not in logs and token not in logs and '实时消息 <script>' not in logs
         self.record('Access logs exclude tested passwords, ticket values and private message content')
-    def cleanup(self):
-        for live in self.sockets:
-            try:live.close()
-            except Exception:pass
-        super().cleanup()
+
 def main():
     LOG.mkdir(parents=True,exist_ok=True);RESULT.parent.mkdir(parents=True,exist_ok=True);verification=Chat();status='failed';error=None
     try:verification.execute();status='passed'
@@ -247,4 +214,5 @@ def main():
         except Exception as exc:status='failed';error='Verification cleanup failed';print(error,file=sys.stderr)
         RESULT.write_text(json.dumps({'stage':'4.6.3','status':status,'checks':verification.checks,'browser_cases':4 if any('Four real browser' in s for s in verification.checks) else 0,'revocation_seconds':verification.revocations,'isolated_database_removed':not verification.created,'development_accounts_modified':False,'server_deployed':False,'error':error},ensure_ascii=False,indent=2),encoding='utf-8')
     return 0 if status=='passed' else 1
-if __name__=='__main__':sys.exit(main())
+
+if __name__ == "__main__":sys.exit(main())

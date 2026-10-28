@@ -185,6 +185,21 @@ test('加载、空内容、无权限和读写失败可恢复，失败不冒充�
     }
     await context.close();
   }
+  // A fresh login in the same browser must not display the previous account's cached list.
+  const switching = await browser.newContext(), changed = await switching.newPage();
+  await login(changed, process.env.ACC_ALICE);await changed.goto('/me/posts');
+  await expect(changed.getByRole('link', {name: process.env.ACC_MANAGED_POST, exact: true})).toBeVisible();
+  let releasePrivateRead;
+  const privateRead = new Promise(resolve => {releasePrivateRead = resolve;});
+  await changed.route(/\/api\/v1\/me\/posts(?:\?.*)?$/, async route => {await privateRead;await route.continue();});
+  // Simulate the current tab observing a different, already authenticated browser login.
+  await switching.addCookies(await page.context().cookies());
+  await changed.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(changed.getByRole('navigation', {name: '账户导航'})).toContainText('无关用户');
+  await expect(changed.getByRole('link', {name: process.env.ACC_MANAGED_POST, exact: true})).toHaveCount(0);
+  releasePrivateRead();
+  await expect(changed.getByRole('link', {name: title, exact: true})).toBeVisible();
+  await switching.close();
   for (const target of ['/posts/18446744073709551615', '/goods/18446744073709551615']) {
     await page.goto(target);
     await expect(page.getByRole('alert').filter({hasText: '内容不存在'})).toBeVisible();

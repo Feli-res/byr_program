@@ -49,7 +49,7 @@ jobs:
       - name: Verify forum and shared uploads
         run: python3 scripts/verify_forum.py
       - name: Check exact money conversion
-        run: node --test apps/web/checks/money.test.mjs
+        run: node --test apps/web/tests/unit/money.test.mjs
       - name: Verify goods and keyword search
         run: python3 scripts/verify_goods.py
       - name: Install WebSocket test dependency

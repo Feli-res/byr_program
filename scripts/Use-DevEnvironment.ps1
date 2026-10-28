@@ -1,7 +1,7 @@
-﻿$ErrorActionPreference='Stop'
+$ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
 if (Test-Path -LiteralPath (Join-Path $projectRoot '.local\cargo\bin\cargo.exe')) {
-    . (Join-Path $projectRoot 'checks\Use-ProjectTools.ps1')
+    . (Join-Path $projectRoot 'scripts\Use-ProjectTools.ps1')
 }
 $env:NEXT_TELEMETRY_DISABLED='1'
 $devLog=Join-Path $projectRoot '.local\logs\dev'

@@ -53,7 +53,7 @@ Markdown 使用 [react-markdown](https://github.com/remarkjs/react-markdown) 和
 | [access.rs](../../services/api/src/access.rs) | 共用登录、身份、请求保护、输入及错误处理入口，继续调用原账户规则 |
 | [forum.rs](../../services/api/src/forum.rs) | 帖子、评论、点赞收藏、个人列表、管理权限、变更记录和审计 |
 | [files.rs](../../services/api/src/accounts/files.rs) | 按用途上传、图片/PDF 检查、文件绑定、权限读取与清理 |
-| [forum.js](../../apps/web/components/forum.js) | 论坛列表、编辑、详情和管理界面 |
+| [forum/](../../apps/web/components/forum/) | 论坛列表、编辑、详情和管理界面；forum.js仅为页面导入入口 |
 | [files.js](../../apps/web/components/files.js)、[upload.js](../../apps/web/lib/upload.js) | 共用上传和附件展示 |
 | [verify_forum.py](../../scripts/verify_forum.py) | 独立临时库的真实接口、权限、并发、文件、故障和重启检查 |
 | [forum.spec.mjs](../../apps/web/tests/forum.spec.mjs) | 普通用户操作、版主范围、数据库故障与表单恢复的浏览器检查 |

@@ -1,117 +1,26 @@
-"""Real 4.5 verification in a uniquely created, disposable MySQL database."""
-from pathlib import Path
-import concurrent.futures
-import copy
-import hashlib
-import http.cookiejar
-import http.client
+"""Accounts scenarios; shared setup lives in test_support."""
+from test_support import ROOT
 import json
-import os
-import re
-import secrets
 import socket
-import struct
-import subprocess
 import sys
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
-import uuid
-import zlib
-import verify_runtime as runtime
+import concurrent.futures
+import hashlib
+import re
+import secrets
+from test_support.runtime import environment
+from test_support.accounts import AccountVerification
+from test_support.http import AccountClient as Client
+from test_support.fixtures import png, pdf
+LOG=ROOT/".local/logs/accounts"
+RESULT=ROOT/"docs/accounts/verification.json"
 
-ROOT=runtime.ROOT
-for package_dir in [ROOT/'.local/design-qa/python',ROOT/'.local/accounts-qa/python']:
-    if package_dir.exists():sys.path.insert(0,str(package_dir))
-from jsonschema import Draft202012Validator,FormatChecker,ValidationError
-CONTRACT=json.loads((ROOT/'docs/design/openapi.json').read_text(encoding='utf-8-sig'))
-LOG=ROOT/'.local/logs/accounts'
-RESULT=ROOT/'docs/accounts/verification.json'
-runtime.LOG=LOG
-
-def png(width=1,height=1):
-    def chunk(name,data):return struct.pack('!I',len(data))+name+data+struct.pack('!I',zlib.crc32(name+data)&0xffffffff)
-    return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!IIBBBBB',width,height,8,6,0,0,0))+chunk(b'IDAT',zlib.compress(b'\0\xff\0\0\xff'))+chunk(b'IEND',b'')
-
-class Client:
-    def __init__(self,verification):
-        self.v=verification;self.jar=http.cookiejar.CookieJar();self.opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.jar))
-    def clone(self):
-        other=Client(self.v)
-        for cookie in self.jar:other.jar.set_cookie(copy.copy(cookie))
-        return other
-    def cookie(self,name):return next((c.value for c in self.jar if c.name==name),None)
-    def call(self,path,method='GET',body=None,expected=200,protect=True,headers=None,raw=None,json_response=True):
-        head={'Connection':'close'};data=raw
-        if body is not None:data=json.dumps(body,ensure_ascii=False).encode();head['Content-Type']='application/json'
-        if method not in ['GET','HEAD']:
-            head['Origin']=self.v.web
-            if protect:head['X-CSRF-Token']=self.call('/api/v1/csrf')['data']['csrf_token']
-        head.update(headers or {})
-        request=urllib.request.Request(self.v.api+path,data=data,headers=head,method=method)
-        for attempt in range(3):
-            response=None
-            try:
-                try:response=self.opener.open(request,timeout=20);status=response.status
-                except urllib.error.HTTPError as error:response=error;status=error.code
-                self.last_headers=response.headers;result=response.read();break
-            except (OSError,http.client.HTTPException) as error:
-                if method not in ['GET','HEAD'] or attempt==2:raise RuntimeError(f'Transport failure for {method} {path}: {type(error).__name__}') from None
-                time.sleep(.2)
-            finally:
-                if response is not None:response.close()
-        assert status==expected,f'{method} {path}: expected {expected}, received {status}'
-        if not json_response:return result
-        payload=json.loads(result)
-        assert uuid.UUID(payload['meta']['request_id'])
-        for route,operations in CONTRACT['paths'].items():
-            if method.lower() not in operations or not re.fullmatch(re.sub(r'\{[^}]+\}',r'[^/]+',route),urllib.parse.urlsplit(path).path):continue
-            responses=operations[method.lower()]['responses'];spec=responses.get(str(status),responses.get('default'))
-            schema=spec['content']['application/json']['schema']
-            try:Draft202012Validator({**CONTRACT,**schema},format_checker=FormatChecker()).validate(payload)
-            except ValidationError as error:raise AssertionError(f'OpenAPI response mismatch for {method} {path} at {error.json_path}') from None
-            break
-        if status>=400:
-            assert 'error' in payload and 'data' not in payload
-            assert all(word not in payload['error']['message'] for word in ['SELECT ','INSERT ','mysql://','D:\\'])
-        return payload
-    def login(self,account,password,expected=200):return self.call('/api/v1/auth/login','POST',{'account':account,'password':password},expected)
-    def register(self,account,password,nickname='测试用户',expected=201):return self.call('/api/v1/auth/register','POST',{'account':account,'password':password,'nickname':nickname},expected)
-    def upload(self,content,name='avatar.png',mime='image/png',expected=201):
-        boundary='byr'+uuid.uuid4().hex
-        raw=(f'--{boundary}\r\nContent-Disposition: form-data; name="purpose"\r\n\r\navatar\r\n--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{name}"\r\nContent-Type: {mime}\r\n\r\n').encode()+content+f'\r\n--{boundary}--\r\n'.encode()
-        return self.call('/api/v1/files','POST',expected=expected,raw=raw,headers={'Content-Type':f'multipart/form-data; boundary={boundary}'})
-    def me(self):return self.call('/api/v1/me')['data']
-
-class Accounts(runtime.Verification):
+class Accounts(AccountVerification):
     def __init__(self):
-        super().__init__();self.database='byr_accounts_'+uuid.uuid4().hex[:16];self.created=False
-        self.env['DATABASE_URL']=self.env['DATABASE_URL'].rsplit('/',1)[0]+'/'+self.database
-        self.env['UPLOAD_ROOT']=str(ROOT/'.local/account-tests'/self.database)
-        self.env['RUST_LOG']='info,sqlx::query=error'
-        self.suffix=uuid.uuid4().hex[:8]
-        self.password=' '+secrets.token_urlsafe(18)+' '
-        self.root_account='root_'+self.suffix;self.alice_account='alice_'+self.suffix;self.bob_account='bob_'+self.suffix
-        self.server=None;self.web_process=None
-    def sql(self,sql,name='sql'):
-        command=self.compose+['exec','-T','mysql','sh','-c','MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql -uroot --default-character-set=utf8mb4 --batch --skip-column-names']
-        result=subprocess.run(command,input=sql.encode('utf-8'),stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=self.env,cwd=ROOT)
-        if result.returncode:raise RuntimeError('Test SQL failed: '+name)
-        return result.stdout.decode('utf-8').strip()
-    def query(self,sql):return self.sql(f'USE `{self.database}`; '+sql)
-    def cli(self,args,name,input=None,expected=0):
-        with (LOG/(name+'.log')).open('wb') as log:
-            result=subprocess.run([self.binary,*args],input=input,env=self.env,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
-        assert (result.returncode==0)==(expected==0),name+' returned an unexpected exit status'
-    def clear_limits(self):self.query('DELETE FROM auth_login_limits;')
-    def admin_action(self,admin,target,kind,data,expected=200):
-        return admin.call(f'/api/v1/admin/users/{target}/{kind}','POST' if kind=='password-reset' else 'PATCH',data,expected)
-    def target(self,admin,uid):
-        return next(item for item in admin.call('/api/v1/admin/users?page_size=100')['data']['items'] if item['id']==uid)
-    def new_reset(self,admin,uid):
-        version=self.target(admin,uid)['version']
-        return self.admin_action(admin,uid,'password-reset',{'version':version,'reason':'账户集成检查'})['data']['credential']
+        super().__init__(log_dir=LOG)
+
     def execute(self):
         for address in [self.api,self.web]:
             parsed=urllib.parse.urlparse(address)
@@ -282,26 +191,18 @@ class Accounts(runtime.Verification):
         self.query('UPDATE auth_login_limits SET locked_until=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND),window_started_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 31 MINUTE);')
         blocked.login(self.alice_account,reset_password)
         self.record('Five-failure account/IP throttling, Retry-After, spoofed forwarding rejection and Redis-loss persistence')
-        logs='\n'.join(p.read_text(encoding='utf-8',errors='replace') for p in LOG.glob('api*.log'))
+        logs='\n'.join(p.read_text(encoding='utf-8',errors='replace') for p in self.log_dir.glob('api*.log'))
         assert all(secret not in logs for secret in [self.password,session,credential,current,reset_password])
         self.record('Access logs contain no tested passwords, session tokens or reset credentials')
 
     def browser_accounts(self,failure=False,admin_account='',admin_password=''):
         cli=ROOT/'apps/web/node_modules/@playwright/test/cli.js'
-        fixture=LOG/'avatar.png';fixture.write_bytes(png())
+        fixture=self.log_dir/'avatar.png';fixture.write_bytes(png())
         extra={'E2E_ACCOUNTS':'1','ACCOUNT_FAILURE_MODE':'1' if failure else '0','ACCOUNT_TEST_SUFFIX':self.suffix,'ACCOUNT_ADMIN':admin_account,'ACCOUNT_ADMIN_PASSWORD':admin_password,'ACCOUNT_TEST_PASSWORD':secrets.token_urlsafe(20),'ACCOUNT_PNG_FIXTURE':str(fixture)}
         self.run(['node',cli,'test','tests/accounts.spec.mjs'],'browser-failure' if failure else 'browser',cwd=ROOT/'apps/web',extra=extra)
         report=json.loads((ROOT/'.local/logs/dev/browser-results.json').read_text(encoding='utf-8'))
         assert report['stats']['expected']==(1 if failure else 2) and report['stats']['unexpected']==0
-        (LOG/('browser-failure-results.json' if failure else 'browser-results.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
-    def cleanup(self):
-        for process in reversed(self.processes):self.stop(process)
-        for log in self.logs:log.close()
-        if self.created:
-            assert re.fullmatch(r'byr_accounts_[a-f0-9]{16}',self.database)
-            self.run(self.compose+['up','-d','--wait'],'cleanup-services-ready')
-            self.sql(f"REVOKE ALL PRIVILEGES ON `{self.database}`.* FROM '{self.env['MYSQL_USER']}'@'%'; DROP DATABASE `{self.database}`;",'drop-own-test-database');self.created=False
-        if self.owns_services:self.run(self.compose+['stop'],'services-stop')
+        (self.log_dir/('browser-failure-results.json' if failure else 'browser-results.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
 
 def main():
     LOG.mkdir(parents=True,exist_ok=True);RESULT.parent.mkdir(parents=True,exist_ok=True)
@@ -313,4 +214,5 @@ def main():
         except Exception as exc:status='failed';error=str(exc);print('Verification cleanup failed',file=sys.stderr)
         RESULT.write_text(json.dumps({'stage':'4.5','status':status,'checks':verification.checks,'isolated_test_database_removed':not verification.created,'real_browser':'Microsoft Edge on Windows; bundled Chromium in CI','real_development_accounts_modified':False,'websocket_invalidation_tested':False,'server_deployed':False,'error':error},ensure_ascii=False,indent=2),encoding='utf-8')
     return 0 if status=='passed' else 1
-if __name__=='__main__':sys.exit(main())
+
+if __name__ == "__main__":sys.exit(main())

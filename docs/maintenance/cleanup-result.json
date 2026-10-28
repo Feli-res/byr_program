@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-28",
+  "status": "passed",
+  "size_method": "Logical file-size sums, excluding .git and external Docker volumes; comparison uses prior recorded inventory, not physical free space.",
+  "before_bytes": 20285333187,
+  "after_bytes": 7412654765,
+  "estimated_net_reduction_bytes": 12872678422,
+  "after_folders": {
+    "(root files)": {
+      "files": 8,
+      "bytes": 164440
+    },
+    ".github": {
+      "files": 1,
+      "bytes": 3570
+    },
+    ".local": {
+      "files": 37867,
+      "bytes": 6884697508
+    },
+    ".upstream": {
+      "files": 279,
+      "bytes": 2922631
+    },
+    "apps": {
+      "files": 13040,
+      "bytes": 493950570
+    },
+    "archive": {
+      "files": 69,
+      "bytes": 29056518
+    },
+    "checks": {
+      "files": 1,
+      "bytes": 303
+    },
+    "demand": {
+      "files": 13,
+      "bytes": 636966
+    },
+    "deploy": {
+      "files": 4,
+      "bytes": 3129
+    },
+    "docs": {
+      "files": 46,
+      "bytes": 610994
+    },
+    "migrations": {
+      "files": 6,
+      "bytes": 24021
+    },
+    "scripts": {
+      "files": 41,
+      "bytes": 371335
+    },
+    "services": {
+      "files": 16,
+      "bytes": 212780
+    }
+  },
+  "validation": {
+    "docs/engineering/runtime-verification.json": {
+      "status": "passed",
+      "groups": 11
+    },
+    "docs/accounts/verification.json": {
+      "status": "passed",
+      "groups": 21
+    },
+    "docs/forum/verification.json": {
+      "status": "passed",
+      "groups": 19
+    },
+    "docs/goods/verification.json": {
+      "status": "passed",
+      "groups": 17
+    },
+    "docs/chat/verification.json": {
+      "status": "passed",
+      "groups": 14
+    },
+    "docs/acceptance/verification.json": {
+      "status": "passed",
+      "groups": 8
+    }
+  },
+  "rust_unit_tests": 14,
+  "money_unit_tests": 3,
+  "frontend_build": "passed",
+  "clippy": "passed",
+  "account_switch_cache_browser_check": "passed",
+  "archived_file_preview_and_offline_font": "passed",
+  "active_markdown_links_checked": 483,
+  "original_configuration_unchanged": true,
+  "original_user_rows_unchanged": true,
+  "original_uploads_unchanged": true,
+  "original_word_templates_and_migrations_unchanged": true,
+  "upstream_unchanged_in_original_location": true,
+  "private_backup": ".local/maintenance-private-20261028",
+  "automatic_review_adjustment": "Moving .upstream was rejected; kept source unchanged and provided archive navigation.",
+  "server_deployed": false,
+  "git_push_performed": false
+}

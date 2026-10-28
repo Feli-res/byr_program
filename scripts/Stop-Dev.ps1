@@ -1,4 +1,4 @@
-﻿param([switch]$KeepDatabase)
+param([switch]$KeepDatabase)
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'Use-DevEnvironment.ps1')
 $processPath=Join-Path $projectRoot '.local\dev-processes.json'

@@ -19,6 +19,8 @@
 | `Verify-Accounts.ps1` | 完整4.5验收：单元、构建、隔离临时库、真实接口与浏览器 |
 | `verify_accounts.py` | 隔离临时库的账户、安全、头像、并发、故障和重启验收 |
 | `Verify-Dev.ps1` | 格式检查、Rust 测试、构建及完整运行验证；检查时需要开发端口空闲 |
+| `Use-ProjectTools.ps1` | 正式工具路径设置，不依赖归档检查目录 |
+| `test_support/` | 共用进程、临时数据库、客户端和样例，见 [说明](test_support/README.md) |
 | `Use-DevEnvironment.ps1` | 读取设置；已有项目内 Rust 工具时自动使用，否则使用系统 Rust |
 | `dev.py` | 跨平台配置生成、数据库启动、迁移及前后端前台启动 |
 | `verify_runtime.py` | 真实 HTTP、SQL 迁移、浏览器、数据库故障与重启读取；结束停止本次程序和开发容器，保留数据卷 |

@@ -1,0 +1,10 @@
+﻿{
+    "acceptance_case_count":  20,
+    "application_functions_tested":  false,
+    "feature_count":  9,
+    "requirement_sha256":  "B8F148DF95FA94F0A60BF1E8BD4C345EF6473491D1E9EE1FCA402759DD6F73C3",
+    "status":  "passed",
+    "step":  "4.1",
+    "word_modified":  false,
+    "links":  "passed"
+}

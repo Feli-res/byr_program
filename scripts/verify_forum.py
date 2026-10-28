@@ -1,41 +1,24 @@
-"""4.6.1 real HTTP/browser verification in an owned disposable database."""
-from pathlib import Path
-import concurrent.futures
+"""Forum scenarios; shared setup lives in test_support."""
+from test_support import ROOT
 import json
-import os
-import re
-import secrets
 import socket
 import sys
+import urllib.error
 import urllib.parse
-import uuid
-import verify_accounts as accounts
-import verify_runtime as runtime
+import urllib.request
+import concurrent.futures
+import re
+from test_support.runtime import environment
+from test_support.accounts import AccountVerification
+from test_support.http import ForumClient as Client
+from test_support.fixtures import png, pdf
+LOG=ROOT/".local/logs/forum"
+RESULT=ROOT/"docs/forum/verification.json"
 
-ROOT=runtime.ROOT
-LOG=ROOT/'.local/logs/forum'
-RESULT=ROOT/'docs/forum/verification.json'
-accounts.LOG=LOG
-runtime.LOG=LOG
+class Forum(AccountVerification):
+    def __init__(self):
+        super().__init__(log_dir=LOG)
 
-def pdf(active=False):
-    objects=[b'<< /Type /Catalog /Pages 2 0 R '+(b'/Names << /JavaScript << /Names [(demo) << /S /JavaScript /JS (alert) >>] >> >> ' if active=='nested' else b'/OpenAction << /S /JavaScript /JS (alert) >> ' if active else b'')+b'>>',b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 100 100] >>']
-    data=b'%PDF-1.4\n';offsets=[0]
-    for index,obj in enumerate(objects,1):offsets.append(len(data));data+=f'{index} 0 obj\n'.encode()+obj+b'\nendobj\n'
-    xref=len(data);data+=f'xref\n0 {len(objects)+1}\n0000000000 65535 f \n'.encode()
-    for offset in offsets[1:]:data+=f'{offset:010d} 00000 n \n'.encode()
-    return data+f'trailer\n<< /Size 4 /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n'.encode()
-
-class Client(accounts.Client):
-    def upload(self,content,purpose='post_image',name='image.png',mime='image/png',expected=201):
-        boundary='forum'+uuid.uuid4().hex
-        raw=(f'--{boundary}\r\nContent-Disposition: form-data; name="purpose"\r\n\r\n{purpose}\r\n--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{name}"\r\nContent-Type: {mime}\r\n\r\n').encode()+content+f'\r\n--{boundary}--\r\n'.encode()
-        return self.call('/api/v1/files','POST',expected=expected,raw=raw,headers={'Content-Type':f'multipart/form-data; boundary={boundary}'})
-    def post(self,board,title='接口测试帖子',body='真实保存的正文',images=None,pdfs=None,expected=201):
-        result=self.call('/api/v1/posts','POST',{'board_id':board,'title':title,'body_markdown':body,'image_file_ids':images or [],'pdf_file_ids':pdfs or []},expected)
-        return result['data'] if expected==201 else result
-
-class Forum(accounts.Accounts):
     def execute(self):
         for address in [self.api,self.web]:
             parsed=urllib.parse.urlparse(address)
@@ -59,19 +42,19 @@ class Forum(accounts.Accounts):
         self.admin_action(admin,mod_id,'role',{'role':'moderator','board_ids':[b1],'version':target['version'],'reason':'论坛权限检查'})
         self.record('Independent migrated database and ordinary/admin/board-moderator identities')
 
-        image=alice.upload(accounts.png())['data'];attachment=alice.upload(pdf(),'post_pdf','notes.pdf','application/pdf')['data']
-        goods_image=alice.upload(accounts.png(),'goods_image')['data']
+        image=alice.upload(png())['data'];attachment=alice.upload(pdf(),'post_pdf','notes.pdf','application/pdf')['data']
+        goods_image=alice.upload(png(),'goods_image')['data']
         for file in [image,attachment,goods_image]:
             visitor.call(file['url'],expected=404);bob.call(file['url'],expected=404);alice.call(file['url'],json_response=False)
         visitor.call('/api/v1/files','POST',expected=401,raw=b'',headers={'Content-Type':'multipart/form-data; boundary=none'})
         self.record('All new upload purposes work; staged uploads are readable only by their owner')
-        alice.upload(accounts.png(),mime='image/jpeg',expected=415)
+        alice.upload(png(),mime='image/jpeg',expected=415)
         alice.upload(b'not an image',expected=415)
-        alice.upload(accounts.png(),'post_image','unsafe.svg','image/svg+xml',415)
+        alice.upload(png(),'post_image','unsafe.svg','image/svg+xml',415)
         alice.upload(b'%PDF-1.4\nnot a document\n%%EOF','post_pdf','fake.pdf','application/pdf',415)
         alice.upload(pdf(True),'post_pdf','active.pdf','application/pdf',415)
         alice.upload(pdf('nested'),'post_pdf','nested.pdf','application/pdf',415)
-        alice.upload(accounts.png(),'post_image','../escape.png','image/png',422)
+        alice.upload(png(),'post_image','../escape.png','image/png',422)
         alice.upload(b'x'*(5242880+1),expected=413)
         alice.upload(b'x'*(10485760+1),'post_pdf','large.pdf','application/pdf',413)
         self.record('Real image/PDF parsing, MIME-extension matching, active PDF rejection, path and size limits')
@@ -130,7 +113,7 @@ class Forum(accounts.Accounts):
         current=alice.call(url)['data'];assert current['version']==first['version']+1
         self.record('Concurrent edits with the same version preserve one successful update and reject the stale write')
 
-        retained=alice.upload(accounts.png())['data']
+        retained=alice.upload(png())['data']
         count=self.query('SELECT COUNT(*) FROM posts;')
         alice.post(b1,images=[retained['id'],goods_image['id']],expected=422)
         assert self.query('SELECT COUNT(*) FROM posts;')==count
@@ -147,7 +130,7 @@ class Forum(accounts.Accounts):
         visitor.call(attachment['url'],expected=404);visitor.call(retained['url'],json_response=False)
         quota_before=int(alice.call('/api/v1/me/file-quota')['data']['used_bytes'])
         self.cli(['--cleanup-files'],'cleanup-replaced-attachments')
-        assert int(alice.call('/api/v1/me/file-quota')['data']['used_bytes'])==quota_before-len(accounts.png())-len(pdf())
+        assert int(alice.call('/api/v1/me/file-quota')['data']['used_bytes'])==quota_before-len(png())-len(pdf())
         assert self.query(f"SELECT state FROM files WHERE id={image['id']};")=='cleaned'
         self.record('Replacing/removing bound files revokes old URLs immediately and physical cleanup returns quota')
 
@@ -189,24 +172,24 @@ class Forum(accounts.Accounts):
         self.record('Public/personal/admin responses conform to 4.3 OpenAPI with bounded stable pagination')
 
         self.query(f'UPDATE users SET used_file_bytes=209715200 WHERE id={bob_id};')
-        bob.upload(accounts.png(),expected=422)
+        bob.upload(png(),expected=422)
         self.query(f'UPDATE users SET used_file_bytes=0 WHERE id={bob_id};')
-        expired=alice.upload(accounts.png(),'goods_image')['data']
+        expired=alice.upload(png(),'goods_image')['data']
         self.query(f"UPDATE files SET expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 HOUR) WHERE id={expired['id']};")
         alice.call(expired['url'],expected=404);self.cli(['--cleanup-files'],'cleanup-expired-purpose')
         assert self.query(f"SELECT state FROM files WHERE id={expired['id']};")=='cleaned'
         self.record('Shared quota and staged expiry/cleanup apply to goods uploads as well as forum attachments')
 
         # Real browser tests operate in this same isolated database.
-        image_path=LOG/'fixture.png';image_path.write_bytes(accounts.png())
-        pdf_path=LOG/'fixture.pdf';prefix=pdf().rsplit(b'%%EOF',1)[0];large_pdf=prefix+b'%'+b' '*(10485760-len(prefix)-8)+b'\n%%EOF\n';assert len(large_pdf)==10485760;pdf_path.write_bytes(large_pdf)
+        image_path=self.log_dir/'fixture.png';image_path.write_bytes(png())
+        pdf_path=self.log_dir/'fixture.pdf';prefix=pdf().rsplit(b'%%EOF',1)[0];large_pdf=prefix+b'%'+b' '*(10485760-len(prefix)-8)+b'\n%%EOF\n';assert len(large_pdf)==10485760;pdf_path.write_bytes(large_pdf)
         cli=ROOT/'apps/web/node_modules/next/dist/bin/next'
         self.web_process=self.start(['node',cli,'start','--hostname','127.0.0.1','--port',self.env['WEB_PORT']],'web',cwd=ROOT/'apps/web');self.wait('/health/ready',base=self.web)
         extra={'E2E_FORUM':'1','FORUM_ALICE':self.alice_account,'FORUM_BOB':self.bob_account,'FORUM_MOD':mod_account,'FORUM_PASSWORD':self.password,'FORUM_SUFFIX':self.suffix,'FORUM_PNG':str(image_path),'FORUM_PDF':str(pdf_path),'FORUM_POST':pid,'FORUM_OTHER_POST':p2,'FORUM_BOARD':b1}
         playwright=ROOT/'apps/web/node_modules/@playwright/test/cli.js'
         self.run(['node',playwright,'test','tests/forum.spec.mjs'],'browser',cwd=ROOT/'apps/web',extra=extra)
         report=json.loads((ROOT/'.local/logs/dev/browser-results.json').read_text(encoding='utf-8'));assert report['stats']['expected']==3 and report['stats']['unexpected']==0
-        (LOG/'browser-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+        (self.log_dir/'browser-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
         self.record('Three real browser cases: forum/upload/edit flow, moderator scope and actual database-failure form recovery')
 
         self.run(self.compose+['stop','mysql'],'mysql-stop')
@@ -234,4 +217,5 @@ def main():
         except Exception as exc:status='failed';error=str(exc);print('Forum cleanup failed',file=sys.stderr)
         RESULT.write_text(json.dumps({'stage':'4.6.1','status':status,'checks':verification.checks,'browser_cases':3 if any('Three real browser' in c for c in verification.checks) else 0,'isolated_database_removed':not verification.created,'development_accounts_modified':False,'server_deployed':False,'error':error},ensure_ascii=False,indent=2),encoding='utf-8')
     return 0 if status=='passed' else 1
-if __name__=='__main__':sys.exit(main())
+
+if __name__ == "__main__":sys.exit(main())

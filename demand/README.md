@@ -23,4 +23,4 @@
 
 **T01、T02、T03 已完成，T04/T05 已在本机实现与验证，T06/T07 账户功能与本机验证已完成。**T02的页面、数据、接口、消息和权限状态约定保存在 [4.3设计包](../docs/design/README.md)，不另复制到需求目录。4.4 结果和第二台电脑复现步骤见 [工程说明](../docs/engineering/README.md)；4.5 账户结果见 [账户说明](../docs/accounts/README.md)，4.6.1 论坛和通用上传已完成本机验收，见 [论坛说明](../docs/forum/README.md)，4.6.2 商品和普通搜索也已完成，见 [商品说明](../docs/goods/README.md)，4.6.3聊天通知也已完成，见 [聊天说明](../docs/chat/README.md)，4.6.4全流程验收也已完成，见 [整体验收](../docs/acceptance/README.md)，下一步4.7；AC01、AC02、AC03、AC04、AC05、AC08、AC10已在本机验收，其他用例按 [实际范围表](../docs/acceptance/验收范围.md)判断，不能整体视为通过。
 
-需要重新执行检查时，查看 [checks 运行说明](../checks/README.md)。返回 [项目总目录](../README.md)。
+需要重新执行检查时，查看 [checks 运行说明](../archive/preparation-checks/README.md)。返回 [项目总目录](../README.md)。

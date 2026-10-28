@@ -4,7 +4,7 @@
   "pages": [
     {
       "page": "index",
-      "html": "../page-drafts/index.html",
+      "html": "../../archive/early-docs/page-drafts/index.html",
       "feature": "F02",
       "name": "论坛首页",
       "planned_operations": [
@@ -16,7 +16,7 @@
     },
     {
       "page": "forum",
-      "html": "../page-drafts/forum.html",
+      "html": "../../archive/early-docs/page-drafts/forum.html",
       "feature": "F02",
       "name": "板块与帖子列表",
       "planned_operations": [
@@ -26,7 +26,7 @@
     },
     {
       "page": "post",
-      "html": "../page-drafts/post.html",
+      "html": "../../archive/early-docs/page-drafts/post.html",
       "feature": "F02",
       "name": "帖子详情与回复",
       "planned_operations": [
@@ -43,7 +43,7 @@
     },
     {
       "page": "compose",
-      "html": "../page-drafts/compose.html",
+      "html": "../../archive/early-docs/page-drafts/compose.html",
       "feature": "F02",
       "name": "发帖编辑",
       "planned_operations": [
@@ -56,7 +56,7 @@
     },
     {
       "page": "goods",
-      "html": "../page-drafts/goods.html",
+      "html": "../../archive/early-docs/page-drafts/goods.html",
       "feature": "F04",
       "name": "商品列表",
       "planned_operations": [
@@ -67,7 +67,7 @@
     },
     {
       "page": "goods-detail",
-      "html": "../page-drafts/goods-detail.html",
+      "html": "../../archive/early-docs/page-drafts/goods-detail.html",
       "feature": "F04",
       "name": "商品详情",
       "planned_operations": [
@@ -79,7 +79,7 @@
     },
     {
       "page": "goods-edit",
-      "html": "../page-drafts/goods-edit.html",
+      "html": "../../archive/early-docs/page-drafts/goods-edit.html",
       "feature": "F04",
       "name": "商品编辑",
       "planned_operations": [
@@ -93,7 +93,7 @@
     },
     {
       "page": "search",
-      "html": "../page-drafts/search.html",
+      "html": "../../archive/early-docs/page-drafts/search.html",
       "feature": "F03",
       "name": "搜索与匹配",
       "planned_operations": [
@@ -105,7 +105,7 @@
     },
     {
       "page": "subscriptions",
-      "html": "../page-drafts/subscriptions.html",
+      "html": "../../archive/early-docs/page-drafts/subscriptions.html",
       "feature": "F07",
       "name": "商品提醒",
       "planned_operations": [
@@ -120,7 +120,7 @@
     },
     {
       "page": "chat",
-      "html": "../page-drafts/chat.html",
+      "html": "../../archive/early-docs/page-drafts/chat.html",
       "feature": "F05",
       "name": "私信",
       "planned_operations": [
@@ -134,7 +134,7 @@
     },
     {
       "page": "notifications",
-      "html": "../page-drafts/notifications.html",
+      "html": "../../archive/early-docs/page-drafts/notifications.html",
       "feature": "F05",
       "name": "通知",
       "planned_operations": [
@@ -145,7 +145,7 @@
     },
     {
       "page": "login",
-      "html": "../page-drafts/login.html",
+      "html": "../../archive/early-docs/page-drafts/login.html",
       "feature": "F01",
       "name": "注册登录与辅助改密",
       "planned_operations": [
@@ -157,7 +157,7 @@
     },
     {
       "page": "profile",
-      "html": "../page-drafts/profile.html",
+      "html": "../../archive/early-docs/page-drafts/profile.html",
       "feature": "F01",
       "name": "个人中心",
       "planned_operations": [
@@ -180,7 +180,7 @@
     },
     {
       "page": "admin",
-      "html": "../page-drafts/admin.html",
+      "html": "../../archive/early-docs/page-drafts/admin.html",
       "feature": "F08",
       "name": "社区管理",
       "planned_operations": [
@@ -211,7 +211,7 @@
     },
     {
       "page": "directory",
-      "html": "../page-drafts/directory.html",
+      "html": "../../archive/early-docs/page-drafts/directory.html",
       "feature": "F09",
       "name": "草图目录",
       "planned_operations": []

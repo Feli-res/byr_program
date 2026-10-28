@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parent
 PROJECT=ROOT.parent.parent
 if sys.argv[1:]!=['--run']:
     raise SystemExit('Use --run to validate in a disposable database in youzhihui-checks-mysql-1.')
-compose=['docker','compose','--env-file',str(PROJECT/'.local/checks.env'),'-f',str(PROJECT/'checks/compose.yaml')]
+compose=['docker','compose','--env-file',str(PROJECT/'.local/checks.env'),'-f',str(PROJECT/'archive/preparation-checks/compose.yaml')]
 def command(args,input=None,check=True,timeout=120):
     result=subprocess.run(args,input=input,text=True,encoding='utf-8',capture_output=True,timeout=timeout)
     if check and result.returncode: raise RuntimeError(result.stderr or result.stdout)
