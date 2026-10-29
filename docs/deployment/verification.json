@@ -1,0 +1,62 @@
+{
+  "status": "passed",
+  "date": "2026-10-29",
+  "website": "https://youzhihui.85-121-122-124.sslip.io",
+  "server": "85.121.122.124",
+  "release": "trial-20261029-02",
+  "unit_tests": 15,
+  "money_tests": 3,
+  "browser_cases": 2,
+  "browser": "Microsoft Edge on external Windows computer",
+  "independent_browser_sessions": 2,
+  "narrow_viewport_width": 375,
+  "http_checks": [
+    "HTTPS secure cookies and independent authenticated sessions",
+    "Cross-origin write rejected",
+    "Private chat and ownership permissions enforced",
+    "Image/PDF uploads and moderation revoke old file URLs",
+    "Restricted goods hidden from visitors and restored after check",
+    "Password change revokes HTTPS session and WSS connection within five seconds",
+    "Ban/unban and logout invalidate old sessions"
+  ],
+  "password_revocation_seconds": 1.475,
+  "login_source_checks": {
+    "server_source_blocked_after_five_failures": true,
+    "forged_headers_cannot_bypass": true,
+    "independent_external_source_login_unaffected": true
+  },
+  "https_valid_certificate": true,
+  "development_routes_disabled": true,
+  "local_development_processes_stopped": true,
+  "update_with_backup_passed": true,
+  "mysql_redis_api_web_restarted": true,
+  "post_goods_messages_and_files_retained": true,
+  "backup_sha256_verified": true,
+  "backup_restored_to_separate_temporary_database": true,
+  "restored_table_counts_match": [
+    "users",
+    "posts",
+    "goods",
+    "messages",
+    "_sqlx_migrations"
+  ],
+  "upload_backup_content_hashes_match": true,
+  "offsite_copy_downloaded_and_verified": true,
+  "automatic_offsite_sync": false,
+  "host_reboot_performed": false,
+  "physical_mobile_device_tested": false,
+  "load_test_performed": false,
+  "full_independent_environment_restore_performed": false,
+  "ai_features_deployed": false,
+  "post_update_browser": {
+    "status": "passed",
+    "oldGoodsImageLoaded": true,
+    "oldPostRetained": true,
+    "oldMessagesRetained": true,
+    "newWssMessageDelivered": true,
+    "narrowViewport": 375
+  },
+  "certificate_renewal_dry_run_passed": true,
+  "api_environment_has_database_root_password": false,
+  "visual_review_of_browser_screenshot": true
+}

@@ -16,6 +16,7 @@ pub struct AccountSettings {
     pub secret: String,
     pub secure_cookie: bool,
     pub uploads: PathBuf,
+    pub proxy_key: Option<String>,
 }
 impl AccountSettings {
     pub fn from_env() -> anyhow::Result<Self> {
@@ -46,7 +47,17 @@ impl AccountSettings {
             .map(PathBuf::from)
             .unwrap_or_else(|| PathBuf::from(".local/uploads"));
         security::warmup();
+        let proxy_key = std::env::var("TRUSTED_PROXY_KEY")
+            .ok()
+            .filter(|v| !v.is_empty());
+        anyhow::ensure!(
+            proxy_key
+                .as_ref()
+                .is_none_or(|v| v.len() >= 64 && v.bytes().all(|b| b.is_ascii_hexdigit())),
+            "TRUSTED_PROXY_KEY must contain at least 64 hexadecimal characters"
+        );
         Ok(Self {
+            proxy_key,
             secret,
             secure_cookie,
             uploads,
@@ -55,6 +66,7 @@ impl AccountSettings {
     #[cfg(test)]
     pub fn testing() -> Self {
         Self {
+            proxy_key: None,
             secret: "a".repeat(64),
             secure_cookie: false,
             uploads: std::env::temp_dir().join("byr-unit-upload-unused"),
@@ -465,13 +477,34 @@ async fn register(req: &mut Request, app: &AppState) -> AccountResult<Value> {
     public_user(&app.pool, &user(&app.pool, result.last_insert_id()).await?).await
 }
 
-fn login_keys(req: &Request, account: &str) -> Vec<Vec<u8>> {
-    // The HTTP peer is authoritative. Forwarded headers are deliberately not trusted.
-    // With the current local Next proxy, all requests share a conservative IP bucket.
-    let peer = req
-        .remote_addr()
-        .as_ipv4()
-        .map(|a| a.ip().to_string())
+// Only the private gateway possessing the server-only key may supply a client IP.
+fn trusted_client_ip(
+    key: Option<&str>,
+    supplied: Option<&str>,
+    ip: Option<&str>,
+) -> Option<std::net::IpAddr> {
+    let (expected, actual) = (key?, supplied?);
+    if expected.len() != actual.len()
+        || expected
+            .bytes()
+            .zip(actual.bytes())
+            .fold(0u8, |d, (a, b)| d | (a ^ b))
+            != 0
+    {
+        return None;
+    }
+    ip?.parse().ok()
+}
+fn login_keys(req: &Request, account: &str, app: &AppState) -> Vec<Vec<u8>> {
+    let header = |name| req.headers().get(name).and_then(|v| v.to_str().ok());
+    let forwarded = trusted_client_ip(
+        app.settings.accounts.proxy_key.as_deref(),
+        header("x-yzh-proxy-key"),
+        header("x-yzh-client-ip"),
+    );
+    let peer = forwarded
+        .map(|a| a.to_string())
+        .or_else(|| req.remote_addr().as_ipv4().map(|a| a.ip().to_string()))
         .or_else(|| req.remote_addr().as_ipv6().map(|a| a.ip().to_string()))
         .unwrap_or_else(|| "local-client".into());
     let mut keys = vec![
@@ -508,7 +541,7 @@ async fn login(req: &mut Request, res: &mut Response, app: &AppState) -> Account
     if !security::password_valid(&input.password) {
         return Err(AccountError::validation("password", "密码为 8～64 个字符"));
     }
-    let keys = login_keys(req, &account);
+    let keys = login_keys(req, &account, app);
     login_limits(app, &keys, false).await?;
     let found = sqlx::query_as::<_, User>(&format!(
         "SELECT {USER_COLUMNS} FROM users WHERE account_norm=?"
@@ -1174,5 +1207,31 @@ mod contract_tests {
         assert_eq!(remove.avatar_file_id, Some(None));
         let unchanged = serde_json::from_value::<Profile>(json!({"version":1})).unwrap();
         assert_eq!(unchanged.avatar_file_id, None);
+    }
+}
+
+#[cfg(test)]
+mod proxy_tests {
+    use super::trusted_client_ip;
+    #[test]
+    fn gateway_identity_requires_secret_and_single_valid_ip() {
+        assert_eq!(
+            trusted_client_ip(Some("secret"), Some("secret"), Some("203.0.113.7"))
+                .unwrap()
+                .to_string(),
+            "203.0.113.7"
+        );
+        assert!(trusted_client_ip(None, Some("secret"), Some("203.0.113.7")).is_none());
+        assert!(trusted_client_ip(Some("secret"), Some("forged"), Some("203.0.113.7")).is_none());
+        assert!(
+            trusted_client_ip(
+                Some("secret"),
+                Some("secret"),
+                Some("203.0.113.7, 203.0.113.8")
+            )
+            .is_none()
+        );
+        assert!(trusted_client_ip(Some("secret"), None, Some("203.0.113.7")).is_none());
+        assert!(trusted_client_ip(Some("secret"), Some("secret"), Some("::1")).is_some());
     }
 }

@@ -1,0 +1,12 @@
+FROM rust:1.99.1-bookworm AS build
+WORKDIR /src
+COPY Cargo.toml Cargo.lock rust-toolchain.toml ./
+COPY services/api services/api
+COPY migrations migrations
+RUN CARGO_BUILD_JOBS=2 cargo build --locked --release -p youzhihui-api
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/* && useradd -u 10001 -m app && mkdir -p /data/uploads && chown -R app:app /data
+COPY --from=build /src/target/release/youzhihui-api /usr/local/bin/youzhihui-api
+USER app
+ENV API_BIND=0.0.0.0:8080 UPLOAD_ROOT=/data/uploads
+ENTRYPOINT ["youzhihui-api"]

@@ -1,0 +1,73 @@
+name: youzhihui-trial
+x-logging: &logging
+  driver: json-file
+  options: {max-size: "10m", max-file: "3"}
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?}
+      MYSQL_USER: ${MYSQL_USER:?}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
+    volumes: ["mysql-data:/var/lib/mysql"]
+    mem_limit: 768m
+    command: ["--innodb-buffer-pool-size=192M", "--max-connections=40", "--mysqlx=OFF"]
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u $$MYSQL_USER -D $$MYSQL_DATABASE -e 'SELECT 1' >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    logging: *logging
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server","--appendonly","yes","--maxmemory","128mb","--maxmemory-policy","noeviction"]
+    mem_limit: 192m
+    volumes: ["redis-data:/data"]
+    healthcheck:
+      test: ["CMD","redis-cli","ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+  api:
+    image: youzhihui-api:${RELEASE_TAG:-trial}
+    build: {context: .., dockerfile: deploy/Dockerfile.api}
+    restart: unless-stopped
+    environment:
+      AUTH_SECRET: ${AUTH_SECRET:?}
+      TRUSTED_PROXY_KEY: ${TRUSTED_PROXY_KEY:?}
+      WEB_ORIGIN: ${WEB_ORIGIN:?}
+      RUST_LOG: ${RUST_LOG:-info,sqlx::query=error}
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      REDIS_URL: redis://redis:6379/
+      API_BIND: 0.0.0.0:8080
+      UPLOAD_ROOT: /data/uploads
+      DEV_TOOLS_ENABLED: "false"
+      COOKIE_SECURE: "true"
+    ports: ["127.0.0.1:18082:8080"]
+    volumes: ["uploads:/data/uploads"]
+    mem_limit: 512m
+    depends_on:
+      mysql: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD","curl","-fsS","http://127.0.0.1:8080/health/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging: *logging
+  web:
+    image: youzhihui-web:${RELEASE_TAG:-trial}
+    build: {context: .., dockerfile: deploy/Dockerfile.web}
+    restart: unless-stopped
+    ports: ["127.0.0.1:18083:3000"]
+    mem_limit: 512m
+    depends_on: [api]
+    logging: *logging
+volumes:
+  mysql-data:
+  redis-data:
+  uploads:

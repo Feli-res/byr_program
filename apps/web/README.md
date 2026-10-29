@@ -7,6 +7,6 @@
 - `lib/money.mjs`、`tests/unit/money.test.mjs`：严格金额转换和单元测试。
 - `tests/*.spec.mjs`、`playwright.config.mjs`：真实浏览器流程、权限、故障、窄屏及换号缓存检查；不扫描unit目录。
 - `public/fonts/`：正式网页本地中文字体、来源和OFL许可。
-- `next.config.mjs`：将同源API和实时连接转给Rust后端。
+- `next.config.mjs`：本机同源API转发；服务器按需生成standalone镜像，由Nginx直接转发API与WebSocket，关闭开发入口。
 
-按 [工程说明](../../docs/engineering/README.md)准备与启动。4.6已完成并通过 [整体验收](../../docs/acceptance/README.md)，下一步4.7接入AI搜索与匹配。HTML草图在 [归档目录](../../archive/early-docs/page-drafts/README.md)。
+按 [工程说明](../../docs/engineering/README.md)准备与启动。4.6已完成并通过 [整体验收](../../docs/acceptance/README.md)，4.7已提供HTTPS试用站，见 [服务器说明](../../邮智汇_服务器使用说明.md)；下一步进入4.8接入AI搜索与匹配。HTML草图在 [归档目录](../../archive/early-docs/page-drafts/README.md)。

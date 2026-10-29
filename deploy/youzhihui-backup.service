@@ -1,0 +1,8 @@
+[Unit]
+Description=Youzhihui trial database and upload backup
+Requires=docker.service
+After=docker.service
+[Service]
+Type=oneshot
+ExecStart=/home/sunxiang/youzhihui/shared/backup.sh
+Nice=10

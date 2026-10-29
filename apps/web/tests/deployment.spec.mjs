@@ -1,0 +1,110 @@
+import {test, expect} from '@playwright/test';
+import {writeFileSync} from 'node:fs';
+import path from 'node:path';
+
+test.use({trace: 'off'});
+test.setTimeout(150000);
+const enabled = process.env.E2E_DEPLOYMENT === '1';
+const suffix = process.env.ACC_SUFFIX || 'unused';
+const output = path.resolve('../../.local/deployment47');
+
+async function login(page, account) {
+  await page.goto('/login');
+  await page.getByLabel('账号', {exact: true}).fill(account);
+  await page.getByLabel('密码', {exact: true}).fill(process.env.ACC_PASSWORD || '');
+  await page.getByRole('button', {name: '登录', exact: true}).click();
+  await expect(page).toHaveURL(/\/profile$/);
+}
+
+test('公网 HTTPS 发帖上传、商品搜索、双会话私聊和通知空状态', async ({browser}) => {
+  test.skip(!enabled);
+  const seller = await browser.newContext(), buyer = await browser.newContext();
+  const a = await seller.newPage(), b = await buyer.newPage();
+  const errors = [], received = [];
+  for (const page of [a,b]) page.on('request',req=>{if(req.url().startsWith('http:')) errors.push('Insecure request');});
+  for (const page of [a, b]) page.on('pageerror', error => errors.push(error.message));
+  a.on('websocket', socket => {expect(socket.url()).toMatch(/^wss:/);socket.on('framereceived', event => {
+    try {received.push(JSON.parse(String(event.payload)));} catch {}
+  });});
+  await login(a, process.env.ACC_ALICE);
+  await login(b, process.env.ACC_BOB);
+  const keyword = '完整流程' + suffix, postTitle = keyword + '交流帖', goodsTitle = keyword + '闲置平板';
+  await a.getByRole('link', {name: '论坛', exact: true}).click();
+  await a.getByRole('link', {name: '发布帖子', exact: true}).last().click();
+  await a.getByLabel('标题', {exact: true}).fill(postTitle);
+  await a.getByLabel('正文', {exact: true}).fill('同一批数据的联通检查。');
+  await a.getByLabel('上传图片', {exact: true}).setInputFiles(process.env.ACC_PNG);
+  await expect(a.locator('.upload-list li')).toHaveCount(1);
+  await expect(a.getByRole('status').filter({hasText: '正在处理文件'})).toHaveCount(0);
+  await a.getByRole('button', {name: '发布帖子', exact: true}).click();
+  await expect(a.getByRole('heading', {name: postTitle, exact: true})).toBeVisible();
+  const postId = new URL(a.url()).pathname.split('/').pop();
+  await b.goto('/posts/' + postId);
+  await b.getByLabel('写回复', {exact: true}).fill('买家的真实回复' + suffix);
+  await b.getByRole('button', {name: '提交回复', exact: true}).click();
+  await expect(b.getByRole('status')).toContainText('回复已保存');
+  await b.getByRole('button', {name: '点赞', exact: true}).click();
+  await b.getByRole('button', {name: '收藏', exact: true}).click();
+  await b.reload();
+  await expect(b.getByRole('button', {name: '取消点赞', exact: true})).toBeVisible();
+  await expect(b.getByRole('button', {name: '取消收藏', exact: true})).toBeVisible();
+  await expect(b.getByText('买家的真实回复' + suffix, {exact: true})).toBeVisible();
+
+  await a.getByRole('link', {name: '商品', exact: true}).click();
+  await a.getByRole('link', {name: '发布商品', exact: true}).last().click();
+  await a.getByLabel('商品标题', {exact: true}).fill(goodsTitle);
+  await a.getByLabel('商品描述', {exact: true}).fill('图书馆自提，联通检查的模拟商品。');
+  await a.getByLabel('交易校区', {exact: true}).selectOption('shahe');
+  await a.getByLabel('价格（元）', {exact: true}).fill('123.451');
+  await a.getByLabel('上传图片', {exact: true}).setInputFiles(process.env.ACC_PNG);
+  await expect(a.locator('.upload-list li')).toHaveCount(1);
+  await expect(a.getByRole('status').filter({hasText: '正在处理文件'})).toHaveCount(0);
+  await a.getByRole('button', {name: '发布商品', exact: true}).click();
+  await expect(a.getByRole('alert').filter({hasText: '最多两位小数'})).toBeVisible();
+  await a.getByLabel('价格（元）', {exact: true}).fill('123.45');
+  await a.getByRole('button', {name: '发布商品', exact: true}).click();
+  await expect(a.getByRole('heading', {name: goodsTitle, exact: true})).toBeVisible();
+  const goodsId = new URL(a.url()).pathname.split('/').pop();
+  await b.getByRole('link', {name: '搜索', exact: true}).click();
+  await b.getByLabel('关键词', {exact: true}).fill(keyword);
+  await b.getByRole('button', {name: '搜索', exact: true}).click();
+  await expect(b.locator('.search-results li')).toHaveCount(2);
+  await expect(b.getByRole('link', {name: postTitle, exact: true})).toBeVisible();
+  await b.getByLabel('内容类型', {exact: true}).selectOption('goods');
+  await b.getByLabel('交易校区', {exact: true}).selectOption('shahe');
+  await b.getByLabel('最高价格（元）', {exact: true}).fill('123.45');
+  await b.getByRole('button', {name: '搜索', exact: true}).click();
+  await expect(b.locator('.search-results li')).toHaveCount(1);
+  const filtered = new URL(b.url()).search;
+  await b.getByRole('link', {name: goodsTitle, exact: true}).click();
+  await b.getByRole('link', {name: '← 返回列表', exact: true}).click();
+  await expect.poll(() => new URL(b.url()).search).toBe(filtered);
+  await b.getByRole('link', {name: goodsTitle, exact: true}).click();
+  await b.getByRole('button', {name: '联系卖家', exact: true}).click();
+  await expect(b).toHaveURL(/\/messages\/\d+$/);
+  const cid = new URL(b.url()).pathname.split('/').pop();
+  await a.goto('/messages/' + cid);
+  await expect(a.getByRole('status').filter({hasText: '实时连接正常'})).toBeVisible();
+  const text = '跨板块流程中的私聊' + suffix;
+  await b.getByLabel('文字消息', {exact: true}).fill(text);
+  await b.getByRole('button', {name: '发送消息', exact: true}).click();
+  await expect(a.locator('.chat-message').filter({hasText: text})).toHaveCount(1);
+  await expect.poll(() => received.some(frame => frame.type === 'message.created' && frame.data.body === text)).toBe(true);
+  await b.reload();
+  await expect(b.locator('.chat-message').filter({hasText: text})).toHaveCount(1);
+  await b.getByRole('link', {name: '站内通知', exact: true}).click();
+  await expect(b).toHaveURL(/\/notifications$/);
+  await expect(b.getByRole('heading',{name:'站内通知',exact:true})).toBeVisible();
+  await expect(b.getByText('暂无通知。',{exact:true})).toBeVisible();
+  await expect(b.locator('.message.error[role=alert]')).toHaveCount(0);
+  expect((await b.request.get('/dev-check')).status()).toBe(404);
+  expect((await b.request.get('/api/dev/records')).status()).toBe(404);
+  expect(await a.getByRole('link', {name:'联通检查',exact:true}).count()).toBe(0);
+  await b.setViewportSize({width: 375, height: 812});
+  expect(await b.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await b.screenshot({path: path.join(output, 'flow-notifications-mobile.png'), fullPage: true});
+  writeFileSync(path.join(output, 'flow-ids.json'), JSON.stringify({postId, goodsId, cid, postTitle, goodsTitle, browser: "Microsoft Edge", externalHTTPS: true, twoSessions: true}));
+  expect(errors).toEqual([]);
+  await seller.close();await buyer.close();
+});
+

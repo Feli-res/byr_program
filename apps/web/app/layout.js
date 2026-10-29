@@ -10,6 +10,6 @@ export default function Layout({children}) {
       <nav aria-label="主导航"><Link href="/posts">论坛</Link><Link href="/goods">商品</Link><Link href="/search">搜索</Link><Link href="/messages">私聊</Link><Link href="/notifications">通知</Link><Link href="/profile">个人资料</Link></nav>
       <div className="account-nav"><UserNavigation/></div>
     </div></header>
-    <main>{children}</main><footer>邮智汇 · 程序设计实验 <Link href="/dev-check">联通检查</Link></footer>
+    <main>{children}</main><footer>邮智汇 · 程序设计实验 {process.env.DISABLE_DEV_PAGE !== 'true' && <Link href="/dev-check">联通检查</Link>}</footer>
   </RealtimeProvider></AuthProvider></body></html>;
 }

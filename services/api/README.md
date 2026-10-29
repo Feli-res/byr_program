@@ -17,3 +17,5 @@
 `/health/live` 不依赖数据库；`/health/ready` 检查 MySQL、Redis 和迁移版本。`/api/dev/records` 是开发验证接口，不属于 4.3 的正式业务接口；默认关闭，打开时后端只允许监听回环地址，并校验浏览器 Origin。真实账户和账户权限已在 `src/accounts/` 实现，见 [4.5 说明](../../docs/accounts/README.md)；4.6.1 论坛及通用上传也已实现，见 [论坛说明](../../docs/forum/README.md)。4.6.2 商品与关键词搜索已实现，见 [商品说明](../../docs/goods/README.md)；4.6.3 聊天通知也已实现，见 [聊天说明](../../docs/chat/README.md)；4.6.4已验证跨业务权限、管理联动与重启，见 [整体验收](../../docs/acceptance/README.md)；AI与持续提醒后续实现。
 
 输入与返回遵循 4.3 的 JSON、字符串 ID、UTC 时间、错误码和请求编号约定。启动步骤见 [工程说明](../../docs/engineering/README.md)。
+
+4.7增加可选的`TRUSTED_PROXY_KEY`。只有密钥正确且访客IP合法时，登录限流才采用网关覆盖后的来源；未配置时仍按直接连接地址处理。正式API使用普通用户与独立上传卷，见 [部署说明](../../docs/deployment/README.md)。
