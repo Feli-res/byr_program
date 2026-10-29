@@ -32,7 +32,7 @@ class Acceptance(ChatVerification):
         name = self.env['MYSQL_DATABASE']
         assert re.fullmatch(r'[A-Za-z0-9_]+', name)
         exists = self.sql(f"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='{name}' AND table_name='users';")
-        data = '' if exists == '0' else self.sql(f"SELECT * FROM `{name}`.users WHERE account_norm IN ('administrator001','testuser001','testuser002') ORDER BY id;")
+        data = '' if exists == '0' else self.sql(f"SELECT * FROM `{name}`.users WHERE LOWER(account_norm) IN ('administrator001','testuser001','testuser002') ORDER BY id;")
         # Compare privately in memory, never log hashes or account row contents.
         return hashlib.sha256(data.encode()).digest()
 

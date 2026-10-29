@@ -10,6 +10,8 @@
 | [forum/](forum/README.md) | 4.6.1 真实论坛、通用上传和本机验收结果 |
 | [accounts/](accounts/README.md) | 4.5 自主账户、头像、权限、管理员重置及实际验收结果 |
 | [engineering/](engineering/README.md) | 4.4 正式工程的运行步骤、真实浏览器与数据库检查结果、第二台电脑复现清单 |
+| [举报设计](design/06_帖子举报与AI辅助处理.md) | 待实现：帖子举报、管理员通知与裁定、AI辅助建议 |
+| [共用AI接口](design/07_共用AI调用接口.md) | 待实现：模型连接与任务扩展约定，供后续功能复用 |
 | [design/](design/README.md) | 4.3 完整设计包：页面操作、数据表和关系、接口、实时事件、权限、状态、共同匹配及检查结果 |
 
 双击 [页面入口 index.html](../archive/early-docs/page-drafts/index.html) 即可预览，无需安装工具或启动后端。这些 HTML 草图使用模拟数据。正式工程的真实保存读取入口见 [4.4 运行说明](engineering/README.md)。

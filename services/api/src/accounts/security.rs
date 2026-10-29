@@ -48,7 +48,7 @@ pub fn account(value: &str) -> Option<String> {
         && value
             .bytes()
             .all(|b| b.is_ascii_alphanumeric() || b == b'_'))
-    .then(|| value.to_ascii_lowercase())
+    .then(|| value.to_owned())
 }
 
 pub fn password_valid(value: &str) -> bool {
@@ -152,7 +152,8 @@ mod tests {
     use super::*;
     #[test]
     fn normalization_and_password_edges() {
-        assert_eq!(account(" AbC_12 "), Some("abc_12".into()));
+        assert_eq!(account(" AbC_12 "), Some("AbC_12".into()));
+        assert_ne!(account("TestUser001"), account("testuser001"));
         for invalid in ["1abc", "abc", "邮abc", "abc-def", &"a".repeat(25)] {
             assert!(account(invalid).is_none());
         }

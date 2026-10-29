@@ -452,7 +452,10 @@ struct Login {
 async fn register(req: &mut Request, app: &AppState) -> AccountResult<Value> {
     let input: Registration = parse(req).await?;
     let account = security::account(&input.account).ok_or_else(|| {
-        AccountError::validation("account", "账号为 4～24 位字母、数字或下划线，首位须为字母")
+        AccountError::validation(
+            "account",
+            "账号为 4～24 位英文字母、数字或下划线，首位须为字母，区分大小写",
+        )
     })?;
     let nickname = field_text(&input.nickname, 2, 20, "nickname")?;
     let password = security::hash_password(input.password).await?;

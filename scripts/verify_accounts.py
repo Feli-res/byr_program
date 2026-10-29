@@ -38,16 +38,20 @@ class Accounts(AccountVerification):
         self.record('Interactive-admin command supports secure stdin verification and refuses repeated bootstrap')
         self.server=self.start([self.binary],'api');self.wait('/health/ready')
         admin=Client(self);admin.login(self.root_account,self.password)
-        alice=Client(self);registered=alice.register(' '+self.alice_account.upper()+' ',self.password)
+        alice=Client(self);registered=alice.register(' '+self.alice_account+' ',self.password)
         assert set(registered['data'])=={'id','nickname','bio','avatar_url'}
         assert alice.cookie('byr_session') is None
         alice.call('/api/v1/me',expected=401)
         uid=registered['data']['id']
         duplicate=Client(self);duplicate.register(self.alice_account,self.password,expected=409)
+        variant=Client(self);variant.register(self.alice_account.upper(),self.password+'V')
+        variant.login(self.alice_account.upper(),self.password+'V')
+        assert variant.me()['account']==self.alice_account.upper()
+        Client(self).login(self.alice_account.upper(),self.password,expected=401)
         duplicate.call('/api/v1/auth/register','POST',{'account':'evil_'+self.suffix,'nickname':'角色注入','password':self.password,'role':'admin'},400)
         duplicate.register('1bad',self.password,expected=422)
         duplicate.register('valid_'+self.suffix,'short',expected=422)
-        self.record('Registration normalization, duplicates, validation, no auto-login and role injection rejection')
+        self.record('Case-sensitive registration/login, separate case variants, exact duplicates, validation and role injection rejection')
         alice.login(self.alice_account,self.password);session=alice.cookie('byr_session')
         headers=';'.join(alice.last_headers.get_all('Set-Cookie'))
         assert 'HttpOnly' in headers and 'SameSite=Lax' in headers and 'Domain=' not in headers
@@ -55,7 +59,7 @@ class Accounts(AccountVerification):
         stored=self.query(f'SELECT password_hash FROM users WHERE id={uid};')
         assert stored.startswith('$argon2id$v=19$m=19456,t=2,p=1$') and self.password not in stored
         assert self.query('SELECT MIN(TIMESTAMPDIFF(SECOND,created_at,expires_at)) FROM sessions;')=='604800'
-        self.record('Argon2id parameters, normalized login, host-only HttpOnly cookie and seven-day absolute session')
+        self.record('Argon2id parameters, case-preserving login, host-only HttpOnly cookie and seven-day absolute session')
         alice.call('/api/v1/me','PATCH',{'version':alice.me()['version'],'bio':'拒绝没有请求保护'},403,protect=False)
         alice.call('/api/v1/me','PATCH',{'version':alice.me()['version'],'bio':'拒绝错误来源'},403,headers={'Origin':'https://unrelated.example'})
         alice.call('/api/v1/me','PATCH',{'version':alice.me()['version'],'bio':'拒绝空来源'},403,headers={'Origin':'null'})

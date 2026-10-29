@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "date": "2026-10-29",
+  "website": "https://youzhihui.85-121-122-124.sslip.io",
+  "release": "trial-20261029-03",
+  "account_rule": "trim surrounding whitespace, preserve case, exact-case uniqueness and login",
+  "database_collation": "ascii_bin (unchanged)",
+  "schema_migrations_changed": false,
+  "backend_unit_tests": 15,
+  "isolated_account_checks": 21,
+  "local_browser_cases": 3,
+  "server_api": {
+    "status": "passed",
+    "five_known_accounts_exact_case_login": true,
+    "wrong_case_login_rejected": true,
+    "exact_duplicate_registration_rejected": true,
+    "existing_post_goods_chat_retained": true
+  },
+  "server_browser": {
+    "status": "passed",
+    "rulesCollapsedInitially": true,
+    "mouseAndKeyboardToggle": true,
+    "sixRulesVisible": true,
+    "wrongCaseRejected": true,
+    "correctCaseLoginPassed": true,
+    "mobile375NoHorizontalOverflow": true,
+    "pageErrors": []
+  },
+  "existing_local_accounts_updated": 3,
+  "existing_server_accounts_updated": 5,
+  "existing_passwords_ids_roles_and_status_preserved": true,
+  "unrelated_accounts_preserved": true,
+  "backup_before_update": true,
+  "backup_after_update": true
+}

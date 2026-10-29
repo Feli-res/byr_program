@@ -4,8 +4,8 @@
   "checks": [
     "Fresh isolated database: five migrations and repeat execution",
     "Interactive-admin command supports secure stdin verification and refuses repeated bootstrap",
-    "Registration normalization, duplicates, validation, no auto-login and role injection rejection",
-    "Argon2id parameters, normalized login, host-only HttpOnly cookie and seven-day absolute session",
+    "Case-sensitive registration/login, separate case variants, exact duplicates, validation and role injection rejection",
+    "Argon2id parameters, case-preserving login, host-only HttpOnly cookie and seven-day absolute session",
     "Signed CSRF cookie/header, strict Origin and anonymous-to-session binding",
     "Personal data, stale versions, forged fields and concurrent profile updates",
     "Real avatar decoding, size/dimension/quota limits, ownership, public binding, detach and cleanup",

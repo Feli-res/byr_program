@@ -15,7 +15,13 @@ test('账户页面注册登录、刷新资料、头像、改密和退出',async(
   test.skip(!enabled||failure);
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   const account='web_'+suffix;
-  await page.goto('/register');await page.getByLabel('账号',{exact:true}).fill(account);await page.getByLabel('昵称',{exact:true}).fill('浏览器账户');
+  await page.goto('/register');
+  const rules=page.locator('.account-rules');
+  await expect(rules).not.toHaveAttribute('open');
+  await rules.locator('summary').click();await expect(rules).toHaveAttribute('open','');
+  await expect(rules).toContainText('TestUser001 与 testuser001 是两个不同的账号');
+  await rules.locator('summary').press('Enter');await expect(rules).not.toHaveAttribute('open');
+  await page.getByLabel('账号',{exact:true}).fill(account);await page.getByLabel('昵称',{exact:true}).fill('浏览器账户');
   await page.getByLabel('密码',{exact:true}).fill(password);await page.getByLabel('确认密码',{exact:true}).fill(password);
   await page.getByRole('button',{name:'注册账号'}).click();await expect(page.getByRole('status')).toContainText('注册成功');
   await expect(page.getByLabel('密码',{exact:true})).toHaveValue('');
