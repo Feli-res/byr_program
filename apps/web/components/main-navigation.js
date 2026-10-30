@@ -7,7 +7,6 @@ const items=[
   {href:'/goods',label:'商品',matches:path=>['/goods','/me/goods','/admin/goods'].some(base=>path===base || path.startsWith(base+'/'))},
   {href:'/search',label:'搜索',matches:path=>path==='/search' || path.startsWith('/search/')},
   {href:'/messages',label:'消息',matches:path=>['/messages','/notifications'].some(base=>path===base || path.startsWith(base+'/'))},
-  {href:'/profile',label:'个人资料',matches:path=>['/profile','/change-password','/admin/users'].some(base=>path===base || path.startsWith(base+'/'))},
 ];
 
 export function MainNavigation(){

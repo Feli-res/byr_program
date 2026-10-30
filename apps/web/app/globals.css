@@ -43,3 +43,11 @@
   .header-inner nav[aria-label="主导航"] > a,
   .header-inner nav[aria-label="主导航"] > a::after { transition: none; }
 }
+
+/* The account area carries the current-page marker for profile and account pages. */
+.header-inner nav[aria-label="账户导航"] > a[aria-current] {
+  color: var(--blue);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
