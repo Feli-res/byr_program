@@ -32,6 +32,14 @@ services:
       timeout: 3s
       retries: 20
     logging: *logging
+  embedding:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9@sha256:2538ea1c9640d3763b15af668039d24172d063b42337b0c27796fc2be180c78d
+    restart: unless-stopped
+    command: ["--model-id", "BAAI/bge-small-zh-v1.5", "--revision", "7999e1d3359715c523056ef9478215996d62a620", "--port", "80"]
+    volumes: ["embedding-cache:/data"]
+    mem_limit: 1200m
+    cpus: "1.0"
+    logging: *logging
   api:
     image: youzhihui-api:${RELEASE_TAG:-trial}
     build: {context: .., dockerfile: deploy/Dockerfile.api}
@@ -43,6 +51,9 @@ services:
       RUST_LOG: ${RUST_LOG:-info,sqlx::query=error}
       DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
       REDIS_URL: redis://redis:6379/
+      AI_ENABLED: ${AI_ENABLED:-false}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      AI_EMBEDDING_URL: http://embedding:80
       API_BIND: 0.0.0.0:8080
       UPLOAD_ROOT: /data/uploads
       DEV_TOOLS_ENABLED: "false"
@@ -71,3 +82,4 @@ volumes:
   mysql-data:
   redis-data:
   uploads:
+  embedding-cache:

@@ -10,9 +10,10 @@ async function csrf() {
 }
 async function send(path, options) {
   const controller=new AbortController();
-  const timeout=setTimeout(() => controller.abort(), 12000);
+  const {timeoutMs=12000,...fetchOptions}=options;
+  const timeout=setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response=await fetch(path, {...options, credentials:'include', cache:'no-store', signal:controller.signal});
+    const response=await fetch(path, {...fetchOptions, credentials:'include', cache:'no-store', signal:controller.signal});
     const payload=await response.json().catch(() => null);
     if (!response.ok) {
       const code=payload?.error?.code;
@@ -40,6 +41,6 @@ export async function request(path, options={}) {
     return send(path,{...options,headers:{...options.headers,'X-CSRF-Token':await csrf()}});
   }
 }
-export function jsonRequest(path,method,data) {
-  return request(path,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+export function jsonRequest(path,method,data,options={}) {
+  return request(path,{...options,method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
 }

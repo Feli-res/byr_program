@@ -9989,6 +9989,10 @@
                 "type": "null"
               }
             ]
+          },
+          "post_title": {
+            "type": "string",
+            "maxLength": 100
           }
         },
         "required": [

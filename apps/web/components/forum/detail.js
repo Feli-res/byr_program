@@ -8,6 +8,7 @@ import ReturnLink from '../return-link';
 import {Failure,Time,SafeMarkdown,Pager} from '../shared/content';
 import {useData} from '../../lib/use-data';
 import {ForumMenu,ManagementGuard} from './navigation';
+import {ReportButton} from './reports';
 
 export function CommentList({postId,onChanged,manage=false}){
   const {user}=useAuth();const [page,setPage]=useState(1),[body,setBody]=useState(''),[parent,setParent]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
@@ -35,6 +36,7 @@ export function Detail({postId,manage=false}){
     <SafeMarkdown>{post.body_markdown}</SafeMarkdown><Attachments images={post.image_files} pdfs={post.pdf_files}/>
     <div className="post-stats">{post.like_count} 人点赞 · {post.comment_count} 条回复</div>
     {(!manage||post.visibility==='public')&&!post.deleted_at&&<div className="actions"><button className="secondary" disabled={!user||busy} onClick={()=>react('like',post.liked_by_me)}>{post.liked_by_me?'取消点赞':'点赞'}</button><button className="secondary" disabled={!user||busy} onClick={()=>react('favorite',post.saved_by_me)}>{post.saved_by_me?'取消收藏':'收藏'}</button>{user?.id===post.author.id&&<Link href={`/posts/${post.id}/edit`}>编辑帖子</Link>}</div>}
+    {user&&!manage&&!post.deleted_at&&<ReportButton postId={post.id}/>}
     {!user&&<p className="muted">登录后可点赞、收藏和回复。</p>}
     {manage&&!post.deleted_at&&<div className="moderation-box"><h2>管理帖子</h2><label htmlFor="moderation-reason">操作原因</label><input id="moderation-reason" value={reason} onChange={e=>setReason(e.target.value)} disabled={busy}/><div className="actions"><button className="secondary" disabled={busy||!reason.trim()} onClick={()=>moderation(post.pinned?'unpin':'pin')}>{post.pinned?'取消置顶':'置顶帖子'}</button><button className="secondary" disabled={busy||!reason.trim()} onClick={()=>moderation(post.visibility==='hidden'?'restore':'hide')}>{post.visibility==='hidden'?'恢复帖子':'隐藏帖子'}</button></div><p className="hint">权限由后端检查，操作会记录原因；不能代作者修改正文。</p></div>}
   </>}<Feedback error={error} notice={notice}/></section>{post&&!post.deleted_at&&post.visibility!=='hidden'&&<CommentList postId={postId} manage={manage} onChanged={()=>{request(`${manage?'/api/v1/admin/posts':'/api/v1/posts'}/${postId}`).then(data.setValue).catch(e=>setError(e.message));}}/>}</>;

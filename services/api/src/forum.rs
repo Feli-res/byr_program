@@ -80,7 +80,7 @@ pub(crate) async fn can_manage(
         == 1)
 }
 
-async fn management_check(
+pub(crate) async fn management_check(
     tx: &mut Transaction<'_, MySql>,
     user: &User,
     board: u64,

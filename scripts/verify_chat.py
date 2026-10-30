@@ -80,7 +80,7 @@ class Chat(ChatVerification):
         assert self.env['MYSQL_USER'].replace('_','').isalnum()
         self.sql(f"CREATE DATABASE `{self.database}` CHARACTER SET utf8mb4; GRANT ALL ON `{self.database}`.* TO '{self.env['MYSQL_USER']}'@'%';",'create-database');self.created=True
         self.cli(['--migrate'],'migrate');self.cli(['--migrate'],'migrate-repeat')
-        assert self.query('SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;')=='5'
+        assert self.query('SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;')=='7'
         self.cli(['--init-admin'],'init-admin',json.dumps({'account':self.root_account,'nickname':'聊天测试管理员','password':self.password}).encode())
         self.server=self.start([self.binary],'api');self.wait('/health/ready')
         admin=Client(self);admin.login(self.root_account,self.password)
@@ -88,7 +88,7 @@ class Chat(ChatVerification):
         bob=Client(self);bob.register(self.bob_account,self.password,'聊天买家');bob.login(self.bob_account,self.password);bid=bob.me()['id']
         outsider=Client(self);third='third_'+self.suffix;outsider.register(third,self.password,'无关用户');outsider.login(third,self.password)
         visitor=Client(self);category=visitor.call('/api/v1/goods-categories')['data'][0]['id'];product=alice.publish(category,title='联系卖家测试商品')
-        self.record('Five migrations and independent seller/buyer/outsider/admin identities')
+        self.record('Seven migrations and independent seller/buyer/outsider/admin identities')
 
         opened=bob.call('/api/v1/conversations','POST',{'goods_id':product['id']})['data'];cid=opened['id'];base='/api/v1/conversations/'+cid
         assert opened['peer']['id']==aid and opened['context_goods']['id']==product['id']

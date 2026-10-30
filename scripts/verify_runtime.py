@@ -50,7 +50,7 @@ class Verification(RuntimeVerification):
         self.record('Validation boundaries, malformed JSON, unknown fields and origin rejection')
         self.run(self.compose+['exec','-T','mysql','sh','-c','MYSQL_PWD="$MYSQL_PASSWORD" mysql -u "$MYSQL_USER" -D "$MYSQL_DATABASE" --batch --skip-column-names -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE(); SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;"'],'schema-count')
         counts=(self.log_dir/'schema-count.log').read_text().split()
-        assert counts==['35','5'],counts
+        assert counts==['36','7'],counts
         self.record('32 designed tables, development records, account throttling and migration history in MySQL')
         self.run(self.compose+['stop','redis'],'redis-stop')
         self.request('/health/live');self.request('/health/ready',expected=503)

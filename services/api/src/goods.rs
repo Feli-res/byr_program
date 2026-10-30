@@ -65,6 +65,9 @@ pub(crate) struct Filters {
     pub category: Option<u64>,
     pub campus: Option<String>,
     pub max_price: Option<u32>,
+    pub brand: Option<String>,
+    pub stylus_support: Option<bool>,
+    pub min_condition: Option<String>,
     pub state: Option<String>,
 }
 impl Filters {
@@ -86,6 +89,25 @@ impl Filters {
         } else {
             None
         };
+        let brand = req
+            .query::<String>("brand")
+            .map(|s| field_text(&s, 1, 100, "brand"))
+            .transpose()?;
+        let stylus_support = match req.query::<String>("stylus_support").as_deref() {
+            None => None,
+            Some("true") => Some(true),
+            Some("false") => Some(false),
+            _ => {
+                return Err(AccountError::validation(
+                    "stylus_support",
+                    "手写笔选项不正确",
+                ));
+            }
+        };
+        let min_condition = req
+            .query::<String>("min_condition")
+            .map(|s| enum_value(&s, &["new", "like_new", "good", "fair"], "min_condition"))
+            .transpose()?;
         let state = req
             .query::<String>("state")
             .map(|s| enum_value(&s, &STATES, "state"))
@@ -95,11 +117,19 @@ impl Filters {
             category,
             campus,
             max_price,
+            brand,
+            stylus_support,
+            min_condition,
             state,
         })
     }
     pub(crate) fn has_goods_filter(&self) -> bool {
-        self.category.is_some() || self.campus.is_some() || self.max_price.is_some()
+        self.category.is_some()
+            || self.campus.is_some()
+            || self.max_price.is_some()
+            || self.brand.is_some()
+            || self.stylus_support.is_some()
+            || self.min_condition.is_some()
     }
     pub(crate) fn append(&self, q: &mut QueryBuilder<'_, MySql>, alias: &str, keyword: bool) {
         if let Some(category) = self.category {
@@ -113,6 +143,26 @@ impl Filters {
         if let Some(price) = self.max_price {
             q.push(format!(" AND {alias}.price_cents<="))
                 .push_bind(price);
+        }
+        if let Some(brand) = &self.brand {
+            q.push(format!(" AND {alias}.brand="))
+                .push_bind(brand.clone());
+        }
+        if let Some(support) = self.stylus_support {
+            q.push(format!(
+                " AND JSON_EXTRACT({alias}.attributes, '$.stylus_support') = CAST("
+            ));
+            q.push_bind(if support { "true" } else { "false" })
+                .push(" AS JSON)");
+        }
+        if let Some(condition) = &self.min_condition {
+            let rank = match condition.as_str() {
+                "new" => 4,
+                "like_new" => 3,
+                "good" => 2,
+                _ => 1,
+            };
+            q.push(format!(" AND CASE {alias}.condition_code WHEN 'new' THEN 4 WHEN 'like_new' THEN 3 WHEN 'good' THEN 2 WHEN 'fair' THEN 1 ELSE 0 END >= ")).push_bind(rank);
         }
         if keyword && let Some(text) = &self.q {
             q.push(format!(" AND CONCAT_WS(' ',{alias}.title,{alias}.description,{alias}.brand,{alias}.model,{alias}.purpose,{alias}.location_text) LIKE ")).push_bind(like_pattern(text)).push(" ESCAPE '!'");

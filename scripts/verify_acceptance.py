@@ -69,7 +69,7 @@ class Acceptance(ChatVerification):
         self.created = True
         self.cli(['--migrate'], 'migrate')
         self.cli(['--migrate'], 'migrate-repeat')
-        assert self.query('SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;') == '5'
+        assert self.query('SELECT COUNT(*) FROM _sqlx_migrations WHERE success=1;') == '7'
         self.cli(['--init-admin'], 'init-admin', json.dumps({'account': self.root_account, 'nickname': '联通管理员', 'password': self.password}).encode())
         self.api = self.api.replace('localhost', '127.0.0.1')
         self.server = self.start([self.binary], 'api')
@@ -90,7 +90,7 @@ class Acceptance(ChatVerification):
         notices = bob.call('/api/v1/notifications')['data']['items']
         system_notice = next(n['id'] for n in notices if n['target_type'] == 'none')
         goods_notice = next(n['id'] for n in notices if n['target_type'] == 'goods')
-        self.record('Fresh isolated database, five migrations, independent roles and private notification fixtures')
+        self.record('Fresh isolated database, seven migrations, independent roles and private notification fixtures')
 
         fixture = self.log_dir / 'fixture.png';fixture.write_bytes(png())
         next_cli = ROOT / 'apps/web/node_modules/next/dist/bin/next'

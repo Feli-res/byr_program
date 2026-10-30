@@ -54,6 +54,11 @@ async fn search(req: &Request, app: &AppState) -> AccountResult<Value> {
     if !["all", "post", "goods"].contains(&kind.as_str()) {
         return Err(AccountError::validation("kind", "内容类型不正确"));
     }
+    if mode == "semantic"
+        && let Ok(result) = crate::semantic::search(req, app).await
+    {
+        return Ok(result);
+    }
     let total: i64 = query(&f, &kind, &text, true)
         .build_query_scalar()
         .fetch_one(&app.pool)

@@ -8,6 +8,7 @@ import {Protected,useAuth} from '../auth';
 import {Failure,Time,Pager} from '../shared/content';
 import {useData} from '../../lib/use-data';
 import {states,conditions,useDictionaries,GoodsMenu,Filters} from './common';
+import {GoodsAiPanel} from './ai-panel';
 
 export function List({mode}){
   const {user}=useAuth(),router=useRouter(),pathname=usePathname(),params=useSearchParams(),dictionaries=useDictionaries();
@@ -15,7 +16,7 @@ export function List({mode}){
   const data=useData(`goods:${mode}:${query}:${user?.id}`,()=>request(endpoint+(query?'?'+query:'')));
   const back=pathname+(query?'?'+query:'');
   function onPage(page){const next=new URLSearchParams(query);next.set('page',page);router.push(`${pathname}?${next}`);}
-  return <><GoodsMenu/><section className="panel"><div className="panel-heading"><div><h1>{mode==='owner'?'我的商品':mode==='admin'?'商品管理':'校园二手'}</h1><p className="muted">校内闲置物品，查看真实价格与交易地点。</p></div>{user&&<Link className="button" href="/goods/new">发布商品</Link>}</div>
+  return <><GoodsMenu/>{mode==='public'&&<GoodsAiPanel dictionaries={dictionaries.value}/>}<section className="panel"><div className="panel-heading"><div><h1>{mode==='owner'?'我的商品':mode==='admin'?'商品管理':'校园二手'}</h1><p className="muted">校内闲置物品，查看真实价格与交易地点。</p></div>{user&&<Link className="button" href="/goods/new">发布商品</Link>}</div>
     <Filters key={query} params={params} dictionaries={dictionaries.value} mode={mode} onSubmit={next=>router.push(`${pathname}${next.size?'?'+next:''}`)}/><Failure data={dictionaries}/><Failure data={data}/>
     {data.value&&<><p className="muted">共 {data.value.total} 件商品</p><ul className="goods-list">{data.value.items.map(g=>{const target=mode==='owner'?`/me/goods/${g.id}`:mode==='admin'?`/admin/goods/${g.id}`:`/goods/${g.id}`;return <li key={g.id}>
       {g.images[0]&&<Link href={`${target}?return_to=${encodeURIComponent(back)}`} className="goods-thumbnail"><img src={g.images[0].url} alt={g.images[0].name} loading="lazy"/></Link>}

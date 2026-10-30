@@ -3844,6 +3844,7 @@ dependencies = [
  "image",
  "lopdf",
  "redis",
+ "reqwest",
  "rpassword",
  "salvo",
  "serde",

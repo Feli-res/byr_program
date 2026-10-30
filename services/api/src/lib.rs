@@ -1,10 +1,14 @@
 mod access;
 pub mod accounts;
+pub mod ai_service;
 pub mod chat;
 mod content;
 mod forum;
 mod goods;
+pub mod report_ai_worker;
+mod reports;
 mod search;
+pub mod semantic;
 use anyhow::{Context, Result, ensure};
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -373,6 +377,8 @@ pub fn app(state: AppState) -> Service {
         .push(forum::routes())
         .push(goods::routes())
         .push(search::routes())
+        .push(ai_service::routes())
+        .push(reports::routes())
         .push(chat::routes())
         .push(Router::with_path("health/live").get(live))
         .push(Router::with_path("health/ready").get(ready))
@@ -432,6 +438,20 @@ mod tests {
                     .unwrap()
             )
             .is_ok()
+        );
+    }
+
+    #[tokio::test]
+    async fn ai_goods_intent_rejects_unprotected_requests() {
+        let service = app(AppState::new(settings(false)).unwrap());
+        let mut response = TestClient::post("http://localhost/api/v1/ai/goods-intent")
+            .add_header("Origin", "https://unrelated.example", true)
+            .send(&service)
+            .await;
+        assert_eq!(response.status_code, Some(StatusCode::FORBIDDEN));
+        assert_eq!(
+            response.take_json::<Value>().await.unwrap()["error"]["code"],
+            "CSRF_INVALID"
         );
     }
 

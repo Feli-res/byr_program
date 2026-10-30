@@ -63,6 +63,8 @@ async fn main() -> Result<()> {
         return Ok(());
     }
     chat::start_workers(state.clone());
+    youzhihui_api::semantic::start_worker(state.clone());
+    youzhihui_api::report_ai_worker::start_worker(state.clone());
     let cleanup = state.clone();
     tokio::spawn(async move {
         let mut interval = tokio::time::interval(std::time::Duration::from_secs(3600));
