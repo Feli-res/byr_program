@@ -13,7 +13,7 @@ export const conditions={new:'全新',like_new:'近新',good:'良好',fair:'一�
 
 export function useDictionaries(){return useData('goods-dictionaries',()=>Promise.all([request('/api/v1/goods-categories'),request('/api/v1/campuses')]).then(([categories,campuses])=>({categories,campuses})));}
 
-export function GoodsMenu(){const {user}=useAuth();return <nav className="forum-menu" aria-label="商品导航"><SectionLink href="/goods">二手商品</SectionLink><SectionLink href="/search">全站搜索</SectionLink>{user&&<><SectionLink href="/goods/new">发布商品</SectionLink><SectionLink href="/me/goods">我的商品</SectionLink>{user.role==='admin'&&<SectionLink href="/admin/goods">商品管理</SectionLink>}</>}</nav>;}
+export function GoodsMenu(){const {user}=useAuth();return <nav className="forum-menu" aria-label="商品导航"><SectionLink href="/goods">二手商品</SectionLink>{user&&<><SectionLink href="/goods/new">发布商品</SectionLink><SectionLink href="/me/goods">我的商品</SectionLink>{user.role==='admin'&&<SectionLink href="/admin/goods">商品管理</SectionLink>}</>}</nav>;}
 
 export function Filters({params,dictionaries,onSubmit,search=false,mode='public'}){
   const [q,setQ]=useState(params.get('q')||''),[category,setCategory]=useState(params.get('category_id')||''),[campus,setCampus]=useState(params.get('campus_code')||''),[price,setPrice]=useState(()=>{try{return params.has('max_price_cents')?centsToYuan(Number(params.get('max_price_cents'))):'';}catch{return params.get('max_price_cents')||'';}}),[state,setState]=useState(params.get('state')||(mode==='public'?'on_sale':'')),[kind,setKind]=useState(params.get('kind')||'all'),[error,setError]=useState('');
