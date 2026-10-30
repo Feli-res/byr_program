@@ -56,9 +56,15 @@ test('管理员签发重置凭据、普通用户界面不能管理账户',async(
   const manager=await browser.newContext();const page=await manager.newPage();await login(page,process.env.ACCOUNT_ADMIN,process.env.ACCOUNT_ADMIN_PASSWORD);
   await page.getByRole('link',{name:'账户管理',exact:true}).click();
   const row=page.locator('.managed-user').filter({has:page.getByRole('heading',{name:/浏览器重置对象/})});await expect(row).toBeVisible();
+  const other=page.locator('.managed-user').first(),rowToggle=row.locator('.managed-toggle'),otherToggle=other.locator('.managed-toggle');
+  await expect(rowToggle).toHaveAttribute('aria-expanded','false');await expect(row).toContainText(account);await expect(row.getByLabel('操作原因',{exact:true})).toBeHidden();
+  await rowToggle.click();await otherToggle.click();await expect(rowToggle).toHaveAttribute('aria-expanded','true');await expect(otherToggle).toHaveAttribute('aria-expanded','true');
+  await page.getByLabel('单项展开').check();await expect(rowToggle).toHaveAttribute('aria-expanded','false');await expect(otherToggle).toHaveAttribute('aria-expanded','true');
+  await rowToggle.click();await expect(otherToggle).toHaveAttribute('aria-expanded','false');await expect(rowToggle).toHaveAttribute('aria-expanded','true');
   await row.getByLabel('操作原因',{exact:true}).fill('浏览器核实后重置检查');
   page.once('dialog',dialog=>dialog.accept());await row.getByRole('button',{name:'签发重置凭据'}).click();
   const credential=await row.getByLabel('重置凭据',{exact:true}).inputValue();expect(credential.length).toBeGreaterThan(31);
+  await rowToggle.click();await expect(row.getByLabel('重置凭据',{exact:true})).toBeHidden();await rowToggle.click();await expect(row.getByLabel('重置凭据',{exact:true})).toHaveValue(credential);
   await person.goto('/profile');await expect(person.getByRole('heading',{name:'请先登录',exact:true})).toBeVisible();
   await person.goto('/reset-password');await person.getByLabel('一次性重置凭据',{exact:true}).fill(credential);
   await person.getByLabel('新密码',{exact:true}).fill(password+'R');await person.getByLabel('确认新密码',{exact:true}).fill(password+'R');await person.getByRole('button',{name:'重置密码',exact:true}).click();

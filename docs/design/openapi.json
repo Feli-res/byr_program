@@ -8492,6 +8492,11 @@
             "maxLength": 20,
             "minLength": 1
           },
+          "account": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 4
+          },
           "nickname": {
             "type": "string",
             "maxLength": 20
@@ -8531,6 +8536,7 @@
         },
         "required": [
           "id",
+          "account",
           "nickname",
           "role",
           "status",

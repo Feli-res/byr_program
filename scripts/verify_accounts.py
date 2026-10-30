@@ -118,6 +118,13 @@ class Accounts(AccountVerification):
         self.query(f"UPDATE sessions SET expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND) WHERE token_hash=UNHEX('{digest}');")
         alice.call('/api/v1/me',expected=401);alice.login(self.alice_account,changed)
         self.record('Expired sessions are rejected without silent renewal')
+        listing=admin.call('/api/v1/admin/users?page=1&page_size=2')['data']
+        all_users=admin.call('/api/v1/admin/users?page=1&page_size=100')['data']['items']
+        assert [int(item['id']) for item in all_users]==sorted(int(item['id']) for item in all_users)
+        assert listing['items']==all_users[:2]
+        assert next(item for item in all_users if item['id']==uid)['account']==self.alice_account
+        assert next(item for item in all_users if item['id']==bob_id)['account']==self.bob_account
+        self.record('Admin-only user list includes exact login accounts in registration order with consistent pagination')
         alice.call('/api/v1/admin/users',expected=403)
         root_id=admin.me()['id'];root_version=admin.me()['version']
         self.admin_action(admin,root_id,'role',{'role':'user','board_ids':[],'version':root_version,'reason':'禁止移除最后管理员'},409)

@@ -12,6 +12,7 @@
     "Logout revokes current session while another browser session stays valid",
     "Password change revokes every old session and accepts the new password",
     "Expired sessions are rejected without silent renewal",
+    "Admin-only user list includes exact login accounts in registration order with consistent pagination",
     "Ordinary/moderator/admin restrictions, board authorization and last-administrator protection",
     "Ban revokes sessions and pauses tasks; unban does not resume tasks",
     "Admin reset: old sessions revoked, change-only token, single use, expiry and reissue",

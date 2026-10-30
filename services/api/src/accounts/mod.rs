@@ -383,7 +383,7 @@ async fn me(app: &AppState, identity: &Identity) -> AccountResult<Value> {
 }
 async fn admin_user(pool: &MySqlPool, u: &User) -> AccountResult<Value> {
     Ok(
-        json!({"id":u.id.to_string(),"nickname":u.nickname,"role":u.role,"status":u.status,"password_reset_required":u.password_reset_required,"board_ids":board_ids(pool,u.id).await?,"version":u.version}),
+        json!({"id":u.id.to_string(),"account":u.account_norm,"nickname":u.nickname,"role":u.role,"status":u.status,"password_reset_required":u.password_reset_required,"board_ids":board_ids(pool,u.id).await?,"version":u.version}),
     )
 }
 async fn parse<T: DeserializeOwned>(req: &mut Request) -> AccountResult<T> {
@@ -756,7 +756,7 @@ async fn list_users(req: &Request, app: &AppState) -> AccountResult<Value> {
         return Err(AccountError::validation("page", "分页参数不正确"));
     }
     let rows = sqlx::query_as::<_, User>(&format!(
-        "SELECT {USER_COLUMNS} FROM users ORDER BY id DESC LIMIT ? OFFSET ?"
+        "SELECT {USER_COLUMNS} FROM users ORDER BY id ASC LIMIT ? OFFSET ?"
     ))
     .bind(size)
     .bind((page - 1) * size)
