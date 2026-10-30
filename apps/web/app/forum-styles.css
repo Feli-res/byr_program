@@ -7,9 +7,7 @@
   main:has(> .forum-menu){display:flow-root}
   main > .forum-menu{float:left;width:152px;margin:0 24px 22px 0;padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:0;background:var(--paper);border:1px solid var(--line)}
   main > .forum-menu::before{content:attr(aria-label);color:var(--muted);font-size:12px;margin-bottom:6px}
-  main > .forum-menu > a{align-self:flex-start;max-width:100%;padding:7px 0;overflow-wrap:anywhere}
-  main > .forum-menu > a::after{bottom:3px}
-  main > .forum-menu > a[aria-current="page"]{color:var(--blue);background:#edf4f9;box-shadow:0 0 0 5px #edf4f9}
+  main > .forum-menu > a{align-self:flex-start;max-width:100%;padding:7px 0 7px 12px;overflow-wrap:anywhere}
   main > .forum-menu ~ *{margin-left:176px}
   main > .forum-menu .unread-label{margin-top:8px;overflow-wrap:anywhere}
 }
@@ -17,3 +15,12 @@
   main > .forum-menu{padding:0 2px 16px;gap:9px 17px}
   main > .forum-menu > a[aria-current="page"]{color:var(--blue);font-weight:700}
 }
+
+
+/* The section navigation uses a marker beside the text. */
+.forum-menu > a{position:relative;padding-left:12px;text-decoration:none;transition:color 180ms ease}
+.forum-menu > a::after{content:"";position:absolute;left:0;top:50%;width:2px;height:16px;background:var(--blue);opacity:0;transform:translate(-3px,-50%) scaleY(.7);transition:opacity 180ms ease,transform 180ms ease}
+.forum-menu > a[aria-current="page"]::after,.forum-menu > a:focus-visible::after{opacity:1;transform:translate(0,-50%) scaleY(1)}
+.forum-menu > a:focus-visible{color:var(--blue)}
+@media(hover:hover){.forum-menu > a:hover{color:var(--blue);text-decoration:none}.forum-menu > a:hover::after{opacity:1;transform:translate(0,-50%) scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.forum-menu > a,.forum-menu > a::after{transition:none}}
