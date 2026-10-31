@@ -3,7 +3,7 @@
   "date": "2026-10-28",
   "status": "passed",
   "checks": [
-    "Fresh isolated database, five migrations, independent roles and private notification fixtures",
+    "Fresh isolated database, seven migrations, independent roles and private notification fixtures",
     "One real browser flow publishes and replies to a post, publishes and searches goods, contacts seller, receives real WS chat and persists notification read state",
     "Browser loading/empty/validation/permission/read-failure/save-failure states recover without false success; list filters and narrow layout work",
     "The same moderation changes remove search hits, revoke old files, clear conversation product context and redact notification targets",
@@ -13,9 +13,35 @@
     "The three original development account rows are identical before and after acceptance"
   ],
   "browser_cases": 3,
-  "regressions_run": {},
+  "regressions_run": {
+    "engineering": {
+      "status": "passed",
+      "groups": 11,
+      "report": "docs/engineering/runtime-verification.json"
+    },
+    "accounts": {
+      "status": "passed",
+      "groups": 22,
+      "report": "docs/accounts/verification.json"
+    },
+    "forum": {
+      "status": "passed",
+      "groups": 19,
+      "report": "docs/forum/verification.json"
+    },
+    "goods": {
+      "status": "passed",
+      "groups": 17,
+      "report": "docs/goods/verification.json"
+    },
+    "chat": {
+      "status": "passed",
+      "groups": 14,
+      "report": "docs/chat/verification.json"
+    }
+  },
   "revocation_seconds": {
-    "password_changed_cross_module": 1.009
+    "password_changed_cross_module": 1.524
   },
   "isolated_database_removed": true,
   "original_development_accounts_unchanged": true,

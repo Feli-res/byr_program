@@ -45,7 +45,7 @@ test('浏览器发帖、通用上传、回复收藏、编辑与移动显示',asy
   await page.setViewportSize({width:375,height:812});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:path.resolve('../../.local/logs/forum/post-mobile.png'),fullPage:true});
   await page.setViewportSize({width:1280,height:900});await page.goto('/posts?board_id='+process.env.FORUM_BOARD+'&sort=popular');
-  await expect(page.getByRole('link',{name:title+'已编辑',exact:true})).toBeVisible();await page.reload();await expect(page.getByRole('combobox',{name:'板块',exact:true})).toHaveValue(process.env.FORUM_BOARD);
+  await expect(page.getByRole('link',{name:title+'已编辑',exact:true})).toBeVisible();await page.reload();expect(new URL(page.url()).searchParams.get('board_id')).toBe(process.env.FORUM_BOARD);await expect(page.locator('.forum-zone-nav a[aria-current="page"]')).toHaveCount(1);
   await page.screenshot({path:path.resolve('../../.local/logs/forum/forum.png'),fullPage:true});
   expect(postPath).toMatch(/^\/posts\/\d+$/);expect(errors).toEqual([]);
 });

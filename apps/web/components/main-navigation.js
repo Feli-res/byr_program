@@ -7,6 +7,7 @@ const items=[
   {href:'/goods',label:'商品',matches:path=>['/goods','/me/goods','/admin/goods'].some(base=>path===base || path.startsWith(base+'/'))},
   {href:'/search',label:'搜索',matches:path=>path==='/search' || path.startsWith('/search/')},
   {href:'/messages',label:'消息',matches:path=>['/messages','/notifications'].some(base=>path===base || path.startsWith(base+'/'))},
+  {href:'/me/subscriptions',label:'提醒',matches:path=>path==='/me/subscriptions' || path.startsWith('/me/subscriptions/')},
 ];
 
 export function MainNavigation(){

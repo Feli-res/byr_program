@@ -1,0 +1,63 @@
+{
+  "stage": "4.9",
+  "status": "passed",
+  "checks": [
+    "First full scan notifies matching on-sale goods once and excludes budget/campus/attribute/state mismatches",
+    "Repeated checks do not repeat notifications and keep the match count stable",
+    "Incremental cursor notifies a newly published matching goods exactly once",
+    "Pause stops new notifications and resume catches up changes from the paused period",
+    "Goods sold before the check never become a valid reminder",
+    "Another account cannot read, edit, delete or receive the task private conditions",
+    "Condition and interval boundaries are rejected without saving a task",
+    "Deleted task stops future checks and notifications; historical matches stay in the database",
+    "At most ten non-deleted tasks are allowed, including paused/error tasks; deleting one frees a slot",
+    "Ban pauses active tasks and blocks notifications; unban does not auto-resume but an explicit resume works",
+    "Transient failures retry with backoff, persist an error state, and recover after manual resume",
+    "Admin task list is redacted and admin pause is audited without exposing private conditions",
+    "API restart keeps effective tasks working and notifications deduplicated",
+    "Browser saves a reminder, sees a match notification, pauses and resumes it, and fits a narrow screen",
+    "4.9 backend and browser verification complete"
+  ],
+  "browser_cases": 1,
+  "isolated_database_removed": true,
+  "development_accounts_modified": false,
+  "server_deployed": true,
+  "error": null,
+  "server": {
+    "url": "https://youzhihui.85-121-122-124.sslip.io",
+    "release": "trial-20261031-01",
+    "health": "ready",
+    "page_status": 200,
+    "online": {
+      "status": "passed",
+      "subscription_id": 1,
+      "goods_ids": [
+        "3",
+        "4"
+      ],
+      "buyer_id": "3",
+      "brand": "ZX491793446349"
+    },
+    "checks": [
+      "first matching goods notified online",
+      "paused task produced no notification",
+      "resumed task caught the paused-period goods",
+      "notification target opens the current goods",
+      "subscriptions page and mobile layout rendered online"
+    ],
+    "test_data_cleaned": true,
+    "browser_page": "passed"
+  },
+  "regressions": {
+    "status": "passed",
+    "report": "docs/acceptance/verification.json",
+    "suites": [
+      "engineering",
+      "accounts",
+      "forum",
+      "goods",
+      "chat"
+    ],
+    "final_acceptance": "passed"
+  }
+}

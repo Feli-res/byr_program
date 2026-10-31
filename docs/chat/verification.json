@@ -2,7 +2,7 @@
   "stage": "4.6.3",
   "status": "passed",
   "checks": [
-    "Five migrations and independent seller/buyer/outsider/admin identities",
+    "Seven migrations and independent seller/buyer/outsider/admin identities",
     "Contact seller derives ownership, reuses one pair conversation and rejects outsiders including administrators",
     "HTTP persistence, retry deduplication, concurrent ordering, cursor history and monotonic peer-only unread counts",
     "Real WebSocket works through the web origin; hashed thirty-second single-use/session-bound tickets and exact Origin are enforced",
@@ -19,11 +19,11 @@
   ],
   "browser_cases": 4,
   "revocation_seconds": {
-    "logout": 0.456,
-    "password_changed": 1.009,
-    "password_reset": 0.51,
-    "banned": 0.512,
-    "expired": 0.509
+    "logout": 0.158,
+    "password_changed": 1.511,
+    "password_reset": 0.517,
+    "banned": 0.511,
+    "expired": 0.516
   },
   "isolated_database_removed": true,
   "development_accounts_modified": false,

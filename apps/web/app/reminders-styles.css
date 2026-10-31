@@ -1,0 +1,18 @@
+.reminder-form{border-top:1px solid var(--line);margin-top:20px;padding-top:8px}
+.reminder-list{list-style:none;margin:18px 0 0;padding:0}
+.reminder-card{border:1px solid var(--line);padding:16px 18px;margin:0 0 14px;background:#fbfcfd}
+.reminder-card .panel-heading{border-bottom:0;padding-bottom:0;margin-bottom:6px}
+.reminder-card h2{font-size:17px;overflow-wrap:anywhere}
+.reminder-card p{margin:6px 0}
+.reminder-facts{display:grid;grid-template-columns:1fr 1fr;gap:7px 24px;margin:10px 0 16px}
+.reminder-facts>div{display:flex;gap:15px;font-size:13px}
+.reminder-facts dt{color:var(--muted);flex:0 0 70px}
+.reminder-facts dd{margin:0;overflow-wrap:anywhere;min-width:0}
+.reminder-condition-fields{margin-top:14px}
+.reminder-condition-fields .reminder-purpose-field{flex-basis:100%}
+.reminder-runs,.reminder-matches{list-style:none;margin:0;padding:0}
+.reminder-runs li{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;align-items:center}
+.reminder-matches li{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.reminder-runs li:last-child,.reminder-matches li:last-child{border-bottom:0}
+.reminder-matches a{font-weight:500}
+@media(max-width:600px){.reminder-facts{grid-template-columns:1fr}.reminder-card{padding:14px}.reminder-runs li,.reminder-matches li{gap:4px 12px}}

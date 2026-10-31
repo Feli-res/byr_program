@@ -9,6 +9,7 @@ pub mod report_ai_worker;
 mod reports;
 mod search;
 pub mod semantic;
+pub mod subscriptions;
 use anyhow::{Context, Result, ensure};
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -380,6 +381,7 @@ pub fn app(state: AppState) -> Service {
         .push(ai_service::routes())
         .push(reports::routes())
         .push(chat::routes())
+        .push(subscriptions::routes())
         .push(Router::with_path("health/live").get(live))
         .push(Router::with_path("health/ready").get(ready))
         .push(
