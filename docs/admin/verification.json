@@ -1,0 +1,49 @@
+{
+  "stage": "4.10",
+  "date": "2026-10-31",
+  "status": "passed",
+  "checks": [
+    "Moderator granted one board for report scope checks",
+    "Comment report, moderator board scope, hide effect and notifications",
+    "Cross-board moderator denial, report type scope and legacy post-report entry",
+    "Post report hide removes detail and search result, author notified",
+    "Goods report, admin-only handling, search/visibility effect and seller notice",
+    "Message report recipient-only, minimal context, moderator denial and decision",
+    "Announcement draft/publish/retract lifecycle and public visibility",
+    "Board create/disable, public list, historical post readable, new post rejected",
+    "Admin task list is masked and pause persists",
+    "Role denials, cross-board denial and audit trail with safe changes",
+    "Report, announcement, board and task states survive an API restart"
+  ],
+  "browser_cases": 1,
+  "browser_checks": [
+    "Comment report, admin decision, announcement publish, home visibility and mobile layout"
+  ],
+  "unit_tests": 23,
+  "build_checks": [
+    "cargo fmt --check",
+    "cargo clippy --all-targets -- -D warnings",
+    "cargo test -p youzhihui-api",
+    "npm run build"
+  ],
+  "regressions": [
+    "docs/forum/verification.json",
+    "docs/goods/verification.json",
+    "docs/chat/verification.json"
+  ],
+  "isolated_database_removed": true,
+  "trial_deployment": {
+    "release": "trial-20261031-02",
+    "backup": "20261031T154416Z",
+    "checks": [
+      "公网健康检查返回 ready",
+      "管理员管理与举报接口可读取",
+      "公告发布后首页与公告页可见",
+      "管理页窄屏无横向溢出"
+    ]
+  },
+  "boundaries": [
+    "4.11 的 AI 对比评测与多人负载尚未执行",
+    "4.12 的独立备份恢复和最终服务器验收尚未执行"
+  ]
+}

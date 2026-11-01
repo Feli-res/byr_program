@@ -5196,7 +5196,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Report"
+                      "$ref": "#/components/schemas/ReportCreated"
                     },
                     "meta": {
                       "type": "object",
@@ -5468,7 +5468,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/AnnouncementPage"
+                      "$ref": "#/components/schemas/AnnouncementSummaryPage"
                     },
                     "meta": {
                       "type": "object",
@@ -6106,7 +6106,7 @@
                   "name": {
                     "type": "string",
                     "maxLength": 30,
-                    "minLength": 1
+                    "minLength": 2
                   },
                   "description": {
                     "type": "string",
@@ -6119,15 +6119,93 @@
                   }
                 },
                 "required": [
-                  "name",
-                  "description",
-                  "reason"
+                  "name"
                 ],
                 "additionalProperties": false
               }
             }
           }
         }
+      },
+      "get": {
+        "operationId": "adminListBoards",
+        "summary": "查看全部板块",
+        "tags": [
+          "管理"
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功；数据定义见对应 schema。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AdminBoardPage"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        }
+                      },
+                      "required": [
+                        "request_id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "失败；HTTP 与业务错误码见 03 接口说明。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-permission": "admin",
+        "x-server-checks": "包含已停用板块和帖子数量；停用不删除历史数据。"
       }
     },
     "/api/v1/admin/boards/{board_id}": {
@@ -6223,7 +6301,7 @@
                   "name": {
                     "type": "string",
                     "maxLength": 30,
-                    "minLength": 1
+                    "minLength": 2
                   },
                   "description": {
                     "type": "string",
@@ -6891,7 +6969,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Report"
+                      "$ref": "#/components/schemas/ReportDecision"
                     },
                     "meta": {
                       "type": "object",
@@ -6928,7 +7006,7 @@
           }
         },
         "x-permission": "moderator_or_admin",
-        "x-server-checks": "检查范围、版本和待处理状态；与处理通知、outbox和审计同事务；内容治理另走治理命令。",
+        "x-server-checks": "检查范围、版本和待处理状态；隐藏/下架与处理通知、outbox和审计同事务。",
         "requestBody": {
           "required": true,
           "content": {
@@ -6936,14 +7014,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "state": {
+                  "action": {
                     "type": "string",
                     "enum": [
-                      "resolved",
-                      "dismissed"
+                      "hide",
+                      "restrict",
+                      "keep",
+                      "uphold",
+                      "dismiss"
                     ]
                   },
-                  "resolution": {
+                  "reason": {
                     "type": "string",
                     "maxLength": 1000,
                     "minLength": 1
@@ -6952,11 +7033,16 @@
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 4294967295
+                  },
+                  "target_version": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
                   }
                 },
                 "required": [
-                  "state",
-                  "resolution",
+                  "action",
+                  "reason",
                   "version"
                 ],
                 "additionalProperties": false
@@ -7008,7 +7094,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/AnnouncementPage"
+                      "$ref": "#/components/schemas/AdminAnnouncementPage"
                     },
                     "meta": {
                       "type": "object",
@@ -7080,7 +7166,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Announcement"
+                      "$ref": "#/components/schemas/AdminAnnouncementDetail"
                     },
                     "meta": {
                       "type": "object",
@@ -7134,17 +7220,11 @@
                     "type": "string",
                     "maxLength": 20000,
                     "minLength": 1
-                  },
-                  "reason": {
-                    "type": "string",
-                    "maxLength": 1000,
-                    "minLength": 1
                   }
                 },
                 "required": [
                   "title",
-                  "body_markdown",
-                  "reason"
+                  "body_markdown"
                 ],
                 "additionalProperties": false
               }
@@ -7198,7 +7278,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Announcement"
+                      "$ref": "#/components/schemas/AdminAnnouncementDetail"
                     },
                     "meta": {
                       "type": "object",
@@ -7243,6 +7323,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "save",
+                      "publish",
+                      "retract"
+                    ]
+                  },
                   "title": {
                     "type": "string",
                     "maxLength": 100,
@@ -7252,14 +7340,6 @@
                     "type": "string",
                     "maxLength": 20000,
                     "minLength": 1
-                  },
-                  "state": {
-                    "type": "string",
-                    "enum": [
-                      "draft",
-                      "published",
-                      "retracted"
-                    ]
                   },
                   "version": {
                     "type": "integer",
@@ -7273,8 +7353,8 @@
                   }
                 },
                 "required": [
-                  "version",
-                  "reason"
+                  "action",
+                  "version"
                 ],
                 "additionalProperties": false
               }
@@ -7315,7 +7395,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Announcement"
+                      "$ref": "#/components/schemas/AdminAnnouncementDetail"
                     },
                     "meta": {
                       "type": "object",
@@ -9946,6 +10026,22 @@
             "maxLength": 20,
             "minLength": 1
           },
+          "target_title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reporter_nickname": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 2
+          },
           "reason": {
             "type": "string",
             "maxLength": 1000,
@@ -9989,10 +10085,6 @@
                 "type": "null"
               }
             ]
-          },
-          "post_title": {
-            "type": "string",
-            "maxLength": 100
           }
         },
         "required": [
@@ -10008,39 +10100,46 @@
         ],
         "additionalProperties": false
       },
-      "ReportContextItem": {
+      "ReportCreated": {
         "type": "object",
         "properties": {
-          "source_id": {
+          "id": {
             "type": "string",
             "pattern": "^[1-9][0-9]{0,19}$",
             "maxLength": 20,
             "minLength": 1
           },
-          "author": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/PublicUser"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "text": {
-            "type": "string",
-            "maxLength": 20000
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
+          "already_exists": {
+            "type": "boolean"
           }
         },
         "required": [
-          "source_id",
-          "author",
-          "text",
-          "created_at"
+          "id",
+          "already_exists"
+        ],
+        "additionalProperties": false
+      },
+      "ReportDecision": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "resolved",
+              "dismissed"
+            ]
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "restricted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "state",
+          "hidden",
+          "restricted"
         ],
         "additionalProperties": false
       },
@@ -10068,6 +10167,22 @@
             "maxLength": 20,
             "minLength": 1
           },
+          "target_title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reporter_nickname": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 2
+          },
           "reason": {
             "type": "string",
             "maxLength": 1000,
@@ -10112,12 +10227,67 @@
               }
             ]
           },
-          "necessary_context": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReportContextItem"
+          "reporter": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$",
+                "maxLength": 20,
+                "minLength": 1
+              },
+              "nickname": {
+                "type": "string",
+                "maxLength": 20,
+                "minLength": 2
+              }
             },
-            "maxItems": 5
+            "required": [
+              "id",
+              "nickname"
+            ],
+            "additionalProperties": false
+          },
+          "snapshot": {
+            "type": "object"
+          },
+          "current": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ai": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string",
+                "maxLength": 20
+              },
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "stale": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "state",
+              "result",
+              "stale"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -10130,11 +10300,175 @@
           "version",
           "created_at",
           "resolved_at",
-          "necessary_context"
+          "reporter",
+          "snapshot",
+          "current",
+          "ai"
         ],
         "additionalProperties": false
       },
       "Announcement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,19}$",
+            "maxLength": 20,
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "body_markdown": {
+            "type": "string",
+            "maxLength": 20000,
+            "minLength": 1
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "body_markdown",
+          "published_at",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "AnnouncementSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,19}$",
+            "maxLength": 20,
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "excerpt",
+          "published_at",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "AdminAnnouncement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,19}$",
+            "maxLength": 20,
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "retracted"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4294967295
+          },
+          "created_by": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 2
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "excerpt",
+          "state",
+          "version",
+          "created_by",
+          "published_at",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "AdminAnnouncementDetail": {
         "type": "object",
         "properties": {
           "id": {
@@ -10166,6 +10500,11 @@
             "minimum": 1,
             "maximum": 4294967295
           },
+          "created_by": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 2
+          },
           "published_at": {
             "anyOf": [
               {
@@ -10176,6 +10515,10 @@
                 "type": "null"
               }
             ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
           },
           "updated_at": {
             "type": "string",
@@ -10188,8 +10531,50 @@
           "body_markdown",
           "state",
           "version",
+          "created_by",
           "published_at",
+          "created_at",
           "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "AdminBoard": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,19}$",
+            "maxLength": 20,
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4294967295
+          },
+          "post_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "enabled",
+          "version",
+          "post_count"
         ],
         "additionalProperties": false
       },
@@ -10274,11 +10659,26 @@
             "maxLength": 20,
             "minLength": 1
           },
-          "actor_id": {
-            "type": "string",
-            "pattern": "^[1-9][0-9]{0,19}$",
-            "maxLength": 20,
-            "minLength": 1
+          "actor": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$",
+                "maxLength": 20,
+                "minLength": 1
+              },
+              "nickname": {
+                "type": "string",
+                "maxLength": 20,
+                "minLength": 2
+              }
+            },
+            "required": [
+              "id",
+              "nickname"
+            ],
+            "additionalProperties": false
           },
           "action": {
             "type": "string",
@@ -10306,48 +10706,7 @@
             "maxLength": 1000
           },
           "changes": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "string",
-                  "maxLength": 64
-                },
-                "before": {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "maxLength": 100
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "after": {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "maxLength": 100
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                }
-              },
-              "required": [
-                "field",
-                "before",
-                "after"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "request_id": {
-            "type": "string",
-            "format": "uuid"
+            "type": "object"
           },
           "created_at": {
             "type": "string",
@@ -10356,13 +10715,12 @@
         },
         "required": [
           "id",
-          "actor_id",
+          "actor",
           "action",
           "target_type",
           "target_id",
           "reason",
           "changes",
-          "request_id",
           "created_at"
         ],
         "additionalProperties": false
@@ -11177,6 +11535,102 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/File"
+            },
+            "maxItems": 100
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "AnnouncementSummaryPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnnouncementSummary"
+            },
+            "maxItems": 100
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "AdminAnnouncementPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminAnnouncement"
+            },
+            "maxItems": 100
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "AdminBoardPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminBoard"
             },
             "maxItems": 100
           },

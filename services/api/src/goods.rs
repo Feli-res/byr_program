@@ -636,6 +636,21 @@ async fn moderate(
     )
     .await?;
     sqlx::query("INSERT INTO audit_logs(actor_id,action,target_type,target_id,reason,safe_changes,request_id) VALUES (?,'goods.moderate','goods',?,?,?,?)").bind(user.id).bind(gid).bind(reason).bind(json!({"moderation":moderation,"state":state,"version":version})).bind(depot.get::<String>("request_id").expect("request id")).execute(&mut *tx).await?;
+    let summary = if moderation == "restricted" {
+        "你的商品已被管理员下架，请在我的商品查看。"
+    } else {
+        "你的商品管理限制已解除，可自行决定是否重新上架。"
+    };
+    crate::chat::notifications::create(
+        &mut tx,
+        old.get::<u64, _>("seller_id"),
+        "system",
+        "none",
+        None,
+        summary,
+        None,
+    )
+    .await?;
     tx.commit().await?;
     Ok(json!({"ok":true}))
 }

@@ -1,6 +1,6 @@
 # HTTP 操作目录
 
-日期：2026 年 10 月 23 日。以下为接口设计目录；账户、4.6.1论坛/通用上传、4.6.2商品/普通搜索及4.6.3聊天/通知已实现，实际结果见 [账户说明](../accounts/README.md) 、[论坛说明](../forum/README.md) 、[商品说明](../goods/README.md) 与 [聊天说明](../chat/README.md)，其他操作按后续阶段实现。完整字段类型见 [openapi.json](openapi.json)，使用方式、错误及事务边界见 [03 接口与消息约定](03_接口与消息约定.md)。
+日期：2026 年 10 月 31 日。以下为接口目录；账户、论坛/上传、商品/普通搜索、聊天/通知、4.8 AI 搜索与帖子举报、4.9 持续提醒、4.10 四类举报与管理已实现，实际结果见 [账户说明](../accounts/README.md) 、[论坛说明](../forum/README.md) 、[商品说明](../goods/README.md) 、[聊天说明](../chat/README.md) 、[4.8 说明](../ai48/README.md) 、[4.9 说明](../reminders/README.md) 与 [4.10 说明](../admin/README.md)。完整字段类型见 [openapi.json](openapi.json)，使用方式、错误及事务边界见 [03 接口与消息约定](03_接口与消息约定.md)。
 
 | 操作编号 | 请求 | 用途 | 允许身份 | 后端必须检查 |
 | --- | --- | --- | --- | --- |
@@ -71,6 +71,7 @@
 | `adminSetUserRole` | `PATCH /api/v1/admin/users/{user_id}/role` | 分配角色和板块 | `admin` | 统一锁防止并发移除最后可用管理员；只有 moderator 可绑定版面；撤销的版面权限立即生效；审计。 |
 | `adminIssuePasswordReset` | `POST /api/v1/admin/users/{user_id}/password-reset` | 管理员核实后发一次性凭据 | `admin` | 不得对自己使用；不能使最后可用管理员失去可用性；撤销旧凭据和所有会话；有效30分钟，明文只在本次响应出现，不入日志；审计。 |
 | `adminCreateBoard` | `POST /api/v1/admin/boards` | 创建板块 | `admin` | 名称唯一；审计。 |
+| `adminListBoards` | `GET /api/v1/admin/boards` | 查看全部板块 | `admin` | 包含已停用板块和帖子数量；停用不删除历史数据。 |
 | `adminUpdateBoard` | `PATCH /api/v1/admin/boards/{board_id}` | 修改板块配置 | `admin` | 禁用后不能新发帖，已有公开帖仍可读；不删除历史数据；审计。 |
 | `adminListPosts` | `GET /api/v1/admin/posts` | 查看权限范围内的帖子状态 | `moderator_or_admin` | 版主仅授权板块；返回管理所需正文，所有结果不进入公共搜索缓存。 |
 | `adminModeratePost` | `PATCH /api/v1/admin/posts/{post_id}/moderation` | 置顶、隐藏或恢复帖子 | `moderator_or_admin` | 版主核对板块授权；删除不恢复；状态变更、内容变更日志、审计同事务。 |
@@ -78,7 +79,7 @@
 | `adminModerateGoods` | `PATCH /api/v1/admin/goods/{goods_id}/moderation` | 治理下架或解除限制 | `admin` | restrict 设 off_shelf 与 restricted；release 仅解除限制，卖家自行恢复在售；审计和索引更新。 |
 | `adminListReports` | `GET /api/v1/admin/reports` | 查看职责范围内举报 | `moderator_or_admin` | 版主仅本人授权板块的帖子/评论举报；商品和私信举报仅管理员。 |
 | `adminGetReport` | `GET /api/v1/admin/reports/{report_id}` | 查看必要举报上下文 | `moderator_or_admin` | 与列表同范围；私信只展示被举报内容和必要上下文，不提供会话历史入口。 |
-| `adminResolveReport` | `PATCH /api/v1/admin/reports/{report_id}` | 处理举报并通知举报人 | `moderator_or_admin` | 检查范围、版本和待处理状态；与处理通知、outbox和审计同事务；内容治理另走治理命令。 |
+| `adminResolveReport` | `PATCH /api/v1/admin/reports/{report_id}` | 处理举报并通知举报人 | `moderator_or_admin` | 检查范围、版本和待处理状态；隐藏/下架与处理通知、outbox和审计同事务。 |
 | `adminListAnnouncements` | `GET /api/v1/admin/announcements` | 查看公告草稿及状态 | `admin` | 有效身份及本人的数据范围。 |
 | `adminCreateAnnouncement` | `POST /api/v1/admin/announcements` | 创建公告草稿 | `admin` | 初始 draft，不公开；审计。 |
 | `adminUpdateAnnouncement` | `PATCH /api/v1/admin/announcements/{announcement_id}` | 编辑、发布或撤回公告 | `admin` | 遵守公告状态图；发布后修改需先撤回；审计。 |

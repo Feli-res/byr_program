@@ -1,2 +1,3 @@
 import {ForumList} from '../components/forum';
-export default function Page(){return <ForumList/>;}
+import {AnnouncementStrip} from '../components/announcements';
+export default function Page(){return <><AnnouncementStrip/><ForumList/></>;}

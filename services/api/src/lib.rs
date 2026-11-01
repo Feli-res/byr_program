@@ -1,6 +1,8 @@
 mod access;
 pub mod accounts;
+mod admin;
 pub mod ai_service;
+mod announcements;
 pub mod chat;
 mod content;
 mod forum;
@@ -380,6 +382,8 @@ pub fn app(state: AppState) -> Service {
         .push(search::routes())
         .push(ai_service::routes())
         .push(reports::routes())
+        .push(announcements::routes())
+        .push(admin::routes())
         .push(chat::routes())
         .push(subscriptions::routes())
         .push(Router::with_path("health/live").get(live))

@@ -37,7 +37,7 @@ fn validate(review: &Review, source: &str) -> bool {
 async fn process(app: &AppState) -> Result<(), ()> {
     sqlx::query("UPDATE report_ai_jobs SET state='unknown',finished_at=UTC_TIMESTAMP(6) WHERE state='running' AND started_at<DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 45 SECOND)").execute(&app.pool).await.map_err(|_|())?;
     let Some(id) = sqlx::query_scalar::<_, u64>(
-        "SELECT id FROM report_ai_jobs WHERE state='pending' ORDER BY id LIMIT 1",
+        "SELECT j.id FROM report_ai_jobs j JOIN reports r ON r.id=j.report_id WHERE j.state='pending' AND r.target_type='post' ORDER BY j.id LIMIT 1",
     )
     .fetch_optional(&app.pool)
     .await

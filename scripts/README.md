@@ -13,6 +13,8 @@
 | `verify_ai48.py`、`ai48-browser.cjs` | 4.8 独立数据库、真实本机向量检索和浏览器验收；需预先构建前后端并启动本机向量服务 |
 | `Verify-Reminders.ps1` | 4.9 完整验收：格式、Clippy、单元测试、前后端构建、独立临时库与浏览器提醒流程 |
 | `verify_reminders.py`、`reminders-browser.cjs` | 订阅创建、全量/增量检查、去重、暂停恢复、封禁、重试、重启和浏览器保存提醒 |
+| `Verify-Admin.ps1` | 4.10 完整验收：格式、Clippy、单元测试、前后端构建、独立临时库与浏览器管理流程 |
+| `verify_admin.py`、`admin-browser.cjs` | 四类举报、公告、板块、任务、审计、联动和重启检查 |
 | `Verify-Chat.ps1` | 4.6.3 完整验收：构建、独立临时库、真实WebSocket、聊天通知及浏览器 |
 | `verify_chat.py` | 聊天去重补读、票据、登录撤销、通知权限、推送故障及重启检查 |
 | `Verify-Goods.ps1` | 4.6.2 完整验收：构建、金额、独立临时库、商品/搜索/文件及浏览器 |

@@ -4,6 +4,7 @@ import {request,jsonRequest} from '../../lib/api';
 import {Feedback,useAuth} from '../auth';
 import {useRealtime} from '../realtime';
 import {Time} from '../shared/content';
+import {ReportButton} from '../reports';
 
 export function order(a,b){const x=BigInt(a.sequence),y=BigInt(b.sequence);return x<y?-1:x>y?1:0;}
 
@@ -38,7 +39,7 @@ export function Messages({conversationId,peer}){
   return <><div className="chat-tools">{error&&!loading&&!initialized.current&&<button className="text-button" onClick={()=>setHistoryRetry(v=>v+1)}>重试读取历史</button>}{older&&<button className="text-button" disabled={loadingOlder} onClick={previous}>{loadingOlder?'正在读取…':'加载更早消息'}</button>}<button className="text-button" onClick={()=>syncRef.current?.()}>补读最新消息</button><button className="text-button" onClick={()=>{atBottom.current=true;if(scroll.current)scroll.current.scrollTop=scroll.current.scrollHeight;readBottom();}}>查看最新并标为已读</button></div>
     <div className="chat-messages" ref={scroll} onScroll={e=>{atBottom.current=e.currentTarget.scrollHeight-e.currentTarget.scrollTop-e.currentTarget.clientHeight<40;if(atBottom.current)readBottom();}} aria-label="聊天记录" role="log" aria-live="polite">
       {loading&&<p className="muted">正在读取历史消息…</p>}{!loading&&messages.length===0&&<p className="empty">还没有消息。</p>}
-      {messages.map(m=><article key={m.id} className={'chat-message '+(m.sender_id===user.id?'mine':'')} data-message-id={m.id}><div className="chat-message-meta"><span>{m.sender_id===user.id?'我':peer.nickname}</span><Time value={m.created_at}/></div><p>{m.body}</p><span className="message-state">{m.sender_id===user.id?(BigInt(m.sequence)<=BigInt(peerRead)?'对方已读':'已保存'):''}</span></article>)}
+      {messages.map(m=><article key={m.id} className={'chat-message '+(m.sender_id===user.id?'mine':'')} data-message-id={m.id}><div className="chat-message-meta"><span>{m.sender_id===user.id?'我':peer.nickname}</span><Time value={m.created_at}/></div><p>{m.body}</p><span className="message-state">{m.sender_id===user.id?(BigInt(m.sequence)<=BigInt(peerRead)?'对方已读':'已保存'):''}</span>{m.sender_id!==user.id&&<ReportButton targetType="message" targetId={m.id} label="举报这条消息" compact/>}</article>)}
     </div><form className="chat-composer" onSubmit={submit}><label htmlFor="message-body">文字消息</label><textarea id="message-body" rows={3} value={body} onChange={e=>setBody(e.target.value)} disabled={busy||!!attempt} required/><p className="hint">最多 2000 个字符，只支持文字。</p>{attempt&&!busy&&<p className="hint">尚未确认发送结果，重试不会重复保存同一条消息。</p>}<div className="actions"><button disabled={busy}>{busy?'正在确认保存…':attempt?'重试发送':'发送消息'}</button>{attempt&&!busy&&<button type="button" className="secondary" onClick={()=>{if(window.confirm('清空只移除此处草稿，已经保存的消息不会撤回。')){pending.current=null;setAttempt(null);setBody('');setError('');}}}>清空待确认草稿</button>}</div></form><Feedback error={error}/>
   </>;
 }

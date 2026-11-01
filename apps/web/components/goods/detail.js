@@ -8,6 +8,7 @@ import {Feedback,Protected,useAuth} from '../auth';
 import {Attachments} from '../files';
 import ReturnLink,{safeReturn} from '../return-link';
 import ContactSeller from '../chat-contact';
+import {ReportButton} from '../reports';
 import {Failure,Time} from '../shared/content';
 import {useData} from '../../lib/use-data';
 import {states,conditions,useDictionaries,GoodsMenu} from './common';
@@ -29,6 +30,7 @@ export function Detail({goodsId,mode}){
     <p className="goods-description">{g.description}</p><Attachments images={g.images}/><p className="muted">发布于 <Time value={g.created_at}/> · 更新于 <Time value={g.updated_at}/></p>
     {owned&&!g.deleted_at&&<div className="actions">{g.state!=='sold'&&!restricted&&<Link className="button" href={`/goods/${g.id}/edit?return_to=${encodeURIComponent(back)}`}>编辑商品</Link>}{!restricted&&g.state==='on_sale'&&<button className="secondary" disabled={busy} onClick={()=>state('reserved')}>标记预留</button>}{!restricted&&g.state==='reserved'&&<button className="secondary" disabled={busy} onClick={()=>state('on_sale')}>取消预留</button>}{!restricted&&['on_sale','reserved'].includes(g.state)&&<><button className="secondary" disabled={busy} onClick={()=>state('sold')}>标记已售</button><button className="secondary" disabled={busy} onClick={()=>state('off_shelf')}>下架商品</button></>}{!restricted&&g.state==='off_shelf'&&<button className="secondary" disabled={busy} onClick={()=>state('on_sale')}>重新上架</button>}<button className="danger-button" disabled={busy} onClick={remove}>删除商品</button></div>}
     {!owned&&<ContactSeller goods={g}/>}
+    {!owned&&mode==='public'&&<ReportButton targetType="goods" targetId={g.id} label="举报商品"/>}
     {mode==='admin'&&!g.deleted_at&&<div className="moderation-box"><h2>管理商品</h2><label htmlFor="goods-reason">操作原因</label><input id="goods-reason" value={reason} onChange={e=>setReason(e.target.value)} disabled={busy}/><div className="actions"><button className="secondary" disabled={busy||!reason.trim()} onClick={moderation}>{restricted?'解除限制':'管理下架'}</button></div><p className="hint">解除限制不会自动重新上架，也不会恢复已售商品。</p></div>}
   </>}<Feedback error={error} notice={notice}/></section></>;
 }

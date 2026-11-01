@@ -28,7 +28,7 @@ export function UserNavigation() {
   const {user,loading,refresh}=useAuth();const [error,setError]=useState(''),[busy,setBusy]=useState(false);
   const path=usePathname()||'';
   async function logout(){setBusy(true);setError('');try{await request('/api/v1/auth/logout',{method:'POST'});await refresh();}catch(e){setError(e.message);}finally{setBusy(false);}}
-  return <><nav aria-label="账户导航">{loading?<span>正在确认身份…</span>:user?<><Link href="/profile" aria-current={path==='/profile'?'page':path==='/change-password'?'location':undefined}>{user.nickname}</Link>{user.role==='admin'&&<Link href="/admin/users" aria-current={path==='/admin/users'?'page':undefined}>账户管理</Link>}<button className="text-button" onClick={logout} disabled={busy}>{busy?'正在退出…':'退出'}</button></>:<><Link href="/login">登录</Link><Link href="/register">注册</Link></>}</nav>{error&&<span className="nav-error" role="alert">{error}</span>}</>;
+  return <><nav aria-label="账户导航">{loading?<span>正在确认身份…</span>:user?<><Link href="/profile" aria-current={path==='/profile'?'page':path==='/change-password'?'location':undefined}>{user.nickname}</Link>{user.role==='admin'||user.role==='moderator'?<Link href="/admin" aria-current={path.startsWith('/admin')?'location':undefined}>管理</Link>:null}<button className="text-button" onClick={logout} disabled={busy}>{busy?'正在退出…':'退出'}</button></>:<><Link href="/login">登录</Link><Link href="/register">注册</Link></>}</nav>{error&&<span className="nav-error" role="alert">{error}</span>}</>;
 }
 export function Protected({children,admin=false}) {
   const {user,loading,error,refresh}=useAuth();

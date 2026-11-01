@@ -1,23 +1,2 @@
-'use client';
-import {useState} from 'react';
-import {request,jsonRequest} from '../../lib/api';
-import {useData} from '../../lib/use-data';
-import {Feedback,Protected} from '../auth';
-import {Failure,Time,Pager} from '../shared/content';
-import {ForumMenu,ManagementGuard} from './navigation';
-
-const status={pending:'待处理',resolved:'已处理',dismissed:'举报不成立'};
-export function ReportButton({postId}){
-  const [open,setOpen]=useState(false),[kind,setKind]=useState('广告或垃圾信息'),[text,setText]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
-  async function submit(e){e.preventDefault();setBusy(true);setError('');try{const result=await jsonRequest('/api/v1/post-reports','POST',{post_id:postId,reason:kind+(text.trim()?'：'+text.trim():'')});setNotice(result.already_exists?'你已经提交过待处理的举报。':'举报已提交，处理结果可在“我的举报”查看。');setOpen(false);}catch(e){setError(e.message)}finally{setBusy(false)}}
-  return <div><button className="text-button" type="button" onClick={()=>setOpen(v=>!v)}>举报帖子</button>{open&&<form onSubmit={submit}><label htmlFor="report-kind">举报原因</label><select id="report-kind" value={kind} onChange={e=>setKind(e.target.value)}>{['广告或垃圾信息','辱骂或人身攻击','泄露个人信息','疑似诈骗','其他'].map(x=><option key={x}>{x}</option>)}</select><label htmlFor="report-detail">补充说明（选填）</label><textarea id="report-detail" value={text} onChange={e=>setText(e.target.value)} maxLength={950} rows={3}/><div className="actions"><button disabled={busy}>{busy?'正在提交…':'提交举报'}</button><button type="button" className="secondary" onClick={()=>setOpen(false)}>取消</button></div></form>}<Feedback error={error} notice={notice}/></div>;
-}
-function Reports({admin}){
-  const [page,setPage]=useState(1),[chosen,setChosen]=useState(null),[reason,setReason]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
-  const data=useData(`reports:${admin}:${page}`,()=>request(`/api/v1/${admin?'admin':'me'}/reports?page=${page}`));
-  async function choose(row){setError('');try{setChosen(await request(`/api/v1/reports/${row.id}`));setReason('');}catch(e){setError(e.message)}}
-  async function decide(action){if(!reason.trim())return;setBusy(true);setError('');setNotice('');try{await jsonRequest(`/api/v1/reports/${chosen.id}`,'PATCH',{action,reason,version:chosen.version,post_version:chosen.current.version});setChosen(null);data.reload();setNotice('处理结果已保存。');}catch(e){setError(e.message)}finally{setBusy(false)}}
-  return <><ForumMenu/><section className="panel"><div className="panel-heading"><h1>{admin?'举报处理':'我的举报'}</h1></div><Failure data={data}/><Feedback error={error} notice={notice}/>{data.value&&<><ul className="record-list">{data.value.items.map(r=><li key={r.id}><button className="text-button" onClick={()=>choose(r)}>{r.post_title}</button><p>{status[r.state]||r.state} · {r.reason}</p><p className="muted"><Time value={r.created_at}/></p></li>)}</ul>{data.value.items.length===0&&<p className="empty">暂无举报记录。</p>}<Pager page={page} total={data.value.total} onPage={setPage}/></>}</section>
-    {chosen&&<section className="panel"><h2>举报详情</h2><p>举报原因：{chosen.reason}</p><p>状态：{status[chosen.state]}</p>{chosen.resolution&&<p>处理说明：{chosen.resolution}</p>}{admin&&chosen.snapshot&&<><h2>举报时的帖子</h2><p>{chosen.snapshot.title}</p><p className="comment-body">{chosen.snapshot.body}</p>{chosen.snapshot.attachments?.length>0&&<p>当时的附件：{chosen.snapshot.attachments.map((f,i)=><span key={f.id}>{i>0&&'、'}<a href={`/api/v1/files/${f.id}/content`} target="_blank" rel="noreferrer">{f.kind==='post_pdf'?'PDF':'图片'} {i+1}</a></span>)}</p>}<h2>当前帖子</h2><p>{chosen.current.title} · {chosen.current.deleted?'已删除':chosen.current.visibility==='hidden'?'已隐藏':'公开'}</p><p className="comment-body">{chosen.current.body}</p><div className="moderation-box"><h2>AI 辅助分析</h2>{chosen.ai?.stale?<p>帖子已修改，原 AI 建议已过期，请人工核查。</p>:chosen.ai?.state==='completed'&&chosen.ai.result?<><p>{chosen.ai.result.assessment} · {chosen.ai.result.suggested_action}</p><p>{chosen.ai.result.explanation}</p>{chosen.ai.result.evidence&&<p>参考原文：{chosen.ai.result.evidence}</p>}</>:<p>AI 分析{chosen.ai?.state==='pending'||chosen.ai?.state==='running'?'进行中':'暂不可用'}，可以继续人工处理。</p>}<p className="hint">AI 只分析文字，未分析附件；结果仅供参考，最终由管理员决定。</p></div>{chosen.state==='pending'&&<><label htmlFor="report-resolution">处理说明</label><textarea id="report-resolution" value={reason} onChange={e=>setReason(e.target.value)} maxLength={1000} rows={3}/><div className="actions"><button disabled={busy||!reason.trim()} onClick={()=>decide('hide')}>成立并隐藏</button><button className="secondary" disabled={busy||!reason.trim()} onClick={()=>decide('keep')}>成立但不隐藏</button><button className="secondary" disabled={busy||!reason.trim()} onClick={()=>decide('dismiss')}>举报不成立</button></div></>}</>}</section>}</>;
-}
-export function ReportsPage({admin=false}){return admin?<ManagementGuard><Reports admin/></ManagementGuard>:<Protected><Reports admin={false}/></Protected>}
+// Kept so existing forum pages can import the shared report UI from this folder.
+export {ReportButton, ReportsPage} from '../reports';

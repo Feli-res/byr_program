@@ -1,2 +1,3 @@
 import {ForumList} from '../../../components/forum';
-export default function Page(){return <ForumList mode="admin"/>;}
+import {AdminMenu} from '../../../components/admin/common';
+export default function Page(){return <><AdminMenu/><ForumList mode="admin"/></>;}

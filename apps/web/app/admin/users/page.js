@@ -1,7 +1,8 @@
 'use client';
 import {useEffect,useState} from 'react';
 import {jsonRequest,request} from '../../../lib/api';
-import {Feedback,Protected,useAuth} from '../../../components/auth';
+import {Feedback,useAuth} from '../../../components/auth';
+import {AdminGuard} from '../../../components/admin/common';
 const roleNames={user:'普通用户',moderator:'版主',admin:'管理员'};
 function UserRow({user,boards,onSaved,number,expanded,onToggle}){
   const [role,setRole]=useState(user.role),[selected,setSelected]=useState(user.board_ids),[reason,setReason]=useState('');
@@ -50,4 +51,4 @@ function Users(){
     {!data?<p>正在读取用户…</p>:<>{data.items.map((user,index)=><UserRow key={user.id} user={user} boards={boards} onSaved={saved} number={(page-1)*20+index+1} expanded={expanded.includes(user.id)} onToggle={()=>toggle(user.id)}/>)}<div className="actions"><button className="secondary" disabled={page===1} onClick={()=>changePage(page-1)}>上一页</button><span>第 {page} 页，共 {data.total} 个用户</span><button className="secondary" disabled={page*20>=data.total} onClick={()=>changePage(page+1)}>下一页</button></div></>}
   </section>;
 }
-export default function Page(){return <Protected admin><Users/></Protected>;}
+export default function Page(){return <AdminGuard adminOnly><Users/></AdminGuard>;}
