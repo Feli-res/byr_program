@@ -11,7 +11,8 @@ import {ForumMenu,ManagementGuard,ZoneNav} from './navigation';
 export function List({mode}){
   const {user}=useAuth(),router=useRouter(),params=useSearchParams();
   const board=params.get('board_id')||'',sort=params.get('sort')||'latest',page=Number(params.get('page')||1);
-  const query=new URLSearchParams({page:String(page),sort});if(board)query.set('board_id',board);
+  const pageSize=20;
+  const query=new URLSearchParams({page:String(page),page_size:String(pageSize),sort});if(board)query.set('board_id',board);
   const endpoints={public:'/api/v1/posts',mine:'/api/v1/me/posts',favorites:'/api/v1/me/favorites',admin:'/api/v1/admin/posts'};
   const data=useData(`${mode}:${query}:${user?.id}:${user?.role}`,()=>request(`${endpoints[mode]}?${query}`));
   const boards=useData('boards',()=>request('/api/v1/boards?page_size=100'));
@@ -23,7 +24,7 @@ export function List({mode}){
       <div className="topic-title">{post.pinned&&<span className="tag">置顶</span>}{post.visibility==='hidden'&&<span className="tag warning">已隐藏</span>}<Link href={mode==='admin'?`/admin/posts/${post.id}`:post.visibility==='hidden'?`/posts/${post.id}/edit`:`/posts/${post.id}`}>{post.title}</Link></div>
       <p className="topic-excerpt">{post.excerpt}</p><div className="topic-meta"><span>{boards.value?.items.find(b=>b.id===post.board_id)?.name||'板块'} · {post.author.nickname} · <Time value={post.created_at}/></span><span>{post.like_count} 赞 · {post.comment_count} 回复{post.saved_by_me?' · 已收藏':''}</span></div>
       {post.last_reply&&<p className="last-reply">最近回复：{post.last_reply.author.nickname} · <Time value={post.last_reply.created_at}/></p>}
-    </li>)}</ul>{data.value.items.length===0&&<p className="empty">这里还没有帖子。</p>}<Pager page={page} total={data.value.total} onPage={v=>update({page:v})}/></>}
+    </li>)}</ul>{data.value.items.length===0&&<p className="empty">这里还没有帖子。</p>}<Pager page={data.value.page} size={data.value.page_size} total={data.value.total} onPage={v=>update({page:v})}/></>}
   </section></>;
 }
 

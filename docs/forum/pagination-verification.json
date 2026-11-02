@@ -1,0 +1,31 @@
+{
+  "stage": "forum-pagination",
+  "date": "2026-11-02",
+  "status": "passed",
+  "checks": [
+    "45 posts are returned as 20/20/5 with page and page_size in the response",
+    "Pure page-window checks cover edges, ellipsis and clamping",
+    "Browser: 20/20/5 pages, page-number navigation, jump validation, disabled edges and 390px layout"
+  ],
+  "browser_cases": 1,
+  "regressions": [
+    "docs/forum/verification.json",
+    "docs/goods/verification.json"
+  ],
+  "behaviour": {
+    "page_size": 20,
+    "page_numbers": "window with first/last, current +/- 2 and ellipsis",
+    "jump": "1..total pages, invalid input shows an inline error",
+    "preserved_query": ["board_id", "sort"]
+  },
+  "isolated_database_removed": true,
+  "trial_deployment": {
+    "release": "trial-20261102-01",
+    "backup": "20261102T125135Z",
+    "checks": [
+      "公网健康检查返回 ready",
+      "帖子页面和已部署脚本包含分页表单",
+      "线上公开帖子不足 20 条，分页控件按设计不显示"
+    ]
+  }
+}

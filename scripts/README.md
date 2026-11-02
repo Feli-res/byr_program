@@ -15,6 +15,9 @@
 | `verify_reminders.py`、`reminders-browser.cjs` | 订阅创建、全量/增量检查、去重、暂停恢复、封禁、重试、重启和浏览器保存提醒 |
 | `Verify-Admin.ps1` | 4.10 完整验收：格式、Clippy、单元测试、前后端构建、独立临时库与浏览器管理流程 |
 | `verify_admin.py`、`admin-browser.cjs` | 四类举报、公告、板块、任务、审计、联动和重启检查 |
+| `Verify-Pagination.ps1` | 论坛分页验收：构建、页码窗口、独立临时库和真实浏览器翻页 |
+| `verify_pagination.py`、`pagination-browser.cjs` | 45 条帖子的 20/20/5 分页、页码、跳页校验、边界和窄屏 |
+| `test_pagination.mjs` | 页码窗口的纯函数检查：首页/末页、省略号、越界夹取 |
 | `Verify-Chat.ps1` | 4.6.3 完整验收：构建、独立临时库、真实WebSocket、聊天通知及浏览器 |
 | `verify_chat.py` | 聊天去重补读、票据、登录撤销、通知权限、推送故障及重启检查 |
 | `Verify-Goods.ps1` | 4.6.2 完整验收：构建、金额、独立临时库、商品/搜索/文件及浏览器 |

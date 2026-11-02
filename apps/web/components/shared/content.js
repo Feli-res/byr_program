@@ -1,6 +1,8 @@
 'use client';
+import {useState} from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import {pageWindow} from '../../lib/pagination.mjs';
 
 export function Failure({data}){return data.error?<p role="alert" className="message error">{data.error} <button className="text-button" onClick={data.reload}>重试读取</button></p>:data.loading?<p className="muted">正在读取…</p>:null;}
 
@@ -14,6 +16,28 @@ export function SafeMarkdown({children}){
 }
 
 export function Pager({page,total,onPage,size=20}){
-  if(total<=size&&page===1)return null;
-  return <nav className="pagination" aria-label="分页"><button className="secondary" disabled={page<=1} onClick={()=>onPage(page-1)}>上一页</button><span>第 {page} 页 · 共 {total} 条</span><button className="secondary" disabled={page*size>=total} onClick={()=>onPage(page+1)}>下一页</button></nav>;
+  const [jump,setJump]=useState(''),[error,setError]=useState('');
+  const count=Math.max(0,Math.floor(Number(total)||0));
+  const perPage=Math.max(1,Math.floor(Number(size)||20));
+  if(count<=perPage)return null;
+  const pages=Math.max(1,Math.ceil(count/perPage));
+  const current=Math.min(Math.max(1,Math.floor(Number(page)||1)),pages);
+  const items=pageWindow(current,pages);
+  function go(value){setError('');onPage(value);}
+  function submitJump(event){
+    event.preventDefault();
+    const raw=jump.trim();
+    const value=Number(raw);
+    if(!/^[0-9]+$/.test(raw)||value<1||value>pages){setError(`请输入 1～${pages} 的页码`);return;}
+    setError('');setJump('');
+    if(value!==current)onPage(value);
+  }
+  return <nav className="pagination" aria-label="分页">
+    <button type="button" className="secondary" disabled={current<=1} onClick={()=>go(current-1)}>上一页</button>
+    <div className="pagination-pages">{items.map((item,index)=>item==='ellipsis'?<span className="page-ellipsis" aria-hidden="true" key={`ellipsis-${index}`}>…</span>:<button type="button" className={item===current?'page-number current':'page-number'} aria-current={item===current?'page':undefined} aria-label={`第 ${item} 页`} key={item} onClick={()=>go(item)}>{item}</button>)}</div>
+    <button type="button" className="secondary" disabled={current>=pages} onClick={()=>go(current+1)}>下一页</button>
+    <span className="pagination-meta">第 {current} / {pages} 页 · 共 {count} 条</span>
+    <form className="pagination-jump" onSubmit={submitJump} noValidate><label>跳至 <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={7} value={jump} onChange={event=>{setJump(event.target.value);setError('');}} aria-label="跳转到页码" placeholder="页码"/> 页</label><button type="submit" className="secondary">跳转</button></form>
+    {error&&<span className="pagination-error" role="alert">{error}</span>}
+  </nav>;
 }
