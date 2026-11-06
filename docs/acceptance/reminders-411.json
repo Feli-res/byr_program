@@ -1,0 +1,439 @@
+{
+  "date": "2026-11-03",
+  "stack": "youzhihui-411",
+  "scenarios": {
+    "positive": 20,
+    "negative": 20
+  },
+  "positive_with_notification": 20,
+  "negative_with_notification": 0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "duplicate_notifications": 0,
+  "latency_seconds": [
+    3.071,
+    3.0825,
+    23.1577,
+    23.1626,
+    32.9248,
+    46.7164,
+    46.8147,
+    51.4532,
+    51.5416,
+    56.3498,
+    70.8903,
+    70.9582,
+    75.7576,
+    75.8451,
+    80.6118,
+    95.2653,
+    95.2777,
+    100.1711,
+    100.175,
+    105.0648
+  ],
+  "latency_p95": 100.175,
+  "results": [
+    {
+      "goods_id": "503",
+      "task_id": "101",
+      "positive": true,
+      "brand": "REMP-01",
+      "recipient": "l411u43",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 23.1626
+    },
+    {
+      "goods_id": "504",
+      "task_id": "102",
+      "positive": true,
+      "brand": "REMP-02",
+      "recipient": "l411u43",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 23.1577
+    },
+    {
+      "goods_id": "505",
+      "task_id": "103",
+      "positive": true,
+      "brand": "REMP-03",
+      "recipient": "l411u43",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 3.071
+    },
+    {
+      "goods_id": "506",
+      "task_id": "104",
+      "positive": true,
+      "brand": "REMP-04",
+      "recipient": "l411u43",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 3.0825
+    },
+    {
+      "goods_id": "507",
+      "task_id": "105",
+      "positive": true,
+      "brand": "REMP-05",
+      "recipient": "l411u43",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 32.9248
+    },
+    {
+      "goods_id": "508",
+      "task_id": "106",
+      "positive": false,
+      "brand": "REMN-06",
+      "recipient": "l411u43",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "509",
+      "task_id": "107",
+      "positive": false,
+      "brand": "REMN-07",
+      "recipient": "l411u43",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "510",
+      "task_id": "108",
+      "positive": false,
+      "brand": "REMN-08",
+      "recipient": "l411u43",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "511",
+      "task_id": "109",
+      "positive": false,
+      "brand": "REMN-09",
+      "recipient": "l411u43",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "512",
+      "task_id": "110",
+      "positive": false,
+      "brand": "REMN-10",
+      "recipient": "l411u43",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "513",
+      "task_id": "111",
+      "positive": true,
+      "brand": "REMP-11",
+      "recipient": "l411u44",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 46.8147
+    },
+    {
+      "goods_id": "514",
+      "task_id": "112",
+      "positive": true,
+      "brand": "REMP-12",
+      "recipient": "l411u44",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 46.7164
+    },
+    {
+      "goods_id": "515",
+      "task_id": "113",
+      "positive": true,
+      "brand": "REMP-13",
+      "recipient": "l411u44",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 51.5416
+    },
+    {
+      "goods_id": "516",
+      "task_id": "114",
+      "positive": true,
+      "brand": "REMP-14",
+      "recipient": "l411u44",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 51.4532
+    },
+    {
+      "goods_id": "517",
+      "task_id": "115",
+      "positive": true,
+      "brand": "REMP-15",
+      "recipient": "l411u44",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 56.3498
+    },
+    {
+      "goods_id": "518",
+      "task_id": "116",
+      "positive": false,
+      "brand": "REMN-16",
+      "recipient": "l411u44",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "519",
+      "task_id": "117",
+      "positive": false,
+      "brand": "REMN-17",
+      "recipient": "l411u44",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "520",
+      "task_id": "118",
+      "positive": false,
+      "brand": "REMN-18",
+      "recipient": "l411u44",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "521",
+      "task_id": "119",
+      "positive": false,
+      "brand": "REMN-19",
+      "recipient": "l411u44",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "522",
+      "task_id": "120",
+      "positive": false,
+      "brand": "REMN-20",
+      "recipient": "l411u44",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "523",
+      "task_id": "121",
+      "positive": true,
+      "brand": "REMP-21",
+      "recipient": "l411u45",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 70.9582
+    },
+    {
+      "goods_id": "524",
+      "task_id": "122",
+      "positive": true,
+      "brand": "REMP-22",
+      "recipient": "l411u45",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 70.8903
+    },
+    {
+      "goods_id": "525",
+      "task_id": "123",
+      "positive": true,
+      "brand": "REMP-23",
+      "recipient": "l411u45",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 75.8451
+    },
+    {
+      "goods_id": "526",
+      "task_id": "124",
+      "positive": true,
+      "brand": "REMP-24",
+      "recipient": "l411u45",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 75.7576
+    },
+    {
+      "goods_id": "527",
+      "task_id": "125",
+      "positive": true,
+      "brand": "REMP-25",
+      "recipient": "l411u45",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 80.6118
+    },
+    {
+      "goods_id": "528",
+      "task_id": "126",
+      "positive": false,
+      "brand": "REMN-26",
+      "recipient": "l411u45",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "529",
+      "task_id": "127",
+      "positive": false,
+      "brand": "REMN-27",
+      "recipient": "l411u45",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "530",
+      "task_id": "128",
+      "positive": false,
+      "brand": "REMN-28",
+      "recipient": "l411u45",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "531",
+      "task_id": "129",
+      "positive": false,
+      "brand": "REMN-29",
+      "recipient": "l411u45",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "532",
+      "task_id": "130",
+      "positive": false,
+      "brand": "REMN-30",
+      "recipient": "l411u45",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "533",
+      "task_id": "131",
+      "positive": true,
+      "brand": "REMP-31",
+      "recipient": "l411u46",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 95.2777
+    },
+    {
+      "goods_id": "534",
+      "task_id": "132",
+      "positive": true,
+      "brand": "REMP-32",
+      "recipient": "l411u46",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 95.2653
+    },
+    {
+      "goods_id": "535",
+      "task_id": "133",
+      "positive": true,
+      "brand": "REMP-33",
+      "recipient": "l411u46",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 100.175
+    },
+    {
+      "goods_id": "536",
+      "task_id": "134",
+      "positive": true,
+      "brand": "REMP-34",
+      "recipient": "l411u46",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 100.1711
+    },
+    {
+      "goods_id": "537",
+      "task_id": "135",
+      "positive": true,
+      "brand": "REMP-35",
+      "recipient": "l411u46",
+      "notifications": 1,
+      "expected": 1,
+      "latency_seconds": 105.0648
+    },
+    {
+      "goods_id": "538",
+      "task_id": "136",
+      "positive": false,
+      "brand": "REMN-36",
+      "recipient": "l411u46",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "539",
+      "task_id": "137",
+      "positive": false,
+      "brand": "REMN-37",
+      "recipient": "l411u46",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "540",
+      "task_id": "138",
+      "positive": false,
+      "brand": "REMN-38",
+      "recipient": "l411u46",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "541",
+      "task_id": "139",
+      "positive": false,
+      "brand": "REMN-39",
+      "recipient": "l411u46",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    },
+    {
+      "goods_id": "542",
+      "task_id": "140",
+      "positive": false,
+      "brand": "REMN-40",
+      "recipient": "l411u46",
+      "notifications": 0,
+      "expected": 0,
+      "latency_seconds": null
+    }
+  ],
+  "note": "原轮询按每 2 秒重复读取同一通知，导致计数重复；本文件按 notifications.id 去重并从数据库重算。"
+}

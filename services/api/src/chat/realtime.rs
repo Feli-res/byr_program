@@ -348,7 +348,7 @@ async fn valid(
     identity: &Identity,
     sink: &mut SplitSink<WebSocket, WsMessage>,
 ) -> bool {
-    match timeout(Duration::from_secs(1), session_state(app, identity)).await {
+    match timeout(Duration::from_secs(2), session_state(app, identity)).await {
         Ok(Ok(None)) => true,
         Ok(Ok(Some(reason))) => {
             let _ = send(
@@ -359,7 +359,14 @@ async fn valid(
             close(sink, 4001).await;
             false
         }
-        _ => {
+        Ok(Err(err)) => {
+            tracing::warn!(status = %err.status, "ws session check failed");
+            error(sink, AccountError::unavailable(), None).await;
+            close(sink, 1013).await;
+            false
+        }
+        Err(_) => {
+            tracing::warn!("ws session check timed out");
             error(sink, AccountError::unavailable(), None).await;
             close(sink, 1013).await;
             false
@@ -431,7 +438,7 @@ async fn connection(socket: WebSocket, app: Arc<AppState>, identity: Identity) {
     {
         return;
     }
-    let mut check = tokio::time::interval(Duration::from_millis(500));
+    let mut check = tokio::time::interval(Duration::from_secs(1));
     check.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
     let mut window = Instant::now();
     let mut frames = 0;
@@ -442,8 +449,8 @@ async fn connection(socket: WebSocket, app: Arc<AppState>, identity: Identity) {
             _=check.tick()=>{if !valid(&app,&identity,&mut sink).await{break;}},
             event=events.recv()=>{
                 let Some(event)=event else{break;};if !valid(&app,&identity,&mut sink).await{break;}
-                match timeout(Duration::from_secs(1),payload(&app,identity.user.id,&event)).await{Ok(Ok(value))=>{if !send(&mut sink,value).await{break;}
-                if !matches!(event,Event::Unread)&&let Ok(value)=unread(&app,identity.user.id).await&& !send(&mut sink,value).await{break;}},Ok(Err(e)) if e.status==StatusCode::NOT_FOUND||e.status==StatusCode::FORBIDDEN=>{},_=>{close(&mut sink,1013).await;break;}}
+                match timeout(Duration::from_secs(2),payload(&app,identity.user.id,&event)).await{Ok(Ok(value))=>{if !send(&mut sink,value).await{break;}
+                if !matches!(event,Event::Unread)&&let Ok(Ok(value))=timeout(Duration::from_secs(1),unread(&app,identity.user.id)).await&& !send(&mut sink,value).await{break;}},Ok(Err(e)) if e.status==StatusCode::NOT_FOUND||e.status==StatusCode::FORBIDDEN=>{},_=>{tracing::warn!("ws event payload failed or timed out");close(&mut sink,1013).await;break;}}
             },
             incoming=stream.next()=>{
                 let Some(Ok(message))=incoming else{break;};if message.is_close(){break;}

@@ -1,0 +1,420 @@
+{
+  "E01": {
+    "brand": "Apple",
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 250000,
+    "min_condition": null,
+    "preferences": [
+      "学习平板"
+    ],
+    "stylus_support": null
+  },
+  "E02": {
+    "brand": "HUAWEI",
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 200000,
+    "min_condition": null,
+    "preferences": [
+      "学习平板"
+    ],
+    "stylus_support": null
+  },
+  "E03": {
+    "brand": "Lenovo",
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 300000,
+    "min_condition": null,
+    "preferences": [
+      "轻薄笔记本"
+    ],
+    "stylus_support": null
+  },
+  "E04": {
+    "brand": "Xiaomi",
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 50000,
+    "min_condition": null,
+    "preferences": [
+      "降噪耳机"
+    ],
+    "stylus_support": null
+  },
+  "E05": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "图书资料",
+    "max_price_cents": 10000,
+    "min_condition": null,
+    "preferences": [
+      "考研数学复习书"
+    ],
+    "stylus_support": null
+  },
+  "E06": {
+    "brand": null,
+    "campus_code": "xitucheng",
+    "category": "图书资料",
+    "max_price_cents": 5000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": null
+  },
+  "E07": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "生活用品",
+    "max_price_cents": 5000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": null
+  },
+  "E08": {
+    "brand": null,
+    "campus_code": "other",
+    "category": "其他",
+    "max_price_cents": 50000,
+    "min_condition": null,
+    "preferences": [
+      "折叠自行车"
+    ],
+    "stylus_support": null
+  },
+  "E09": {
+    "brand": "Sony",
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 80000,
+    "min_condition": null,
+    "preferences": [
+      "降噪耳机"
+    ],
+    "stylus_support": null
+  },
+  "E10": {
+    "brand": "Dell",
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 100000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": null
+  },
+  "S011": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 250000,
+    "min_condition": null,
+    "preferences": [
+      "适合记笔记"
+    ],
+    "stylus_support": null
+  },
+  "S012": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 300000,
+    "min_condition": null,
+    "preferences": [
+      "适合记笔记"
+    ],
+    "stylus_support": null
+  },
+  "S021": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 200000,
+    "min_condition": null,
+    "preferences": [
+      "适合网课使用"
+    ],
+    "stylus_support": null
+  },
+  "S022": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 250000,
+    "min_condition": null,
+    "preferences": [
+      "适合网课使用"
+    ],
+    "stylus_support": null
+  },
+  "S031": {
+    "brand": null,
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 300000,
+    "min_condition": null,
+    "preferences": [
+      "适合写代码"
+    ],
+    "stylus_support": null
+  },
+  "S032": {
+    "brand": null,
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 350000,
+    "min_condition": null,
+    "preferences": [
+      "适合写代码"
+    ],
+    "stylus_support": null
+  },
+  "S041": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 50000,
+    "min_condition": null,
+    "preferences": [
+      "适合通勤用"
+    ],
+    "stylus_support": null
+  },
+  "S042": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 100000,
+    "min_condition": null,
+    "preferences": [
+      "适合通勤"
+    ],
+    "stylus_support": null
+  },
+  "S051": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "图书资料",
+    "max_price_cents": 10000,
+    "min_condition": null,
+    "preferences": [
+      "考研"
+    ],
+    "stylus_support": null
+  },
+  "S052": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "图书资料",
+    "max_price_cents": 60000,
+    "min_condition": null,
+    "preferences": [
+      "考研"
+    ],
+    "stylus_support": null
+  },
+  "S061": {
+    "brand": null,
+    "campus_code": "xitucheng",
+    "category": "图书资料",
+    "max_price_cents": 5000,
+    "min_condition": null,
+    "preferences": [
+      "适合课程用"
+    ],
+    "stylus_support": null
+  },
+  "S062": {
+    "brand": null,
+    "campus_code": "xitucheng",
+    "category": "图书资料",
+    "max_price_cents": 55000,
+    "min_condition": null,
+    "preferences": [
+      "适合课程用"
+    ],
+    "stylus_support": null
+  },
+  "S071": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "生活用品",
+    "max_price_cents": 5000,
+    "min_condition": null,
+    "preferences": [
+      "适合宿舍用"
+    ],
+    "stylus_support": null
+  },
+  "S072": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "生活用品",
+    "max_price_cents": 55000,
+    "min_condition": null,
+    "preferences": [
+      "适合宿舍使用"
+    ],
+    "stylus_support": null
+  },
+  "S081": {
+    "brand": null,
+    "campus_code": "other",
+    "category": "生活用品",
+    "max_price_cents": 50000,
+    "min_condition": null,
+    "preferences": [
+      "适合校园使用"
+    ],
+    "stylus_support": null
+  },
+  "S082": {
+    "brand": null,
+    "campus_code": "other",
+    "category": "生活用品",
+    "max_price_cents": 100000,
+    "min_condition": null,
+    "preferences": [
+      "适合校园使用"
+    ],
+    "stylus_support": null
+  },
+  "S091": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 80000,
+    "min_condition": null,
+    "preferences": [
+      "适合自习使用"
+    ],
+    "stylus_support": null
+  },
+  "S092": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 130000,
+    "min_condition": null,
+    "preferences": [
+      "适合自习使用"
+    ],
+    "stylus_support": null
+  },
+  "S101": {
+    "brand": null,
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 100000,
+    "min_condition": null,
+    "preferences": [
+      "适合外接屏使用"
+    ],
+    "stylus_support": null
+  },
+  "S102": {
+    "brand": null,
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 150000,
+    "min_condition": null,
+    "preferences": [
+      "适合外接屏使用"
+    ],
+    "stylus_support": null
+  },
+  "M01": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 200000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": true
+  },
+  "M02": {
+    "brand": "Lenovo",
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 300000,
+    "min_condition": "good",
+    "preferences": [],
+    "stylus_support": null
+  },
+  "M03": {
+    "brand": "HUAWEI",
+    "campus_code": "shahe",
+    "category": "数码设备",
+    "max_price_cents": 180000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": true
+  },
+  "M04": {
+    "brand": null,
+    "campus_code": "shahe",
+    "category": "图书资料",
+    "max_price_cents": 10000,
+    "min_condition": null,
+    "preferences": [
+      "考研数学"
+    ],
+    "stylus_support": null
+  },
+  "M05": {
+    "brand": "Dell",
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": 90000,
+    "min_condition": "good",
+    "preferences": [],
+    "stylus_support": null
+  },
+  "M06": {
+    "brand": null,
+    "campus_code": "other",
+    "category": "其他",
+    "max_price_cents": 50000,
+    "min_condition": null,
+    "preferences": [
+      "折叠自行车"
+    ],
+    "stylus_support": null
+  },
+  "N01": {
+    "brand": "Nikon",
+    "campus_code": null,
+    "category": "数码设备",
+    "max_price_cents": 500000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": null
+  },
+  "N02": {
+    "brand": "Canon",
+    "campus_code": "xitucheng",
+    "category": "数码设备",
+    "max_price_cents": null,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": null
+  },
+  "N03": {
+    "brand": "DJI",
+    "campus_code": null,
+    "category": "数码设备",
+    "max_price_cents": 300000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": null
+  },
+  "N04": {
+    "brand": null,
+    "campus_code": null,
+    "category": "其他",
+    "max_price_cents": 800000,
+    "min_condition": null,
+    "preferences": [],
+    "stylus_support": null
+  }
+}

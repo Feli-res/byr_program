@@ -14,7 +14,8 @@ dc exec -T mysql sh -c 'MYSQL_PWD="$MYSQL_PASSWORD" exec mysqldump -u "$MYSQL_US
 docker run --rm --network none --user 0 --entrypoint tar -v youzhihui-trial_uploads:/data:ro "$(dc images -q api | head -n 1)" -czf - -C /data . > "$DEST/uploads.tar.gz"
 cp "$BASE/shared/.env.prod" "$DEST/server.env"
 readlink -f "$BASE/current" > "$DEST/release.txt"
-(cd "$DEST" && sha256sum database.sql uploads.tar.gz server.env release.txt > SHA256SUMS)
+python3 "$(dirname "$0")/backup_inventory.py" "$DEST" "$(dc ps -q mysql)"
+(cd "$DEST" && sha256sum database.sql uploads.tar.gz server.env release.txt inventory.json > SHA256SUMS)
 dc start api web >/dev/null
 trap - EXIT
 # Keep the newest 14 successful snapshots; no volume or live upload removal.

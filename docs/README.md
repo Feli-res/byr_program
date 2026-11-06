@@ -2,6 +2,7 @@
 
 | 目录 | 内容 |
 | --- | --- |
+| [final/](final/README.md) | 4.12 公网最终复验、独立恢复工具、课程演示、源码打包和运维交接；保留待实测项 |
 | [page-drafts/](../archive/early-docs/page-drafts/README.md) | 4.3 的浏览器页面草图：页面目录、论坛、商品、搜索、聊天、通知、账户和管理视图 |
 | [acceptance/](acceptance/README.md) | 4.6整体流程、实际范围、修复和复验方法 |
 | [maintenance/](maintenance/README.md) | 已执行的缓存清理、旧资料归档、代码整理和复验记录 |

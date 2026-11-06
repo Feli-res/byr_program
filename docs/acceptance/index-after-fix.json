@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-03",
+  "stack": "youzhihui-411",
+  "image": "youzhihui-api:411-fix2",
+  "no_load_probe": {
+    "goods_id": "501",
+    "db_ready_seconds": 1.36,
+    "search_visible_seconds": 1.61,
+    "target_seconds": 60
+  },
+  "under_full_load": {
+    "goods_id": "502",
+    "created_at": "2026-11-03 07:57:42.679540",
+    "indexed_at": "2026-11-03 07:57:44.734906",
+    "db_seconds": 2,
+    "target_seconds": 60
+  },
+  "after_load": {
+    "ready_goods": 502,
+    "ready_posts": 3298,
+    "index_jobs_succeeded": 3800,
+    "index_jobs_pending": 0
+  },
+  "note": "load-411-after-fix2.json 的 index_sync_seconds=367.57 是压测结束后才开始轮询的测量口径，不是索引实际耗时；本文件按 goods.created_at 与 search_documents.indexed_at 直接计算。"
+}

@@ -1,0 +1,3 @@
+-r ../accounts/requirements-tests.txt
+-r ../chat/requirements-tests.txt
+paramiko==5.1.0

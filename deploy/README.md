@@ -11,9 +11,13 @@
 | `update.sh` | 构建新版本、备份、迁移、启动和检查 |
 | `youzhihui-backup.service`、`youzhihui-backup.timer` | 每日配套备份的定时任务模板 |
 | `backup.sh` | 数据库、上传、设置和版本配套备份，保留最近14份 |
+| `backup_inventory.py` | 网站停止写入时记录所有表精确行数和上传文件 SHA256；与新版 `backup.sh` 成对安装 |
+| `compose.restore412.yaml` | 4.12 全新独立恢复容器及卷，仅 loopback 18103 入口；不与 trial 共用数据库或上传卷 |
 
 本机 `.env` 与服务器 `.env.prod` 各自保存，禁止互相覆盖或提交。正式脚本当前按 `/home/sunxiang/youzhihui` 配置，不能直接用于其他目录或项目。
 
 本机步骤见 [工程说明](../docs/engineering/README.md)；公网地址与服务器命令见 [服务器使用说明](../邮智汇_服务器使用说明.md)，检查结果见 [4.7记录](../docs/deployment/README.md)。
 
 停止容器会保留数据；不要使用删卷命令代替停止。
+
+完整独立恢复方法见 [4.12 恢复演练](../docs/final/恢复演练.md)。工具已准备；是否实际恢复通过，以该目录真实记录为准。

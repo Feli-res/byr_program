@@ -1,0 +1,106 @@
+{
+  "started_at": "2026-11-03T08:08:02+0100",
+  "environment": "youzhihui-411 isolated stack, 4 vCPU / 16 GiB host, API cgroup 1 CPU / 512 MiB, slice 1.5 CPU",
+  "seed": {
+    "accounts": 50,
+    "posts": 1000,
+    "comments": 3000,
+    "goods": 500,
+    "messages": 2000,
+    "tasks": 100
+  },
+  "http_workers": 20,
+  "ws_connections": 10,
+  "warmup_seconds": 30,
+  "measure_seconds": 180,
+  "categories": {
+    "detail": {
+      "count": 2421,
+      "errors": 0,
+      "p50": 0.0361,
+      "p95": 0.1894,
+      "p99": 0.5379,
+      "max": 1.5886,
+      "threshold": 1.0,
+      "within_threshold_pct": 99.46
+    },
+    "semantic_search": {
+      "count": 800,
+      "errors": 0,
+      "p50": 0.629,
+      "p95": 1.1,
+      "p99": 1.2754,
+      "max": 1.577,
+      "threshold": 3.0,
+      "within_threshold_pct": 100.0
+    },
+    "list": {
+      "count": 2055,
+      "errors": 0,
+      "p50": 0.0491,
+      "p95": 0.1886,
+      "p99": 0.519,
+      "max": 1.5273,
+      "threshold": 1.0,
+      "within_threshold_pct": 99.71
+    },
+    "comment_create": {
+      "count": 771,
+      "errors": 0,
+      "p50": 0.0557,
+      "p95": 0.1717,
+      "p99": 0.4792,
+      "max": 1.6876,
+      "threshold": 1.0,
+      "within_threshold_pct": 99.22
+    },
+    "post_create": {
+      "count": 828,
+      "errors": 0,
+      "p50": 0.0714,
+      "p95": 0.3376,
+      "p99": 0.8655,
+      "max": 1.8975,
+      "threshold": 1.0,
+      "within_threshold_pct": 99.15
+    },
+    "keyword_search": {
+      "count": 1206,
+      "errors": 0,
+      "p50": 0.0579,
+      "p95": 0.1767,
+      "p99": 0.3605,
+      "max": 1.0186,
+      "threshold": 2.0,
+      "within_threshold_pct": 100.0
+    },
+    "chat_delivery": {
+      "count": 87,
+      "errors": 1,
+      "p50": 0.2967,
+      "p95": 0.6908,
+      "p99": 1.1335,
+      "max": 1.8414,
+      "threshold": 2.0,
+      "within_threshold_pct": 100.0
+    }
+  },
+  "semantic_modes": {
+    "semantic|degraded=False": 667,
+    "keyword|degraded=True": 247
+  },
+  "index_sync_seconds": null,
+  "errors": {
+    "chat_delivery": [
+      "ConnectionClosedError: received 1013 (try again later) connection closed; then sent 1013 (try again later) connection closed"
+    ]
+  },
+  "db": {
+    "posts": "3635",
+    "comments": "5502",
+    "goods": "506",
+    "messages": "2245",
+    "tasks": "100",
+    "duplicate_messages": "0"
+  }
+}

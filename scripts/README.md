@@ -4,6 +4,9 @@
 
 | 脚本 | 用途 |
 | --- | --- |
+| `verify_final412.py`、`final412-browser.cjs` | 4.12 真实 HTTPS/WSS 流程、管理、暂停整周期、重启/恢复读取及浏览器页面检查；专用密码留在 `.local` |
+| `server412.py`、`restore412.py`、`test_restore412.py` | 校验既有 SSH 指纹的更新/备份/下载、完整独立恢复及备份安全检查；步骤见 [4.12 交付](../docs/final/README.md) |
+| `package_final412.py` | 打包当前源码与验收说明，排除私密设置和构建缓存，生成逐文件及整包 SHA256 |
 | `Prepare-Dev.ps1` | 生成随机本机配置，启动独立数据库，构建后端、执行迁移及构建前端 |
 | `Start-Dev.ps1` | 启动数据库、后端与网页，记录自己启动的进程；默认支持前端热更新 |
 | `Stop-Dev.ps1` | 只停止记录的进程及其子进程、开发专用容器，保留数据 |
@@ -13,6 +16,7 @@
 | `verify_ai48.py`、`ai48-browser.cjs` | 4.8 独立数据库、真实本机向量检索和浏览器验收；需预先构建前后端并启动本机向量服务 |
 | `Verify-Reminders.ps1` | 4.9 完整验收：格式、Clippy、单元测试、前后端构建、独立临时库与浏览器提醒流程 |
 | `verify_reminders.py`、`reminders-browser.cjs` | 订阅创建、全量/增量检查、去重、暂停恢复、封禁、重试、重启和浏览器保存提醒 |
+| `seed_411.py`、`load_411.py`、`guard_411.py`、`check_411.py` | 4.11 服务器 411 隔离栈造数、20 HTTP + 10 WebSocket + 提醒混合负载、保护监控和只读计数；只连 411，不连 trial |
 | `Verify-Admin.ps1` | 4.10 完整验收：格式、Clippy、单元测试、前后端构建、独立临时库与浏览器管理流程 |
 | `verify_admin.py`、`admin-browser.cjs` | 四类举报、公告、板块、任务、审计、联动和重启检查 |
 | `Verify-Pagination.ps1` | 论坛分页验收：构建、页码窗口、独立临时库和真实浏览器翻页 |

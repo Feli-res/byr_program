@@ -1,0 +1,642 @@
+[
+  {
+    "id": "E01",
+    "subset": "exact",
+    "text": "想收一台 Apple 的iPad 学习平板，预算 2500 元以内，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Apple",
+      "max_price_cents": 250000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E02",
+    "subset": "exact",
+    "text": "想收一台 HUAWEI 的华为学习平板，预算 2000 元以内，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": "HUAWEI",
+      "max_price_cents": 200000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E03",
+    "subset": "exact",
+    "text": "想收一台 Lenovo 的联想轻薄笔记本，预算 3000 元以内，西土城交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Lenovo",
+      "max_price_cents": 300000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E04",
+    "subset": "exact",
+    "text": "想收一台 Xiaomi 的小米降噪耳机，预算 500 元以内，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Xiaomi",
+      "max_price_cents": 50000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E05",
+    "subset": "exact",
+    "text": "想收一台  的考研数学复习书，预算 100 元以内，沙河交易",
+    "expected": {
+      "category": "图书资料",
+      "brand": null,
+      "max_price_cents": 10000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "2"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E06",
+    "subset": "exact",
+    "text": "想收一台  的计算机网络教材，预算 50 元以内，西土城交易",
+    "expected": {
+      "category": "图书资料",
+      "brand": null,
+      "max_price_cents": 5000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "2"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E07",
+    "subset": "exact",
+    "text": "想收一台  的宿舍台灯，预算 50 元以内，沙河交易",
+    "expected": {
+      "category": "生活用品",
+      "brand": null,
+      "max_price_cents": 5000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "3"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E08",
+    "subset": "exact",
+    "text": "想收一台  的折叠自行车，预算 500 元以内，其他交易",
+    "expected": {
+      "category": "生活用品",
+      "brand": null,
+      "max_price_cents": 50000,
+      "campus_code": "other",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "3"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E09",
+    "subset": "exact",
+    "text": "想收一台 Sony 的索尼降噪耳机，预算 800 元以内，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Sony",
+      "max_price_cents": 80000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "E10",
+    "subset": "exact",
+    "text": "想收一台 Dell 的戴尔显示器，预算 1000 元以内，西土城交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Dell",
+      "max_price_cents": 100000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "S011",
+    "subset": "synonym",
+    "text": "想找适合记笔记用的数码设备，价格不超过 2500 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 250000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "记笔记",
+    "no_result": false
+  },
+  {
+    "id": "S012",
+    "subset": "synonym",
+    "text": "想找适合记笔记用的数码设备，价格不超过 3000 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 300000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "记笔记",
+    "no_result": false
+  },
+  {
+    "id": "S021",
+    "subset": "synonym",
+    "text": "想找适合网课用的数码设备，价格不超过 2000 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 200000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "网课",
+    "no_result": false
+  },
+  {
+    "id": "S022",
+    "subset": "synonym",
+    "text": "想找适合网课用的数码设备，价格不超过 2500 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 250000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "网课",
+    "no_result": false
+  },
+  {
+    "id": "S031",
+    "subset": "synonym",
+    "text": "想找适合写代码用的数码设备，价格不超过 3000 元，西土城交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 300000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "写代码",
+    "no_result": false
+  },
+  {
+    "id": "S032",
+    "subset": "synonym",
+    "text": "想找适合写代码用的数码设备，价格不超过 3500 元，西土城交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 350000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "写代码",
+    "no_result": false
+  },
+  {
+    "id": "S041",
+    "subset": "synonym",
+    "text": "想找适合通勤用的数码设备，价格不超过 500 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 50000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "通勤",
+    "no_result": false
+  },
+  {
+    "id": "S042",
+    "subset": "synonym",
+    "text": "想找适合通勤用的数码设备，价格不超过 1000 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 100000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "通勤",
+    "no_result": false
+  },
+  {
+    "id": "S051",
+    "subset": "synonym",
+    "text": "想找适合考研用的图书资料，价格不超过 100 元，沙河交易",
+    "expected": {
+      "category": "图书资料",
+      "brand": null,
+      "max_price_cents": 10000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "2"
+    },
+    "keyword": "考研",
+    "no_result": false
+  },
+  {
+    "id": "S052",
+    "subset": "synonym",
+    "text": "想找适合考研用的图书资料，价格不超过 600 元，沙河交易",
+    "expected": {
+      "category": "图书资料",
+      "brand": null,
+      "max_price_cents": 60000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "2"
+    },
+    "keyword": "考研",
+    "no_result": false
+  },
+  {
+    "id": "S061",
+    "subset": "synonym",
+    "text": "想找适合课程用的图书资料，价格不超过 50 元，西土城交易",
+    "expected": {
+      "category": "图书资料",
+      "brand": null,
+      "max_price_cents": 5000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "2"
+    },
+    "keyword": "课程",
+    "no_result": false
+  },
+  {
+    "id": "S062",
+    "subset": "synonym",
+    "text": "想找适合课程用的图书资料，价格不超过 550 元，西土城交易",
+    "expected": {
+      "category": "图书资料",
+      "brand": null,
+      "max_price_cents": 55000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "2"
+    },
+    "keyword": "课程",
+    "no_result": false
+  },
+  {
+    "id": "S071",
+    "subset": "synonym",
+    "text": "想找适合宿舍用的生活用品，价格不超过 50 元，沙河交易",
+    "expected": {
+      "category": "生活用品",
+      "brand": null,
+      "max_price_cents": 5000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "3"
+    },
+    "keyword": "宿舍",
+    "no_result": false
+  },
+  {
+    "id": "S072",
+    "subset": "synonym",
+    "text": "想找适合宿舍用的生活用品，价格不超过 550 元，沙河交易",
+    "expected": {
+      "category": "生活用品",
+      "brand": null,
+      "max_price_cents": 55000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "3"
+    },
+    "keyword": "宿舍",
+    "no_result": false
+  },
+  {
+    "id": "S081",
+    "subset": "synonym",
+    "text": "想找适合校园用的生活用品，价格不超过 500 元，其他交易",
+    "expected": {
+      "category": "生活用品",
+      "brand": null,
+      "max_price_cents": 50000,
+      "campus_code": "other",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "3"
+    },
+    "keyword": "校园",
+    "no_result": false
+  },
+  {
+    "id": "S082",
+    "subset": "synonym",
+    "text": "想找适合校园用的生活用品，价格不超过 1000 元，其他交易",
+    "expected": {
+      "category": "生活用品",
+      "brand": null,
+      "max_price_cents": 100000,
+      "campus_code": "other",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "3"
+    },
+    "keyword": "校园",
+    "no_result": false
+  },
+  {
+    "id": "S091",
+    "subset": "synonym",
+    "text": "想找适合自习用的数码设备，价格不超过 800 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 80000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "自习",
+    "no_result": false
+  },
+  {
+    "id": "S092",
+    "subset": "synonym",
+    "text": "想找适合自习用的数码设备，价格不超过 1300 元，沙河交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 130000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "自习",
+    "no_result": false
+  },
+  {
+    "id": "S101",
+    "subset": "synonym",
+    "text": "想找适合外接屏用的数码设备，价格不超过 1000 元，西土城交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 100000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "外接屏",
+    "no_result": false
+  },
+  {
+    "id": "S102",
+    "subset": "synonym",
+    "text": "想找适合外接屏用的数码设备，价格不超过 1500 元，西土城交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 150000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": "外接屏",
+    "no_result": false
+  },
+  {
+    "id": "M01",
+    "subset": "mixed",
+    "text": "预算 2000 元以内、沙河交易的平板，要求支持手写笔",
+    "expected": {
+      "category": "数码设备",
+      "brand": null,
+      "max_price_cents": 200000,
+      "campus_code": "shahe",
+      "stylus_support": true,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "M02",
+    "subset": "mixed",
+    "text": "西土城交易、成色良好及以上的联想笔记本，3000 元以内",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Lenovo",
+      "max_price_cents": 300000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": "good",
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "M03",
+    "subset": "mixed",
+    "text": "沙河交易的华为平板，预算 1800 元，支持手写笔",
+    "expected": {
+      "category": "数码设备",
+      "brand": "HUAWEI",
+      "max_price_cents": 180000,
+      "campus_code": "shahe",
+      "stylus_support": true,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "M04",
+    "subset": "mixed",
+    "text": "想收 100 元以内的考研数学书，沙河面交",
+    "expected": {
+      "category": "图书资料",
+      "brand": null,
+      "max_price_cents": 10000,
+      "campus_code": "shahe",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "2"
+    },
+    "keyword": "考研",
+    "no_result": false
+  },
+  {
+    "id": "M05",
+    "subset": "mixed",
+    "text": "西土城的戴尔显示器，最高 900 元，成色良好以上",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Dell",
+      "max_price_cents": 90000,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": "good",
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": false
+  },
+  {
+    "id": "M06",
+    "subset": "mixed",
+    "text": "其他校区交易的折叠自行车，预算 500 元以内",
+    "expected": {
+      "category": "生活用品",
+      "brand": null,
+      "max_price_cents": 50000,
+      "campus_code": "other",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "3"
+    },
+    "keyword": "校园",
+    "no_result": false
+  },
+  {
+    "id": "N01",
+    "subset": "no_result",
+    "text": "想收一台尼康相机，预算 5000 元",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Nikon",
+      "max_price_cents": 500000,
+      "campus_code": null,
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": true
+  },
+  {
+    "id": "N02",
+    "subset": "no_result",
+    "text": "求购佳能相机，西土城交易",
+    "expected": {
+      "category": "数码设备",
+      "brand": "Canon",
+      "max_price_cents": null,
+      "campus_code": "xitucheng",
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": true
+  },
+  {
+    "id": "N03",
+    "subset": "no_result",
+    "text": "收一台大疆无人机，3000 元以内",
+    "expected": {
+      "category": "数码设备",
+      "brand": "DJI",
+      "max_price_cents": 300000,
+      "campus_code": null,
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "1"
+    },
+    "keyword": null,
+    "no_result": true
+  },
+  {
+    "id": "N04",
+    "subset": "no_result",
+    "text": "求购一台二手钢琴，预算 8000 元",
+    "expected": {
+      "category": "其他",
+      "brand": null,
+      "max_price_cents": 800000,
+      "campus_code": null,
+      "stylus_support": null,
+      "min_condition": null,
+      "category_id": "4"
+    },
+    "keyword": null,
+    "no_result": true
+  }
+]

@@ -1,0 +1,149 @@
+{
+  "checked_at": "2026-11-05T08:54:00.700012+00:00",
+  "release": "final-20261105-01",
+  "previous_release": "trial-20261102-01",
+  "containers": {
+    "youzhihui-trial-api-1": {
+      "image": "youzhihui-api:final-20261105-01",
+      "image_id": "sha256:2bd0c84efa137fa97c6779501abbe709b6d8c7ae94efa485dda8b1bc69bcb552",
+      "status": "running",
+      "health": "healthy",
+      "restart_policy": "unless-stopped",
+      "ports": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18082"
+          }
+        ]
+      },
+      "volumes": [
+        {
+          "name": "youzhihui-trial_uploads",
+          "destination": "/data/uploads"
+        }
+      ],
+      "logs": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      },
+      "public_flags": {
+        "AI_ENABLED": "true",
+        "DEV_TOOLS_ENABLED": "false",
+        "COOKIE_SECURE": "true",
+        "WEB_ORIGIN": "https://youzhihui.85-121-122-124.sslip.io"
+      }
+    },
+    "youzhihui-trial-web-1": {
+      "image": "youzhihui-web:final-20261105-01",
+      "image_id": "sha256:ebe1f7209a25e2b605d24b9212d7befc015e58c2bc5880c24b4382bacfa9657b",
+      "status": "running",
+      "health": null,
+      "restart_policy": "unless-stopped",
+      "ports": {
+        "3000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18083"
+          }
+        ]
+      },
+      "volumes": [],
+      "logs": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    "youzhihui-trial-mysql-1": {
+      "image": "mysql:8.4",
+      "image_id": "sha256:d2a0d367629f5b5dcd6cdabc53fe9183a0a3c313f9bd354e368290ba6fbf6d3f",
+      "status": "running",
+      "health": "healthy",
+      "restart_policy": "unless-stopped",
+      "ports": {
+        "3306/tcp": null,
+        "33060/tcp": null
+      },
+      "volumes": [
+        {
+          "name": "youzhihui-trial_mysql-data",
+          "destination": "/var/lib/mysql"
+        }
+      ],
+      "logs": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    "youzhihui-trial-redis-1": {
+      "image": "redis:7-alpine",
+      "image_id": "sha256:98c6ca8f397f86e469be752c3e7ed5eb8b17f2479840cb69a2e413037038e9f4",
+      "status": "running",
+      "health": "healthy",
+      "restart_policy": "unless-stopped",
+      "ports": {
+        "6379/tcp": null
+      },
+      "volumes": [
+        {
+          "name": "youzhihui-trial_redis-data",
+          "destination": "/data"
+        }
+      ],
+      "logs": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    "youzhihui-trial-embedding-1": {
+      "image": "ghcr.io/huggingface/text-embeddings-inference:cpu-1.9@sha256:2538ea1c9640d3763b15af668039d24172d063b42337b0c27796fc2be180c78d",
+      "image_id": "sha256:8ce0330d3eae11511627a5b3eeef7001f76970ad3633d771147b57915c021dd7",
+      "status": "running",
+      "health": null,
+      "restart_policy": "unless-stopped",
+      "ports": {},
+      "volumes": [
+        {
+          "name": "youzhihui-trial_embedding-cache",
+          "destination": "/data"
+        }
+      ],
+      "logs": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    }
+  },
+  "source_sha256": {
+    "services/api/src/ai_service.rs": "3b968364d6b42f87b5488297d82186a04d5fa54616004cbe8a9c135b0ff08957",
+    "services/api/src/semantic.rs": "2dffaa16f3c8da9a23b6f40d0519667c893e699647025a6b06698575fda10676",
+    "services/api/src/chat/realtime.rs": "6e9fe76cd5813e6aab3f892aa0de54938c639d29a657012b82559d82c945e452"
+  },
+  "docker_enabled": "enabled",
+  "backup_timer_enabled": "enabled",
+  "backup_service": [
+    "Result=success",
+    "ExecMainStatus=0"
+  ],
+  "backup_snapshots": [
+    "20261105T084901Z",
+    "20261105T085058Z"
+  ],
+  "nginx_configuration_valid": true,
+  "source_matches_workspace": true
+}

@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-11-05T08:50:33.402488+00:00",
+  "status": "passed",
+  "containers": {
+    "/youzhihui-trial-api-1": {
+      "before_started_at": "2026-11-05T08:49:38.755215385Z",
+      "after_started_at": "2026-11-05T08:50:32.101404988Z",
+      "container_id_preserved": true,
+      "image": "youzhihui-api:final-20261105-01"
+    },
+    "/youzhihui-trial-web-1": {
+      "before_started_at": "2026-11-05T08:49:38.949826956Z",
+      "after_started_at": "2026-11-05T08:50:22.08086329Z",
+      "container_id_preserved": true,
+      "image": "youzhihui-web:final-20261105-01"
+    }
+  },
+  "other_containers_unchanged": true,
+  "host_rebooted": false
+}

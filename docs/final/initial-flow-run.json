@@ -1,0 +1,48 @@
+{
+  "stage": "4.12",
+  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "checked_at": "2026-11-05T07:38:11.453774+00:00",
+  "checks": [
+    {
+      "check": "HTTPS/API readiness",
+      "passed": true
+    },
+    {
+      "check": "Two independent accounts register and log in",
+      "passed": true
+    },
+    {
+      "check": "Image post, reply, keyword search and unauthorized edit rejected",
+      "passed": true
+    },
+    {
+      "check": "Real AI understands a goods request",
+      "passed": true,
+      "elapsed_seconds": 2.077,
+      "response_fields": [
+        "intent",
+        "requires_confirmation"
+      ]
+    },
+    {
+      "check": "Semantic goods matching with confirmed budget/campus conditions",
+      "passed": true,
+      "mode_used": "semantic"
+    },
+    {
+      "check": "New goods triggers one persisted reminder through the real scheduler",
+      "passed": true,
+      "observed_wait_seconds": 298.46
+    },
+    {
+      "check": "Paused task and sold goods excluded from matching",
+      "passed": true
+    },
+    {
+      "check": "Two WSS sessions deliver a real private message; history saved and anonymous access denied",
+      "passed": true
+    }
+  ],
+  "status": "failed",
+  "error": "TypeError: 'GoodsClient' object is not callable"
+}

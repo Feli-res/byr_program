@@ -1,0 +1,102 @@
+{
+  "started_at": "2026-11-03T08:49:40+0100",
+  "environment": "youzhihui-411 isolated stack, 4 vCPU / 16 GiB host, API cgroup 1 CPU / 512 MiB, slice 1.5 CPU",
+  "seed": {
+    "accounts": 50,
+    "posts": 1000,
+    "comments": 3000,
+    "goods": 500,
+    "messages": 2000,
+    "tasks": 100
+  },
+  "http_workers": 20,
+  "ws_connections": 10,
+  "warmup_seconds": 60,
+  "measure_seconds": 300,
+  "categories": {
+    "list": {
+      "count": 2098,
+      "errors": 0,
+      "p50": 0.3946,
+      "p95": 0.9453,
+      "p99": 1.4674,
+      "max": 2.5233,
+      "threshold": 1.0,
+      "within_threshold_pct": 96.43
+    },
+    "keyword_search": {
+      "count": 1224,
+      "errors": 0,
+      "p50": 0.1121,
+      "p95": 0.4755,
+      "p99": 0.7647,
+      "max": 1.8378,
+      "threshold": 2.0,
+      "within_threshold_pct": 100.0
+    },
+    "semantic_search": {
+      "count": 809,
+      "errors": 0,
+      "p50": 1.4073,
+      "p95": 2.1196,
+      "p99": 2.3081,
+      "max": 2.5856,
+      "threshold": 3.0,
+      "within_threshold_pct": 100.0
+    },
+    "detail": {
+      "count": 2473,
+      "errors": 0,
+      "p50": 0.1461,
+      "p95": 0.6955,
+      "p99": 1.2568,
+      "max": 2.5473,
+      "threshold": 1.0,
+      "within_threshold_pct": 98.38
+    },
+    "post_create": {
+      "count": 824,
+      "errors": 0,
+      "p50": 0.275,
+      "p95": 1.1987,
+      "p99": 1.8766,
+      "max": 2.8218,
+      "threshold": 1.0,
+      "within_threshold_pct": 92.48
+    },
+    "comment_create": {
+      "count": 777,
+      "errors": 0,
+      "p50": 0.1426,
+      "p95": 0.5731,
+      "p99": 1.0311,
+      "max": 1.9689,
+      "threshold": 1.0,
+      "within_threshold_pct": 98.84
+    },
+    "chat_delivery": {
+      "count": 141,
+      "errors": 0,
+      "p50": 0.6994,
+      "p95": 1.7861,
+      "p99": 2.0497,
+      "max": 3.1087,
+      "threshold": 2.0,
+      "within_threshold_pct": 97.87
+    }
+  },
+  "semantic_modes": {
+    "semantic|degraded=False": 972,
+    "keyword|degraded=True": 12
+  },
+  "index_sync_seconds": null,
+  "errors": {},
+  "db": {
+    "posts": "2017",
+    "comments": "3961",
+    "goods": "501",
+    "messages": "2338",
+    "tasks": "100",
+    "duplicate_messages": "0"
+  }
+}

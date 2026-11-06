@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "goods_id": "8",
+  "goods_created_at": "2026-11-05T08:50:35.719876Z",
+  "notification_created_at": "2026-11-05T08:55:33.234435Z",
+  "delivery_latency_seconds": 297.514559,
+  "notice_count": 1,
+  "target_seconds": 420,
+  "scope": "one production sample; server timestamps, not a percentile benchmark"
+}

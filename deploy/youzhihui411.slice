@@ -1,0 +1,17 @@
+[Unit]
+Description=Resource envelope for isolated Youzhihui 4.11 tests
+
+[Slice]
+CPUAccounting=yes
+CPUQuota=150%
+CPUWeight=10
+MemoryAccounting=yes
+MemoryHigh=2560M
+MemoryMax=2816M
+MemorySwapMax=0
+IOAccounting=yes
+IOWeight=10
+IOReadBandwidthMax=/dev/vdb 40M
+IOWriteBandwidthMax=/dev/vdb 20M
+IOReadIOPSMax=/dev/vdb 500
+IOWriteIOPSMax=/dev/vdb 250

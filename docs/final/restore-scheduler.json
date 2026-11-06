@@ -1,0 +1,36 @@
+{
+  "stage": "4.12",
+  "origin": "http://localhost:18103",
+  "checked_at": "2026-11-05T08:52:57.177911+00:00",
+  "checks": [
+    {
+      "check": "Restore/API readiness",
+      "passed": true
+    },
+    {
+      "check": "Readback: login, post, image, sold goods, paused task, message and notification preserved",
+      "passed": true
+    },
+    {
+      "check": "Restored task resumes across isolated API restart; subsequent real scan keeps messages/notifications unique",
+      "passed": true
+    }
+  ],
+  "status": "passed",
+  "fixture_ids": {
+    "post_id": "11",
+    "image_id": "15",
+    "task_id": "2",
+    "goods_id": "5",
+    "message_id": "6",
+    "conversation_id": "4"
+  },
+  "scheduler_database_evidence": {
+    "subscription_id": "2",
+    "last_successful_check": "2026-11-05T08:58:02.716760Z",
+    "seconds_from_exercise_start_to_last_scan": 305.538849,
+    "successful_runs_total": 4,
+    "duplicate_message_keys": 0,
+    "duplicate_subscription_goods_keys": 0
+  }
+}

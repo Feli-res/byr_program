@@ -1,0 +1,12 @@
+{
+  "account": "flow41129ac9d53",
+  "post_id": "3299",
+  "goods_id": "543",
+  "task_id": "141",
+  "conversation_id": "26",
+  "message_id": "2516",
+  "reminder_notified": true,
+  "post_after_restart": true,
+  "message_after_restart": true,
+  "notification_after_restart": true
+}

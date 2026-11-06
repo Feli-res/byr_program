@@ -1,0 +1,39 @@
+{
+  "started_at": "2026-11-03T08:42:07+0100",
+  "environment": "youzhihui-411 isolated stack, 4 vCPU / 16 GiB host, API cgroup 1 CPU / 512 MiB, slice 1.5 CPU",
+  "seed": {
+    "accounts": 50,
+    "posts": 1000,
+    "comments": 3000,
+    "goods": 500,
+    "messages": 2000,
+    "tasks": 100
+  },
+  "http_workers": 0,
+  "ws_connections": 10,
+  "warmup_seconds": 30,
+  "measure_seconds": 300,
+  "categories": {
+    "chat_delivery": {
+      "count": 149,
+      "errors": 0,
+      "p50": 0.2472,
+      "p95": 0.3126,
+      "p99": 0.559,
+      "max": 0.7122,
+      "threshold": 2.0,
+      "within_threshold_pct": 100.0
+    }
+  },
+  "semantic_modes": {},
+  "index_sync_seconds": null,
+  "errors": {},
+  "db": {
+    "posts": "1000",
+    "comments": "3000",
+    "goods": "501",
+    "messages": "2166",
+    "tasks": "100",
+    "duplicate_messages": "0"
+  }
+}

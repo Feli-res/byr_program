@@ -1,0 +1,73 @@
+{
+  "stage": "4.12",
+  "status": "complete",
+  "updated_at": "2026-11-05T10:38:09.781732+00:00",
+  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "release": "final-20261105-01",
+  "previous_release": "trial-20261102-01",
+  "production_flow_checks": 10,
+  "browser_checks": 6,
+  "production_pause_observation_seconds": 320,
+  "production_reminder_timing": {
+    "status": "passed",
+    "goods_id": "8",
+    "goods_created_at": "2026-11-05T08:50:35.719876Z",
+    "notification_created_at": "2026-11-05T08:55:33.234435Z",
+    "delivery_latency_seconds": 297.514559,
+    "notice_count": 1,
+    "target_seconds": 420,
+    "scope": "one production sample; server timestamps, not a percentile benchmark"
+  },
+  "source_matches_workspace": true,
+  "production_restart_and_existing_data_readback": "passed",
+  "restore": {
+    "snapshot": "20261105T085058Z",
+    "tables": 36,
+    "upload_files": 17,
+    "all_table_counts_match": true,
+    "all_upload_hashes_match": true,
+    "readback": "passed",
+    "scheduler_restart_and_next_real_scan": "passed",
+    "duplicate_message_keys": 0,
+    "duplicate_subscription_goods_keys": 0,
+    "test_containers_stopped": 6,
+    "test_volumes_preserved": true
+  },
+  "offsite_snapshot_downloaded_and_checksums_verified": true,
+  "local_backup_safety_tests": 5,
+  "artifact": "See .local/final412-delivery/youzhihui-course-source.zip and SHA256SUMS",
+  "human_confirmation_pending": [],
+  "limits": [
+    "4.11 performance results apply to the isolated stack; production was a business smoke check",
+    "AI labels are rule-generated with sample checking; no fabricated two-person review",
+    "Shared host was not rebooted; real mobile hardware and automatic offsite synchronization were not added"
+  ],
+  "preserved_interrupted_runs": [
+    "initial-flow-run.json",
+    "production-maintenance-interrupted.json"
+  ],
+  "evidence": [
+    "production-final-flow.json",
+    "production-final-paused.json",
+    "browser-verification.json",
+    "before-update-readback.json",
+    "after-restart-readback.json",
+    "production-restart.json",
+    "server-runtime.json",
+    "tls-verification.json",
+    "restore-data.json",
+    "restore-readback.json",
+    "restore-scheduler.json",
+    "restore-stopped.json",
+    "offsite-verification.json"
+  ],
+  "scope_adjustment": {
+    "authorized_by": "project owner in the conversation",
+    "date": "2026-11-05",
+    "removed_requirements": [
+      "Another member performs maintenance from the instructions",
+      "Two members jointly review the AI evaluation labels"
+    ],
+    "actual_label_method": "Structured rules with sample checking; no two-person independent labeling was performed"
+  }
+}

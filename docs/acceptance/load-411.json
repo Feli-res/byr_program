@@ -1,0 +1,116 @@
+{
+  "started_at": "2026-11-03T08:02:15+0100",
+  "environment": "youzhihui-411 isolated stack, 4 vCPU / 16 GiB host, API cgroup 1 CPU / 512 MiB, slice 1.5 CPU",
+  "seed": {
+    "accounts": 50,
+    "posts": 1000,
+    "comments": 3000,
+    "goods": 500,
+    "messages": 2000,
+    "tasks": 100
+  },
+  "http_workers": 20,
+  "ws_connections": 10,
+  "warmup_seconds": 60,
+  "measure_seconds": 300,
+  "categories": {
+    "keyword_search": {
+      "count": 1931,
+      "errors": 0,
+      "p50": 0.051,
+      "p95": 0.1663,
+      "p99": 0.4339,
+      "max": 1.5559,
+      "threshold": 2.0,
+      "within_threshold_pct": 100.0
+    },
+    "semantic_search": {
+      "count": 1382,
+      "errors": 0,
+      "p50": 0.6186,
+      "p95": 1.105,
+      "p99": 1.4013,
+      "max": 1.7683,
+      "threshold": 3.0,
+      "within_threshold_pct": 100.0
+    },
+    "detail": {
+      "count": 4119,
+      "errors": 0,
+      "p50": 0.0299,
+      "p95": 0.1713,
+      "p99": 0.59,
+      "max": 1.7434,
+      "threshold": 1.0,
+      "within_threshold_pct": 99.51
+    },
+    "comment_create": {
+      "count": 1326,
+      "errors": 0,
+      "p50": 0.053,
+      "p95": 0.1999,
+      "p99": 1.2207,
+      "max": 2.0388,
+      "threshold": 1.0,
+      "within_threshold_pct": 98.79
+    },
+    "list": {
+      "count": 3329,
+      "errors": 0,
+      "p50": 0.0399,
+      "p95": 0.1917,
+      "p99": 0.6134,
+      "max": 1.6864,
+      "threshold": 1.0,
+      "within_threshold_pct": 99.49
+    },
+    "post_create": {
+      "count": 1389,
+      "errors": 0,
+      "p50": 0.0695,
+      "p95": 0.2954,
+      "p99": 1.2536,
+      "max": 2.2927,
+      "threshold": 1.0,
+      "within_threshold_pct": 98.78
+    },
+    "chat_delivery": {
+      "count": 108,
+      "errors": 5,
+      "p50": 0.2768,
+      "p95": 0.5571,
+      "p99": 0.8829,
+      "max": 1.7188,
+      "threshold": 2.0,
+      "within_threshold_pct": 100.0
+    },
+    "reminder_delivery": {
+      "count": 5,
+      "errors": 0,
+      "p50": 104.7402,
+      "p95": 108.7985,
+      "p99": 108.815,
+      "max": 108.8191,
+      "threshold": 420.0,
+      "within_threshold_pct": 100.0
+    }
+  },
+  "index_sync_seconds": null,
+  "errors": {
+    "chat_delivery": [
+      "ConnectionClosedError: received 1013 (try again later) connection closed; then sent 1013 (try again later) connection closed",
+      "ConnectionClosedError: received 1013 (try again later) connection closed; then sent 1013 (try again later) connection closed",
+      "ConnectionClosedError: received 1013 (try again later) connection closed; then sent 1013 (try again later) connection closed",
+      "ConnectionClosedError: received 1013 (try again later) connection closed; then sent 1013 (try again later) connection closed",
+      "ConnectionClosedError: received 1013 (try again later) connection closed; then sent 1013 (try again later) connection closed"
+    ]
+  },
+  "db": {
+    "posts": "2671",
+    "comments": "4600",
+    "goods": "506",
+    "messages": "2140",
+    "tasks": "100",
+    "duplicate_messages": "0"
+  }
+}

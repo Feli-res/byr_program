@@ -1,0 +1,62 @@
+{
+  "stage": "4.12",
+  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "checked_at": "2026-11-05T08:51:48.422739+00:00",
+  "checks": [
+    {
+      "check": "HTTPS/API readiness",
+      "passed": true
+    },
+    {
+      "check": "Two independent accounts register and log in",
+      "passed": true
+    },
+    {
+      "check": "Image post, reply, keyword search and unauthorized edit rejected",
+      "passed": true
+    },
+    {
+      "check": "Real AI understands a goods request",
+      "passed": true,
+      "elapsed_seconds": 1.53,
+      "max_price_cents": 200000,
+      "campus_code": "shahe"
+    },
+    {
+      "check": "Published goods matches before subscription; lowered budget and changed campus both exclude it",
+      "passed": true
+    },
+    {
+      "check": "Semantic goods matching with confirmed budget/campus conditions",
+      "passed": true,
+      "mode_used": "semantic"
+    },
+    {
+      "check": "New goods triggers one persisted reminder through the real scheduler",
+      "passed": true,
+      "observed_wait_seconds": 217.236
+    },
+    {
+      "check": "Paused task and sold goods excluded from matching",
+      "passed": true
+    },
+    {
+      "check": "Two WSS sessions deliver a real private message; history saved and anonymous access denied",
+      "passed": true
+    },
+    {
+      "check": "Admin report decision, reporter readback, announcement draft/publish/retract",
+      "passed": true
+    }
+  ],
+  "status": "passed",
+  "fixture_ids": {
+    "post_id": "12",
+    "image_id": "18",
+    "preview_goods_id": "7",
+    "task_id": "3",
+    "goods_id": "8",
+    "message_id": "7",
+    "conversation_id": "5"
+  }
+}

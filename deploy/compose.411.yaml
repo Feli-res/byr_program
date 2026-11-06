@@ -1,0 +1,161 @@
+name: youzhihui-411
+x-logging: &id001
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+services:
+  mysql:
+    image: mysql:8.4
+    restart: 'no'
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?}
+      MYSQL_USER: ${MYSQL_USER:?}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
+    volumes:
+    - mysql-data:/var/lib/mysql
+    mem_limit: 512m
+    command:
+    - --innodb-buffer-pool-size=128M
+    - --max-connections=40
+    - --mysqlx=OFF
+    - --performance-schema=OFF
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u $$MYSQL_USER -D $$MYSQL_DATABASE
+        -e 'SELECT 1' >/dev/null
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    logging: *id001
+    memswap_limit: 512m
+    cpus: '1'
+    pids_limit: 256
+    cgroup_parent: youzhihui411.slice
+  redis:
+    image: redis:7-alpine
+    restart: 'no'
+    command:
+    - redis-server
+    - --appendonly
+    - 'yes'
+    - --maxmemory
+    - 64mb
+    - --maxmemory-policy
+    - noeviction
+    mem_limit: 128m
+    volumes:
+    - redis-data:/data
+    healthcheck:
+      test:
+      - CMD
+      - redis-cli
+      - ping
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *id001
+    memswap_limit: 128m
+    cpus: '0.25'
+    pids_limit: 256
+    cgroup_parent: youzhihui411.slice
+  embedding:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9@sha256:2538ea1c9640d3763b15af668039d24172d063b42337b0c27796fc2be180c78d
+    restart: 'no'
+    command:
+    - --model-id
+    - BAAI/bge-small-zh-v1.5
+    - --revision
+    - 7999e1d3359715c523056ef9478215996d62a620
+    - --port
+    - '80'
+    volumes:
+    - embedding-cache:/data
+    mem_limit: 1024m
+    cpus: '1'
+    logging: *id001
+    memswap_limit: 1024m
+    pids_limit: 256
+    cgroup_parent: youzhihui411.slice
+  api:
+    image: ${API_IMAGE:?}
+    restart: 'no'
+    environment:
+      AUTH_SECRET: ${AUTH_SECRET:?}
+      TRUSTED_PROXY_KEY: ${TRUSTED_PROXY_KEY:?}
+      WEB_ORIGIN: ${WEB_ORIGIN:?}
+      RUST_LOG: ${RUST_LOG:-info,sqlx::query=error}
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      REDIS_URL: redis://redis:6379/
+      AI_ENABLED: ${AI_ENABLED:-false}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      AI_EMBEDDING_URL: http://embedding:80
+      API_BIND: 0.0.0.0:8080
+      UPLOAD_ROOT: /data/uploads
+      DEV_TOOLS_ENABLED: 'false'
+      COOKIE_SECURE: 'false'
+    ports:
+    - 127.0.0.1:18092:8080
+    volumes:
+    - uploads:/data/uploads
+    mem_limit: 512m
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+      - CMD
+      - curl
+      - -fsS
+      - http://127.0.0.1:8080/health/ready
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging: *id001
+    memswap_limit: 512m
+    cpus: '1'
+    pids_limit: 256
+    cgroup_parent: youzhihui411.slice
+  web:
+    image: ${WEB_IMAGE:?}
+    restart: 'no'
+    mem_limit: 256m
+    depends_on:
+    - api
+    logging: *id001
+    memswap_limit: 256m
+    cpus: '0.5'
+    pids_limit: 256
+    environment:
+      NODE_OPTIONS: --max-old-space-size=160
+    cgroup_parent: youzhihui411.slice
+  edge:
+    image: nginx:alpine
+    restart: 'no'
+    mem_limit: 64m
+    memswap_limit: 64m
+    cpus: '.25'
+    pids_limit: 64
+    ports:
+    - 127.0.0.1:18093:80
+    environment:
+      TRUSTED_PROXY_KEY: ${TRUSTED_PROXY_KEY:?}
+      NGINX_ENVSUBST_FILTER: TRUSTED_PROXY_KEY
+    volumes:
+    - ./nginx.411.conf:/etc/nginx/templates/default.conf.template:ro
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_started
+    logging: *id001
+    cgroup_parent: youzhihui411.slice
+volumes:
+  mysql-data: null
+  redis-data: null
+  uploads: null
+  embedding-cache: null

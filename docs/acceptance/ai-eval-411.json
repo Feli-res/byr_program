@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-03",
+  "stack": "youzhihui-411",
+  "metrics": {
+    "keyword": {
+      "n": 36,
+      "p5": 0.0,
+      "r5": 0.0,
+      "ndcg10": 0.0,
+      "synonym_n": 20,
+      "synonym_r5": 0.0
+    },
+    "semantic": {
+      "n": 36,
+      "p5": 0.9056,
+      "r5": 0.0801,
+      "ndcg10": 0.9057,
+      "synonym_n": 20,
+      "synonym_r5": 0.0663
+    },
+    "ai": {
+      "n": 36,
+      "p5": 0.8889,
+      "r5": 0.0781,
+      "ndcg10": 0.8889,
+      "synonym_n": 20,
+      "synonym_r5": 0.0728
+    }
+  },
+  "field_accuracy": {
+    "category": 0.95,
+    "brand": 1.0,
+    "max_price_cents": 1.0,
+    "campus_code": 1.0,
+    "stylus_support": 1.0,
+    "min_condition": 1.0
+  },
+  "hard_constraint_violations": 0,
+  "dataset": {
+    "goods": 500,
+    "queries": 40,
+    "synonym": 20,
+    "no_result": 4
+  }
+}

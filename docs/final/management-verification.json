@@ -1,0 +1,16 @@
+{
+  "stage": "4.12",
+  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "checked_at": "2026-11-05T07:46:58.581898+00:00",
+  "checks": [
+    {
+      "check": "HTTPS/API readiness",
+      "passed": true
+    },
+    {
+      "check": "Admin report decision, reporter readback, announcement draft/publish/retract",
+      "passed": true
+    }
+  ],
+  "status": "passed"
+}
