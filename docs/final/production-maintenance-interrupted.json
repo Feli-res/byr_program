@@ -1,6 +1,6 @@
 {
   "stage": "4.12",
-  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "origin": "https://site.example.invalid",
   "checked_at": "2026-11-05T08:50:19.999728+00:00",
   "checks": [
     {
@@ -33,5 +33,6 @@
     }
   ],
   "status": "failed",
-  "error": "AssertionError: GET /api/v1/notifications?page_size=50: expected 200, received 502"
+  "error": "AssertionError: GET /api/v1/notifications?page_size=50: expected 200, received 502",
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

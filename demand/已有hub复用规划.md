@@ -8,7 +8,7 @@
 
 - **原用途：**学校试卷与资料管理后端。
 - **技术：**Rust、Salvo、Tokio、SQLx、MySQL、Redis、JWT。
-- **版本：**`d71b9976bcd6606b0e74855fda092338687218af`，源码已保存在 `.upstream`。
+- **版本：**`d71b9976bcd6606b0e74855fda092338687218af`，原始快照已转入本机私有归档，公开版本保留来源链接。
 - **来源：**[仓库主页](https://github.com/gygy-hh/hnu-doc)。下表路径相对 `hnudoc/src/`。
 
 ### 保留与改造
@@ -42,7 +42,7 @@
 
 - **原用途：**面向特定游戏客户端协议的 C++ 服务端，包含游戏邮件和管理后台。
 - **技术：**C++17、cpp-httplib、MySQL、Redis、HTML/JavaScript。
-- **版本：**`8fb142e049f0eac1a53abf522cb861ccd944685a`，源码已保存在 `.upstream`。
+- **版本：**`8fb142e049f0eac1a53abf522cb861ccd944685a`，原始快照已转入本机私有归档，公开版本保留来源链接。
 - **来源：**[仓库主页](https://github.com/gygy-hh/jhserver)。
 
 ### 借鉴并用 Rust 重写
@@ -78,7 +78,7 @@
 - **技术：**Java 21、Spring Boot、Spring Security、JPA、MySQL、Flyway；Vue 3、TypeScript、Vite、Axios。
 - **检查版本：**`892e0b14d2a784c833597ecb9fc91f2a41b996d2`，2026 年 10 月 20 日重新读取远端并复核代码；当时 `main` 与此版本一致。
 - **来源：**[固定版本](https://github.com/gygy-hh/FRAS-lab-website/tree/892e0b14d2a784c833597ecb9fc91f2a41b996d2)。
-- **本地源码：**[固定版本目录](../.upstream/FRAS-lab-website-892e0b14d2a784c833597ecb9fc91f2a41b996d2)，同时保存同名 ZIP；[来源与校验记录](../.upstream/FRAS-lab-website.source.json)。原始源码未改动，本次未构建或启动服务。
+- **本地源码：**[固定版本源码](https://github.com/gygy-hh/FRAS-lab-website/tree/892e0b14d2a784c833597ecb9fc91f2a41b996d2)，原始快照及 ZIP 保存在本机私有归档；[来源与校验记录](../.upstream/README.md)。原始源码未改动，本次未构建或启动服务。
 
 ### 目录内容
 

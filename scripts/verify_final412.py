@@ -18,8 +18,9 @@ import urllib.request
 from test_support import ROOT
 from test_support.fixtures import png
 from test_support.http import GoodsClient
+from server_target import load_target
 
-DEFAULT_ORIGIN = 'https://youzhihui.85-121-122-124.sslip.io'
+DEFAULT_ORIGIN = load_target().get('origin')
 
 
 def write(path, value):
@@ -49,6 +50,8 @@ def main():
     parser.add_argument('--observe-paused', action='store_true', help='With --readback, observe a paused task for one real interval')
     parser.add_argument('--exercise-restore', action='store_true', help='With --readback on Linux loopback only, resume a restored task and restart only the restore API')
     args = parser.parse_args()
+    if not args.origin:
+        parser.error('Set origin in .local/server-target.json or YOUZHIHUI_ORIGIN')
     if args.management_only and not args.admin_credentials:
         parser.error('--management-only requires --admin-credentials')
     if sum((args.readback, args.resume, args.management_only)) > 1:

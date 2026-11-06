@@ -1,7 +1,7 @@
 {
   "status": "passed",
   "date": "2026-10-29",
-  "website": "https://youzhihui.85-121-122-124.sslip.io",
+  "website": "https://site.example.invalid",
   "release": "trial-20261029-03",
   "account_rule": "trim surrounding whitespace, preserve case, exact-case uniqueness and login",
   "database_collation": "ascii_bin (unchanged)",
@@ -31,5 +31,6 @@
   "existing_passwords_ids_roles_and_status_preserved": true,
   "unrelated_accounts_preserved": true,
   "backup_before_update": true,
-  "backup_after_update": true
+  "backup_after_update": true,
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

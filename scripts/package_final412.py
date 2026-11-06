@@ -13,8 +13,9 @@ OMIT = {'.git', '.local', 'node_modules', '.next', 'target', '__pycache__',
         'playwright-report', 'test-results'}
 TOP_FILES = ['README.md', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml',
              '.dockerignore', '.gitattributes', '.gitignore',
+             '.upstream/README.md',
              '邮智汇_程设项目计划书.md', '邮智汇_服务器使用说明.md', '邮智汇_当前成果汇报.md']
-TOP_DIRS = ['apps', 'services', 'migrations', 'deploy', 'scripts', 'docs', 'demand', '.github', 'archive']
+TOP_DIRS = ['apps', 'services', 'migrations', 'deploy', 'scripts', 'docs', 'demand', '.github', 'archive', 'checks']
 
 
 def files():
@@ -29,6 +30,10 @@ def files():
                     continue
                 if '.env' in name and not name.endswith('.example'):
                     continue
+                if path.suffix.lower() in ('.pem', '.key', '.p12', '.pfx', '.bak') or path.name.lower().endswith('.sql.gz'):
+                    continue
+                if path.relative_to(ROOT).parts[0] == 'demand' and path.suffix.lower() in ('.docx', '.zip'):
+                    continue
                 yield path
 
 
@@ -36,7 +41,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     manifest = {'created_at': datetime.now(timezone.utc).isoformat(),
                 'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-                'source': 'current workspace including pending 4.11 and 4.12 changes',
+                'source': 'current workspace including uncommitted changes',
                 'acceptance_status': 'See docs/final/README.md; server restore is not implied by packaging',
                 'omitted': ['private settings/passwords/backups', 'dependency/build/cache directories', '.upstream reference repositories'],
                 'files': {}}

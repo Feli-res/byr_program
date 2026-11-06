@@ -17,14 +17,14 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| [NotoSansSC-Regular.woff2](NotoSansSC-Regular.woff2) | 常规字重 400，正文与辅助信息使用 |
-| [NotoSansSC-Medium.woff2](NotoSansSC-Medium.woff2) | 中等字重 500，标题、强调文字使用 |
+| [NotoSansSC-Regular.woff2](../../../../../apps/web/public/fonts/NotoSansSC-Regular.woff2) | 正式前端中的常规字重 400；与原草图独立副本的 SHA-256 一致 |
+| [NotoSansSC-Medium.woff2](../../../../../apps/web/public/fonts/NotoSansSC-Medium.woff2) | 正式前端中的中等字重 500；与原草图独立副本的 SHA-256 一致 |
 | [fonts.css](fonts.css) | 将两份字体以 data URL 内嵌，供离线双击 HTML 加载，避免本地文件字体请求的跨源差异 |
 | [OFL.txt](OFL.txt) | 官方许可与版权说明 |
 | [source.json](source.json) | 来源、转换和哈希记录 |
 | [verification.json](verification.json) | 字体嵌入、哈希、字重、页面汉字覆盖和主要文字对比度检查结果 |
 
-完整字库及内嵌 CSS 文件较大；这是当前本地草图的离线方案。正式前端阶段可按访问方式拆分字体范围及缓存，不把本地草图的加载方式直接当作最终部署方案。
+草图的内嵌 CSS 保持原样，双击 HTML 时仍使用其中的数据；2026-11-06 已删除草图目录中与正式前端逐字节相同的两份独立 WOFF2 副本，减少重复文件。
 
 ## 字号与配色
 

@@ -11,7 +11,7 @@ from pathlib import Path
 import load_411 as l
 
 WORK = l.WORK
-DOCS = Path("/home/sunxiang/youzhihui/acceptance411-work")
+DOCS = l.WORK
 
 TEMPLATES = [
     {"name": "iPad 学习平板", "cat": "数码设备", "brand": "Apple", "keyword": "记笔记", "max": 250000, "campus": "shahe"},

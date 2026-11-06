@@ -1,8 +1,0 @@
-[workspace]
-resolver = "2"
-members = ["hnudoc", "spider_2024"]
-
-[workspace.package]
-version = "0.1.0"
-edition = "2024"
-license = "MIT"

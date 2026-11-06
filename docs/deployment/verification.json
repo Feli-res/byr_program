@@ -1,8 +1,8 @@
 {
   "status": "passed",
   "date": "2026-10-29",
-  "website": "https://youzhihui.85-121-122-124.sslip.io",
-  "server": "85.121.122.124",
+  "website": "https://site.example.invalid",
+  "server": "SERVER_IP",
   "release": "trial-20261029-02",
   "unit_tests": 15,
   "money_tests": 3,
@@ -58,5 +58,6 @@
   },
   "certificate_renewal_dry_run_passed": true,
   "api_environment_has_database_root_password": false,
-  "visual_review_of_browser_screenshot": true
+  "visual_review_of_browser_screenshot": true,
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BASE=/home/sunxiang/youzhihui
+BASE="${YOUZHIHUI_BASE:-$(cd -- "$(dirname -- "$0")/.." && pwd -P)}"
 export RELEASE_TAG="$(basename "$(readlink -f "$BASE/current")")"
 dc() { docker compose --env-file "$BASE/shared/.env.prod" -f "$BASE/current/deploy/compose.prod.yaml" "$@"; }
 case "${1:-status}" in

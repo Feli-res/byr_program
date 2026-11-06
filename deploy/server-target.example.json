@@ -1,0 +1,6 @@
+{
+  "host": "server.example.com",
+  "ssh_user": "deploy",
+  "base_dir": "/srv/youzhihui",
+  "origin": "https://site.example.com"
+}

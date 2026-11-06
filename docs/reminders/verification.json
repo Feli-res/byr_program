@@ -24,7 +24,7 @@
   "server_deployed": true,
   "error": null,
   "server": {
-    "url": "https://youzhihui.85-121-122-124.sslip.io",
+    "url": "https://site.example.invalid",
     "release": "trial-20261031-01",
     "health": "ready",
     "page_status": 200,
@@ -59,5 +59,6 @@
       "chat"
     ],
     "final_acceptance": "passed"
-  }
+  },
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

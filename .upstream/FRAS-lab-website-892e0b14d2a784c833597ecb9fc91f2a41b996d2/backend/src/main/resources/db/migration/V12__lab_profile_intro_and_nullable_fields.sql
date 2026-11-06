@@ -1,7 +1,0 @@
-ALTER TABLE lab_profile
-    MODIFY COLUMN slogan_zh VARCHAR(500) NULL,
-    MODIFY COLUMN slogan_en VARCHAR(500) NULL,
-    MODIFY COLUMN address_zh VARCHAR(500) NULL,
-    MODIFY COLUMN address_en VARCHAR(500) NULL,
-    ADD COLUMN intro_zh LONGTEXT NULL AFTER address_en,
-    ADD COLUMN intro_en LONGTEXT NULL AFTER intro_zh;

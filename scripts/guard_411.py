@@ -2,6 +2,7 @@
 import argparse
 import datetime
 import json
+import os
 import signal
 import subprocess
 import time
@@ -9,7 +10,7 @@ import urllib.request
 import shutil
 from pathlib import Path
 
-BASE = Path('/home/sunxiang/youzhihui/acceptance411')
+BASE = Path(os.environ.get('YOUZHIHUI_BASE', '/srv/youzhihui')) / 'acceptance411'
 PROJECT = 'youzhihui-411'
 SLICE = 'youzhihui411.slice'
 STOP = False

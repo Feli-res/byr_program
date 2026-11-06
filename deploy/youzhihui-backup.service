@@ -4,5 +4,6 @@ Requires=docker.service
 After=docker.service
 [Service]
 Type=oneshot
-ExecStart=/home/sunxiang/youzhihui/shared/backup.sh
+# Example path: adjust to your private deployment location before installation.
+ExecStart=/srv/youzhihui/shared/backup.sh
 Nice=10

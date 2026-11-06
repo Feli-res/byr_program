@@ -2,7 +2,10 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Use-ProjectTools.ps1')
 $taskRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $logPath = Join-Path $taskRoot '.local\logs\hnu-cargo-check.log'
-$manifest = Join-Path $taskRoot '.upstream\hnu-doc-d71b9976bcd6606b0e74855fda092338687218af\Cargo.toml'
+$referenceRoot = Join-Path $taskRoot '.local\public-cleanup-20261106\upstream-original'
+if (-not (Test-Path -LiteralPath $referenceRoot)) { $referenceRoot = Join-Path $taskRoot '.upstream' }
+$manifest = Join-Path $referenceRoot 'hnu-doc-d71b9976bcd6606b0e74855fda092338687218af\Cargo.toml'
+if (-not (Test-Path -LiteralPath $(if ($manifest) { $manifest } else { $sourcePath }))) { throw 'Reference source missing; obtain the fixed version listed in .upstream/README.md.' }
 $ErrorActionPreference = 'Continue'
 & cargo check --locked --manifest-path $manifest -p hnudoc 2>&1 | ForEach-Object { $_.ToString() } | Out-File -LiteralPath $logPath -Encoding utf8
 $buildExit = $LASTEXITCODE

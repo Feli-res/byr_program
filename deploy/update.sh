@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BASE=/home/sunxiang/youzhihui
+BASE="${YOUZHIHUI_BASE:-$(cd -- "$(dirname -- "$0")/.." && pwd -P)}"
 TAG=${1:?Usage: sudo update.sh RELEASE_FOLDER_NAME}
 [[ "$TAG" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$ ]] || { echo 'Invalid release name'; exit 1; }
 TARGET=$(realpath "$BASE/releases/$TAG")

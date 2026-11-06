@@ -2,7 +2,7 @@
   "stage": "4.12",
   "status": "complete",
   "updated_at": "2026-11-05T10:38:09.781732+00:00",
-  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "origin": "https://site.example.invalid",
   "release": "final-20261105-01",
   "previous_release": "trial-20261102-01",
   "production_flow_checks": 10,
@@ -69,5 +69,6 @@
       "Two members jointly review the AI evaluation labels"
     ],
     "actual_label_method": "Structured rules with sample checking; no two-person independent labeling was performed"
-  }
+  },
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

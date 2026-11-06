@@ -1,6 +1,6 @@
 {
   "stage": "4.12",
-  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "origin": "https://site.example.invalid",
   "checked_at": "2026-11-05T08:55:33.885Z",
   "checks": [
     "Real production browser login",
@@ -10,5 +10,6 @@
     "Browser reads messages",
     "390px subscription/notification/post pages have no horizontal overflow"
   ],
-  "status": "passed"
+  "status": "passed",
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

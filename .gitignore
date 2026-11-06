@@ -1,5 +1,10 @@
 # Local tools, downloads, build outputs and private settings
 /.local/
+/.upstream/*
+!/.upstream/README.md
+/demand/*.docx
+/demand/*.zip
+/demand/提交文档模版/
 **/node_modules/
 **/target/
 **/.next/

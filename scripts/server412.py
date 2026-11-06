@@ -5,7 +5,9 @@ Set YOUSHIZHUI_SSH_PASSWORD or put a single password line in
 """
 import argparse
 import hashlib
+import json
 import os
+import re
 import shlex
 import sys
 import tarfile
@@ -14,9 +16,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / '.local/deploy-tools'))
 import paramiko
+from server_target import load_target
 
-BASE = '/home/sunxiang/youzhihui'
-TAG = 'final-20261105-01'
 WORK = ROOT / '.local/final412-server'
 
 
@@ -66,7 +67,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['inspect', 'deploy', 'backup', 'restore', 'download'])
     parser.add_argument('--snapshot', help='UTC backup directory name, required by restore/download')
+    parser.add_argument('--tag', help='New release folder name, required by deploy')
     args = parser.parse_args()
+    if args.action == 'deploy' and (not args.tag or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,63}', args.tag)):
+        parser.error('deploy requires --tag with a valid new release name')
+    TAG = args.tag
+    try:
+        target = load_target(('host', 'ssh_user', 'base_dir'))
+    except ValueError as error:
+        raise SystemExit(str(error) + '; configure .local/server-target.json') from None
+    BASE = target['base_dir']
     password = os.environ.get('YOUSHIZHUI_SSH_PASSWORD')
     private = ROOT / '.local/ssh-password.txt'
     if not password and private.is_file():
@@ -77,7 +87,7 @@ def main():
     ssh = paramiko.SSHClient()
     ssh.load_host_keys(str(ROOT / '.local/server-known-hosts'))
     ssh.set_missing_host_key_policy(paramiko.RejectPolicy())
-    ssh.connect('85.121.122.124', username='sunxiang', password=password,
+    ssh.connect(target['host'], username=target['ssh_user'], password=password,
                 look_for_keys=False, allow_agent=False, timeout=25)
 
     def run(command, sudo=False, timeout=300):
@@ -137,7 +147,6 @@ def main():
         elif args.action == 'backup':
             run(f'{BASE}/shared/backup.sh', sudo=True)
         else:
-            import re
             if not args.snapshot or not re.fullmatch(r'\d{8}T\d{6}Z', args.snapshot):
                 parser.error('--snapshot must be a UTC backup directory name')
             snapshot = BASE + '/backups/' + args.snapshot
@@ -146,20 +155,20 @@ def main():
                 run(f'mkdir -p {BASE}/final412-tools/scripts {BASE}/final412-tools/deploy')
                 sftp = ssh.open_sftp()
                 for local, remote in [('scripts/restore412.py', 'scripts/restore412.py'),
+                                      ('scripts/server_target.py', 'scripts/server_target.py'),
                                       ('deploy/backup_inventory.py', 'deploy/backup_inventory.py'),
                                       ('deploy/compose.restore412.yaml', 'deploy/compose.restore412.yaml'),
                                       ('deploy/nginx.411.conf', 'deploy/nginx.411.conf')]:
                     sftp.put(str(ROOT / local), BASE + '/final412-tools/' + remote)
                 sftp.close()
-                run(f'python3 {BASE}/final412-tools/scripts/restore412.py {snapshot}', sudo=True, timeout=900)
+                run(f'YOUZHIHUI_BASE={shlex.quote(BASE)} python3 {BASE}/final412-tools/scripts/restore412.py {snapshot}', sudo=True, timeout=900)
             else:
                 remote = BASE + '/shared/final412-offsite.tar.gz'
-                run(f'set -e; cd {snapshot}; sha256sum -c SHA256SUMS; tar -czf {remote} -C {BASE}/backups {args.snapshot}; chown sunxiang:sunxiang {remote}; chmod 600 {remote}', sudo=True)
+                run(f'set -e; cd {snapshot}; sha256sum -c SHA256SUMS; tar -czf {remote} -C {BASE}/backups {args.snapshot}; chown {target["ssh_user"]} {remote}; chmod 600 {remote}', sudo=True)
                 sftp = ssh.open_sftp()
                 sftp.get(remote, str(WORK / 'offsite-backup.tar.gz'))
                 sftp.close()
                 verified = verify_offsite(WORK / 'offsite-backup.tar.gz', args.snapshot)
-                import json
                 (WORK / 'offsite-verification.json').write_text(json.dumps({'snapshot': args.snapshot, 'status': 'passed', 'checksums': verified}, indent=2) + '\n')
                 print('Downloaded and verified every backup checksum: .local/final412-server/offsite-backup.tar.gz')
     finally:

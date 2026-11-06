@@ -1,9 +1,10 @@
 """Write the 4.11 seed manifest from the isolated database after seeding."""
 import json
+import os
 import subprocess
 from pathlib import Path
 
-WORK = Path("/home/sunxiang/youzhihui/acceptance411-work")
+WORK = Path(os.environ.get("YOUZHIHUI_BASE", "/srv/youzhihui")) / "acceptance411-work"
 MYSQL = "youzhihui-411-mysql-1"
 DB = "youzhihui_411"
 

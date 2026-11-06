@@ -54,7 +54,8 @@ test('管理员签发重置凭据、普通用户界面不能管理账户',async(
   await login(person,account,password);
   await person.goto('/admin/users');await expect(person.getByRole('heading',{name:'没有访问权限'})).toBeVisible();
   const manager=await browser.newContext();const page=await manager.newPage();await login(page,process.env.ACCOUNT_ADMIN,process.env.ACCOUNT_ADMIN_PASSWORD);
-  await page.getByRole('link',{name:'账户管理',exact:true}).click();
+  await page.getByRole('navigation',{name:'账户导航'}).getByRole('link',{name:'管理',exact:true}).click();
+  await page.getByRole('navigation',{name:'管理导航'}).getByRole('link',{name:'账户管理',exact:true}).click();
   const row=page.locator('.managed-user').filter({has:page.getByRole('heading',{name:/浏览器重置对象/})});await expect(row).toBeVisible();
   const other=page.locator('.managed-user').first(),rowToggle=row.locator('.managed-toggle'),otherToggle=other.locator('.managed-toggle');
   await expect(rowToggle).toHaveAttribute('aria-expanded','false');await expect(row).toContainText(account);await expect(row.getByLabel('操作原因',{exact:true})).toBeHidden();

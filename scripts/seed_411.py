@@ -15,8 +15,9 @@ import httpx
 
 BASE_DEFAULT = "http://127.0.0.1:18092"
 ORIGIN_DEFAULT = "http://localhost:18093"
-WORK = Path("/home/sunxiang/youzhihui/acceptance411-work")
-ENV_FILE = Path("/home/sunxiang/youzhihui/acceptance411/test.env")
+PROJECT_BASE = Path(os.environ.get("YOUZHIHUI_BASE", "/srv/youzhihui"))
+WORK = PROJECT_BASE / "acceptance411-work"
+ENV_FILE = PROJECT_BASE / "acceptance411/test.env"
 
 
 def load_password():

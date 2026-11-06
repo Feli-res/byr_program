@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 umask 077
-BASE=/home/sunxiang/youzhihui
+BASE="${YOUZHIHUI_BASE:-$(cd -- "$(dirname -- "$0")/.." && pwd -P)}"
 exec 9>"$BASE/shared/operations.lock"
 flock -n 9 || { echo "Another backup/update is running" >&2; exit 1; }
 export RELEASE_TAG="$(basename "$(readlink -f "$BASE/current")")"

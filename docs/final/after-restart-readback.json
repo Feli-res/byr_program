@@ -1,6 +1,6 @@
 {
   "stage": "4.12",
-  "origin": "https://youzhihui.85-121-122-124.sslip.io",
+  "origin": "https://site.example.invalid",
   "checked_at": "2026-11-05T08:50:50.598353+00:00",
   "checks": [
     {
@@ -20,5 +20,6 @@
     "goods_id": "5",
     "message_id": "6",
     "conversation_id": "4"
-  }
+  },
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

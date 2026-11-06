@@ -1,15 +1,15 @@
-# Example only: insert the PRIVATE key from shared/.env.prod before installation.
+# Example only: replace SERVER_IP, site.example.invalid and the private proxy key before installation.
 server {
- listen 85.121.122.124:80;
- server_name youzhihui.85-121-122-124.sslip.io;
+ listen SERVER_IP:80;
+ server_name site.example.invalid;
  location /.well-known/acme-challenge/ { root /var/www/youzhihui-acme; }
  location / { return 308 https://$host$request_uri; }
 }
 server {
  listen 443 ssl;
- server_name youzhihui.85-121-122-124.sslip.io;
- ssl_certificate /etc/letsencrypt/live/youzhihui.85-121-122-124.sslip.io/fullchain.pem;
- ssl_certificate_key /etc/letsencrypt/live/youzhihui.85-121-122-124.sslip.io/privkey.pem;
+ server_name site.example.invalid;
+ ssl_certificate /etc/letsencrypt/live/site.example.invalid/fullchain.pem;
+ ssl_certificate_key /etc/letsencrypt/live/site.example.invalid/privkey.pem;
  ssl_protocols TLSv1.2 TLSv1.3;
  client_max_body_size 11m;
  add_header X-Content-Type-Options nosniff always;

@@ -19,7 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'deploy'))
 from backup_inventory import database_inventory, upload_inventory
 
-BASE = Path('/home/sunxiang/youzhihui')
+BASE = Path(os.environ.get('YOUZHIHUI_BASE', '/srv/youzhihui'))
 PROJECT = 'youzhihui-restore412'
 WORK = BASE / 'restore412'
 

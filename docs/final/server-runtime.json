@@ -34,7 +34,7 @@
         "AI_ENABLED": "true",
         "DEV_TOOLS_ENABLED": "false",
         "COOKIE_SECURE": "true",
-        "WEB_ORIGIN": "https://youzhihui.85-121-122-124.sslip.io"
+        "WEB_ORIGIN": "https://site.example.invalid"
       }
     },
     "youzhihui-trial-web-1": {
@@ -145,5 +145,6 @@
     "20261105T085058Z"
   ],
   "nginx_configuration_valid": true,
-  "source_matches_workspace": true
+  "source_matches_workspace": true,
+  "_privacy_redacted": "Deployment identifiers replaced with examples on 2026-11-06; measurements are unchanged."
 }

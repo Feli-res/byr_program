@@ -7,7 +7,10 @@ const assert = require('node:assert/strict');
   const work = path.resolve(process.argv[2] || '.local/final412-02');
   const credentials = JSON.parse(fs.readFileSync(path.join(work, 'fixtures.json'), 'utf8'));
   const base = credentials.origin;
-  assert.equal(base, 'https://youzhihui.85-121-122-124.sslip.io');
+  const targetFile = path.resolve('.local/server-target.json');
+  const target = process.env.YOUZHIHUI_ORIGIN || (fs.existsSync(targetFile) ? JSON.parse(fs.readFileSync(targetFile, 'utf8')).origin : null);
+  assert.ok(target && new URL(target).protocol === 'https:', 'Configure the private HTTPS origin');
+  assert.equal(base.replace(/\/$/, ''), target.replace(/\/$/, ''));
   const browser = await chromium.launch({headless: true, executablePath: process.env.BROWSER_EXECUTABLE || 'C:/Program Files/Google/Chrome/Application/chrome.exe'});
   const result = {stage: '4.12', origin: base, checked_at: new Date().toISOString(), checks: [], status: 'running'};
   try {
