@@ -35,22 +35,6 @@
 
 技术栈：前端 Next.js / React，后端 Rust / Salvo / Tokio，MySQL 保存业务资料与向量，Redis 保存临时连接信息，磁盘保存上传文件。文本 AI 由后端调用，中文向量服务在内部运行；真实密钥不进入浏览器。
 
-## 评测与最终验收
-
-| 子项 | 实际结果 |
-| --- | --- |
-| 4.11.1 全站检查 | AC01—AC20 矩阵齐全；AC12/13/14/19/20 在该阶段实测，其余引用 4.4—4.10 独立库结果；4.12 另补生产浏览器复验 |
-| 4.11.2 AI 对比 | 500 商品、40 需求；字段准确率 95%～100%，硬约束违规 0；提醒 20+20，精确率 1.0、重复 0 |
-| 4.11.3 负载 | 修复后 20 HTTP + 10 WS 运行 5 分钟；HTTP P95 全达标；索引满载 2 秒、0 pending；WebSocket 0 次 1013；语义降级 3.7% |
-| 4.12 生产流程 | 10 项完整流程、6 项浏览器检查通过；修改预算/校区、已售排除、私聊及举报公告均有实际结果 |
-| 4.12 提醒与重启 | 项目 API/web 重启后旧资料保留；暂停任务观察 320 秒无新通知；一个新商品样本约 297.515 秒后通知一次 |
-| 4.12 独立恢复 | 快照 `20261105T085058Z` 恢复到全新独立数据库及卷；36 张表行数、17 个上传文件大小和 SHA256 全部一致；恢复任务跨重启与后续真实周期去重通过 |
-| 4.12 备份与材料 | 完整备份已下载到本机并校验，演示、运维、源码包和文件哈希清单齐备；恢复测试容器已停止，数据卷保留 |
-
-原始结果见 [功能检查](docs/acceptance/4.11_功能检查.md)、[AI 评测](docs/acceptance/4.11_AI评测.md)、[修复后负载测试](docs/acceptance/4.11_负载测试_修复后.md) 与 [最终验收汇总](docs/final/production-verification.json)。
-
-性能结果来自服务器 411 隔离栈的 1.5 CPU 配额环境，生产 HTTPS 入口的本轮检查为业务复验，不据此承诺并发容量。AI 金标采用结构化规则生成与抽样核对；完整自然句的关键词基线命中率较低，评测结果不能外推到所有查询。297.515 秒仅为一个生产提醒样本，不是 P95。
-
 ## 从哪里开始看
 
 | 想了解什么 | 阅读入口 |
@@ -71,71 +55,6 @@
 | 页面计划做成什么样 | [HTML 页面草图](archive/early-docs/page-drafts/index.html) · [打开说明](archive/early-docs/page-drafts/README.md) |
 | 前后端按什么字段和规则配合 | [4.3 设计包](docs/design/README.md) |
 | 三个参考仓库怎么使用 | [参考代码说明](.upstream/README.md) |
-
-## 本机怎样使用
-
-项目位置：`D:\program_design_experiment`。先打开 Docker Desktop，再在 PowerShell 中进入项目目录：
-
-```powershell
-Set-Location D:\program_design_experiment
-```
-
-首次准备、升级已有工程或依赖改变后执行：
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Prepare-Dev.ps1
-```
-
-已有程序在运行时先停止；正常启动使用：
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Start-Dev.ps1
-```
-
-| 页面 | 地址与用途 |
-| --- | --- |
-| 论坛首页 | <http://localhost:3000/> |
-| 论坛帖子列表 | <http://localhost:3000/posts>；每页 20 条，可用页码、上一页/下一页和跳页 |
-| 发布帖子 | <http://localhost:3000/posts/new>，登录后使用 |
-| 我的内容 | <http://localhost:3000/me/posts> · <http://localhost:3000/me/favorites> |
-| 帖子管理 | <http://localhost:3000/admin/posts>，管理员或授权版主使用 |
-| 商品与搜索 | <http://localhost:3000/goods> · <http://localhost:3000/search> |
-| 公告 | <http://localhost:3000/announcements>；首页同时显示最新公告 |
-| 管理概览 | <http://localhost:3000/admin>，管理员或版主登录后使用 |
-| 举报、公告、板块与任务管理 | `/admin/reports` · `/admin/announcements` · `/admin/boards` · `/admin/subscriptions` · `/admin/audit-logs` |
-| 发布与我的商品 | <http://localhost:3000/goods/new> · <http://localhost:3000/me/goods> |
-| 消息：私聊与通知 | <http://localhost:3000/messages> · <http://localhost:3000/notifications>；顶部从“消息”进入，商品详情可联系卖家 |
-| 商品管理 | <http://localhost:3000/admin/goods>，管理员使用 |
-| 注册、登录 | <http://localhost:3000/register> · <http://localhost:3000/login> |
-| 个人资料 | <http://localhost:3000/profile>，登录后使用 |
-| 账户管理 | <http://localhost:3000/admin/users>，管理员登录后使用 |
-| 开发读写检查 | <http://localhost:3000/dev-check>，保存并刷新检查测试记录 |
-
-本机开发库中已按要求创建以下账号，登录验证通过。账号区分大小写，登录时必须按清单中的大小写输入，昵称与下列账号写法相同；密码由项目负责人掌握，文档不保存。
-
-| 账号 | 权限 |
-| --- | --- |
-| Administrator001 | 管理员 |
-| TestUser001 | 普通用户 |
-| TestUser002 | 普通用户 |
-
-当前开发库已有管理员，无需再次执行初始化。以后准备一个全新数据库、且没有管理员时，才使用 `scripts/Init-Admin.ps1` 交互创建第一位管理员；其他管理员由已有管理员授权。
-
-停止程序和开发数据库，保留已保存数据：
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Stop-Dev.ps1
-```
-
-需要重跑完整4.6验收时，先停止正在运行的开发程序，再执行下列命令。它会构建一次，顺序执行原有回归和新的跨模块检查，并停止、重启开发专用数据库：
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Verify-Acceptance.ps1
-```
-
-只检查某个功能时，使用 [脚本目录](scripts/README.md) 中对应的单项验收命令，不必每次全部重跑。
-
-详细配置、准备步骤和故障处理见 [工程说明](docs/engineering/README.md) 与 [账户说明](docs/accounts/README.md)。真实配置位于被 Git 忽略的 `deploy/.env`；本机工具、缓存和日志位于 `.local/`。
 
 ## 目录
 
