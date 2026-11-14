@@ -8,8 +8,7 @@ import {useData} from '../lib/use-data';
 
 export function AnnouncementStrip(){
   const data=useData('announcement-strip',()=>request('/api/v1/announcements?page_size=3'));
-  if(data.error||!data.value?.items?.length)return null;
-  return <section className="panel announcement-strip" aria-label="公告"><div className="panel-heading"><h2>公告</h2><Link href="/announcements">全部公告</Link></div><ul className="record-list">{data.value.items.map(a=><li key={a.id}><Link href={`/announcements/${a.id}`}>{a.title}</Link><p className="muted"><Time value={a.published_at}/></p></li>)}</ul></section>;
+  return <section className="panel announcement-strip" aria-label="公告"><div className="panel-heading"><h2>校园公告</h2><Link href="/announcements">全部公告</Link></div><Failure data={data}/>{data.value&&<><ul className="record-list">{data.value.items.map(a=><li key={a.id}><Link href={`/announcements/${a.id}`}>{a.title}</Link><p className="muted"><Time value={a.published_at}/></p></li>)}</ul>{data.value.items.length===0&&<p className="muted">暂无公告</p>}</>}</section>;
 }
 
 export function AnnouncementsList(){
