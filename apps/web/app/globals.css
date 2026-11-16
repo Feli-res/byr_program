@@ -50,3 +50,37 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+
+/* Warm campus palette. */
+:root{--cream:#F5DDB5;--peach:#F5CCBC;--pink:#F5B5BF;--rose:#CEA2B5;--lilac:#9A9AB9;--soft-blue:#728AB9;--blue:#56669E;--teal:#50B9AE;--ink:#302c35;--muted:#696575;--line:#e7d9d7;--paper:#fffdfb}
+body{background:#fcefdc;color:var(--ink)}
+.site-header{border-top-color:var(--blue);background:#fffdfb}
+a{color:#424666}a:hover{color:#343862}
+button,.button{background:var(--blue);border-color:var(--blue);color:#fff}
+button:hover:not(:disabled),.button:hover{background:#454f81;border-color:#454f81}
+button.secondary{background:#fffdfb;color:#414975;border-color:#9A9AB9}
+.text-button{background:none;border:0;color:#454b70}.text-button:hover:not(:disabled){background:none;border-color:transparent;color:#292d49}
+.header-inner nav[aria-label="主导航"] > a{color:var(--ink);padding:5px 9px;border-radius:6px}
+.header-inner nav[aria-label="主导航"] > a[aria-current]{background:var(--blue);color:#fff}
+.header-inner nav[aria-label="主导航"] > a[aria-current]::after{display:none}
+.header-inner nav[aria-label="主导航"] > a:hover:not([aria-current]),.header-inner nav[aria-label="主导航"] > a:focus-visible:not([aria-current]){color:#343862;background:#f4e8e8}
+.header-inner nav[aria-label="账户导航"] a{color:#424666}
+.panel,.forum-zone-nav,.forum-menu{border-color:var(--line)}
+.forum-workspace .forum-panel h1,.forum-aside h2,.forum-workspace .topic-title a{color:var(--ink)}
+.forum-workspace .topic-board{color:#493d4c;background:#f5ccbc}
+.forum-workspace .topic-list > li:nth-child(4n+2) .topic-board{background:#f5b5bf}
+.forum-workspace .topic-list > li:nth-child(4n+3) .topic-board{background:#e8cedb}
+.forum-workspace .topic-list > li:nth-child(4n+4) .topic-board{background:#d8dbeb}
+.forum-workspace .topic-title::before{content:"";width:8px;height:8px;background:var(--teal);border-radius:50%;flex:none;margin-top:.58em}
+.forum-aside .record-list li::before{content:"";display:inline-block;width:7px;height:7px;background:var(--teal);border-radius:50%;margin-right:8px;vertical-align:middle}
+.forum-reminder-link{background:#f9e6e1;color:#433b4d}
+.forum-personal-actions{display:flex;gap:8px 16px;flex-wrap:wrap;margin:0 0 14px;font-size:13px}.forum-personal-actions a{color:#4c4760}
+.forum-workspace:not(:has(> .forum-aside)){grid-template-columns:minmax(0,1fr)}
+@media(min-width:761px){
+ main:has(> .forum-workspace):not(:has(> .forum-menu)){display:flow-root}
+ main > .forum-zone-nav:not(:has(~ .forum-menu)){border-radius:10px}
+ main:not(:has(> .forum-menu)) > .forum-zone-nav ~ .forum-workspace{margin-left:176px}
+ main > .forum-zone-nav a{color:#302c35}
+ main > .forum-zone-nav > a[aria-current="page"]{color:#302c35;background:#dbe0f0;border-radius:5px;padding-right:10px}
+}
+@media(max-width:760px){.header-inner nav[aria-label="主导航"]{flex-wrap:wrap;gap:5px 8px}.header-inner nav[aria-label="主导航"] > a{padding:4px 7px}}
